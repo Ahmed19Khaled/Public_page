@@ -1,0 +1,71 @@
+body{
+    background-image: linear-gradient(to right ,#040944 20% ,#110d23f2  );
+    height: 100hv;
+    width: 100%;
+    display: flex;
+   margin: 0;
+
+
+}
+a{
+    color: white;
+    text-decoration: none;
+}
+.container{
+    
+    height: 100dvh;
+    width: 100%;
+   background-image:linear-gradient(to right, #2f0bbc8d 30%,#060b4da7),url(1697889991.jpg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+header{
+    display: flex;
+    justify-content: space-between;
+}
+.logo{
+    font-size: 30px;
+    padding: 20px;
+    text-transform: uppercase;
+}
+ul{
+  width: 50%;
+ 
+    list-style: none;
+    display: flex ;
+    justify-content: space-evenly;
+   
+}
+.container:hover{
+    background-image:linear-gradient(to right, transparent 30%,rgb(15, 41, 187)),url(1697889991.jpg);
+
+}
+ul a:hover{
+    border-bottom: solid red;
+}
+
+.cont{
+   color: white;
+    width: 50%;
+    margin-top: 40px;
+    padding-left: 30px;
+}
+.cont h2{
+    text-transform: uppercase;
+    font-size: 80px;
+}
+.cont p{
+    width: 350px;
+}
+.cont button{
+    font-size: 30px;
+    border-radius: 10px;
+    background: #06675f;
+}
+button:hover{
+    font-size: 35px;
+    background: transparent;
+    border: solid white;
+    color: rgb(147, 15, 15);
+}

@@ -1,0 +1,62 @@
+
+*{
+    margin: 0;
+    padding: 0;
+}
+a{
+    color: #c22112;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+body{
+    
+    background-image: linear-gradient(to right , #1a1252,#000002);
+    height: 100vh;
+    width: 100%; 
+    display: flex;
+   justify-self: center;
+   align-items: center;
+
+}
+.container{ 
+    width: 100%  ;
+    height: 100%;
+
+background-image: linear-gradient(to right ,#01022de5 30%,#00000088),url(wallpaperflare.com_wallpaper\ \(2\).jpg);
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+   }
+.container:hover{
+    background-image:
+     linear-gradient(to right ,#01022de5 30%,transparent)
+      ,url(wallpaperflare.com_wallpaper\ \(2\).jpg)
+     ;
+
+   }
+   header{
+display: flex;
+justify-content: space-between;
+padding: 10px;
+
+   }
+   .logo{
+     font-size: 30px;
+ text-transform: uppercase;
+ color: #040ab6;
+   }
+   ul{
+    width: 60%;
+list-style: none;
+display: flex;
+justify-content: space-between ;
+
+   }
+   ul a{
+    border-bottom: transparent 2px solid;
+   }
+   ul a:hover{
+    border-bottom: rgb(202, 11, 11) 2px solid;
+
+   }
+
