@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Granada Pro — نظام الفواتير الحرارية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--ink:#0a0a0f;
+--ink2:#1a1a2e;
+--ink3:#16213e;
+--gold:#c9a84c;
+--gold2:#e8c97a;
+--gold3:#f5e4a8;
+--silver:#8892a4;
+--line:#e2e8f0;
+--bg:#f8f7f4;
+--panel-bg:#ffffff;
+--accent:#1a1a2e;
+--success:#059669;
+--danger:#dc2626;
+--paper:#ffffff;
+--paper-w:80mm;
+}
+html,body{height:100%;font-family:'Cairo',sans-serif;background:var(--bg);color:var(--ink);overflow:hidden}
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:99px}
+::-webkit-scrollbar-track{background:transparent}
+
+.app{display:grid;grid-template-columns:340px 1fr 300px;height:100vh}
+
+/* LEFT PANEL */
+.left-panel{background:#0a0a0f;color:#e2e8f0;overflow-y:auto;border-left:1px solid #1e293b;display:flex;flex-direction:column}
+.brand-header{padding:20px 18px 16px;border-bottom:1px solid #1e293b;background:linear-gradient(180deg,#0f0f1a 0%,#0a0a0f 100%)}
+.brand-logo{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.brand-icon{width:44px;height:44px;background:linear-gradient(135deg,#c9a84c,#e8c97a);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.brand-name{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.5px}
+.brand-sub{font-size:11px;color:#64748b;font-weight:400}
+
+.left-content{padding:14px;flex:1;overflow-y:auto}
+.section{background:#111827;border:1px solid #1e293b;border-radius:14px;padding:14px;margin-bottom:12px}
+.section-title{font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-title::before{content:'';display:block;width:3px;height:14px;background:var(--gold);border-radius:99px}
+
+.fld{margin-bottom:10px}
+.fld label{display:block;font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.fld input,.fld select,.fld textarea{width:100%;background:#0a0a0f;color:#e2e8f0;border:1px solid #1e293b;border-radius:10px;padding:9px 12px;font-size:12px;font-family:'Cairo',sans-serif;outline:none;transition:.2s}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:#c9a84c;box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.fld textarea{min-height:64px;resize:vertical;line-height:1.5}
+.fld select option{background:#0a0a0f}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:.18s;font-family:'Cairo',sans-serif;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#0a0a0f}
+.btn-dark{background:#1e293b;color:#e2e8f0;border:1px solid #334155}
+.btn-danger{background:rgba(220,38,38,.12);color:#fca5a5;border:1px solid rgba(220,38,38,.2)}
+.btn-success{background:rgba(5,150,105,.12);color:#6ee7b7;border:1px solid rgba(5,150,105,.2)}
+.btn-full{width:100%;display:flex}
+
+.logo-upload{display:flex;align-items:center;gap:10px;border:1px dashed #334155;border-radius:12px;padding:10px;cursor:pointer;transition:.2s;margin-bottom:10px}
+.logo-upload:hover{border-color:#c9a84c}
+.logo-thumb{width:46px;height:46px;border-radius:8px;background:#0a0a0f;border:1px solid #1e293b;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-size:20px;color:#475569}
+.logo-info{font-size:11px;color:#64748b}
+.logo-info strong{display:block;color:#94a3b8;font-size:12px;margin-bottom:2px}
+
+.action-bar{padding:14px;border-top:1px solid #1e293b;display:flex;gap:8px}
+
+/* CENTER */
+.center-panel{background:#f1efe9;display:flex;flex-direction:column;overflow:hidden}
+.center-toolbar{padding:12px 18px;background:#ffffff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.toolbar-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.toolbar-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:99px;font-size:11px;font-weight:700;border:1px solid #e2e8f0;color:#64748b;background:#f8fafc}
+.pill-gold{background:#fefce8;border-color:#fbbf24;color:#92400e}
+.zoom-btn{width:34px;height:34px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;cursor:pointer;font-size:11px;font-weight:700;color:#475569;transition:.15s;font-family:'Cairo',sans-serif}
+.zoom-btn:hover{background:#f8fafc;border-color:#c9a84c;color:#0a0a0f}
+.zoom-btn.active{background:#0a0a0f;color:#e8c97a;border-color:#0a0a0f}
+.tool-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:11px;font-weight:700;cursor:pointer;color:#475569;transition:.15s;font-family:'Cairo',sans-serif}
+.tool-btn:hover{background:#0a0a0f;color:#e8c97a;border-color:#0a0a0f}
+
+.paper-area{flex:1;overflow:auto;display:flex;justify-content:center;padding:28px 24px;background:repeating-linear-gradient(0deg,transparent,transparent 24px,rgba(0,0,0,.03) 24px,rgba(0,0,0,.03) 25px),repeating-linear-gradient(90deg,transparent,transparent 24px,rgba(0,0,0,.03) 24px,rgba(0,0,0,.03) 25px)}
+
+.preview-wrap{transform-origin:top center;transition:transform .2s ease}
+
+/* ============= RECEIPT DESIGNS ============= */
+.receipt{background:#fff;direction:rtl;font-family:'Cairo',sans-serif;box-shadow:0 4px 32px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.08)}
+
+/* THERMAL 80mm — PREMIUM DESIGN */
+.r-thermal{width:80mm;padding:0;overflow:hidden}
+.r-thermal .r-header{background:#0a0a0f;color:#fff;padding:5mm 4mm 4mm}
+.r-thermal .r-header-logo{display:flex;align-items:center;gap:3mm;margin-bottom:3mm}
+.r-thermal .r-hlogo{width:12mm;height:12mm;border-radius:3mm;overflow:hidden;border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06);flex-shrink:0;font-size:6px;color:rgba(255,255,255,.4)}
+.r-thermal .r-hname{font-weight:900;font-size:12px;color:#fff;line-height:1.2}
+.r-thermal .r-hsub{font-size:7px;color:rgba(255,255,255,.5);margin-top:1px}
+.r-thermal .r-hnum{text-align:left;margin-right:auto}
+.r-thermal .r-hnum-label{font-size:6px;color:rgba(255,255,255,.4);margin-bottom:1px}
+.r-thermal .r-hnum-val{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:#e8c97a;letter-spacing:.5px}
+
+.r-thermal .r-gold-bar{height:2.5px;background:linear-gradient(90deg,#c9a84c,#e8c97a,#c9a84c);width:100%}
+
+.r-thermal .r-body{padding:3.5mm 3.5mm 2mm}
+.r-thermal .r-barcode-area{margin-bottom:3mm;text-align:center}
+.r-thermal .r-barcode-area svg{width:100%;height:14mm;display:block}
+
+.r-thermal .r-cards{display:grid;grid-template-columns:1fr 1fr;gap:2mm;margin-bottom:2mm}
+.r-thermal .r-card{background:#f8f7f4;border:1px solid #e8e4db;border-radius:2.5mm;padding:2.5mm}
+.r-thermal .r-card-title{font-size:6px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2mm;display:flex;align-items:center;gap:1.5mm}
+.r-thermal .r-card-title::before{content:'';display:block;width:1.5mm;height:1.5mm;border-radius:99px}
+.r-thermal .r-card-title.sender::before{background:#3b82f6}
+.r-thermal .r-card-title.receiver::before{background:#10b981}
+.r-thermal .r-kv{margin-bottom:1.5mm}
+.r-thermal .r-kv:last-child{margin-bottom:0}
+.r-thermal .r-k{font-size:6px;color:#94a3b8}
+.r-thermal .r-v{font-size:7.5px;font-weight:700;color:#1a1a2e;word-break:break-word;line-height:1.3}
+
+.r-thermal .r-details{background:#f8f7f4;border:1px solid #e8e4db;border-radius:2.5mm;padding:2.5mm;margin-bottom:2mm}
+.r-thermal .r-details-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm}
+.r-thermal .r-detail-cell{text-align:center}
+.r-thermal .r-detail-label{font-size:5.5px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.r-thermal .r-detail-val{font-size:8px;font-weight:800;color:#1a1a2e;margin-top:0.5mm;line-height:1.2}
+
+.r-thermal .r-amounts{display:grid;grid-template-columns:1fr 1fr;gap:2mm;margin-bottom:2mm}
+.r-thermal .r-amount-box{border-radius:2.5mm;padding:2.5mm;text-align:center}
+.r-thermal .r-amount-box.shipping{background:#eff6ff;border:1px solid #bfdbfe}
+.r-thermal .r-amount-box.cod{background:#fef2f2;border:1px solid #fecaca}
+.r-thermal .r-amount-label{font-size:6px;font-weight:800;margin-bottom:1mm}
+.r-thermal .r-amount-box.shipping .r-amount-label{color:#1d4ed8}
+.r-thermal .r-amount-box.cod .r-amount-label{color:#dc2626}
+.r-thermal .r-amount-val{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:800;color:#0a0a0f}
+
+.r-thermal .r-notes-box{background:#fffbeb;border:1px solid #fde68a;border-radius:2.5mm;padding:2.5mm;margin-bottom:2mm}
+.r-thermal .r-notes-title{font-size:6px;font-weight:800;color:#92400e;margin-bottom:1.5mm}
+.r-thermal .r-notes-text{font-size:7px;color:#78350f;line-height:1.5}
+
+.r-thermal .r-footer{background:#f8f7f4;border-top:1px solid #e8e4db;padding:2mm 3.5mm}
+.r-thermal .r-footer-barcode svg{width:100%;height:11mm;display:block;margin-bottom:1.5mm}
+.r-thermal .r-footer-info{display:flex;align-items:center;justify-content:space-between;font-size:6px;color:#94a3b8}
+.r-thermal .r-footer-inv{font-family:'IBM Plex Mono',monospace;font-weight:700;color:#64748b;font-size:7px}
+
+/* A4 */
+.r-a4{width:210mm;min-height:297mm;padding:18mm 16mm 14mm}
+.r-a4 .a4-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10mm;padding-bottom:6mm;border-bottom:2.5px solid #0a0a0f}
+.r-a4 .a4-brand{display:flex;align-items:center;gap:6mm}
+.r-a4 .a4-logo{width:20mm;height:20mm;border-radius:5mm;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#f8f7f4;flex-shrink:0;font-size:10px;color:#94a3b8}
+.r-a4 .a4-company-name{font-size:24px;font-weight:900;color:#0a0a0f;line-height:1.1;margin-bottom:2mm}
+.r-a4 .a4-company-info{font-size:10px;color:#64748b;line-height:1.6}
+.r-a4 .a4-inv-block{text-align:left}
+.r-a4 .a4-inv-label{font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:2mm}
+.r-a4 .a4-inv-num{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:800;color:#0a0a0f}
+.r-a4 .a4-barcode svg{width:55mm;height:18mm;display:block;margin-top:3mm}
+.r-a4 .a4-section-title{font-size:9px;font-weight:800;color:#0a0a0f;text-transform:uppercase;letter-spacing:1px;margin-bottom:4mm;display:flex;align-items:center;gap:3mm}
+.r-a4 .a4-section-title::after{content:'';flex:1;height:1px;background:#e2e8f0}
+.r-a4 .a4-parties{display:grid;grid-template-columns:1fr 1fr;gap:8mm;margin-bottom:8mm}
+.r-a4 .a4-party{border:1px solid #e2e8f0;border-radius:4mm;padding:5mm}
+.r-a4 .a4-party-label{font-size:8px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3mm;display:flex;align-items:center;gap:2mm}
+.r-a4 .a4-party-label span{width:3mm;height:3mm;border-radius:50%;display:inline-block}
+.r-a4 .a4-party-name{font-size:15px;font-weight:800;color:#0a0a0f;margin-bottom:2mm}
+.r-a4 .a4-party-detail{font-size:10px;color:#64748b;margin-bottom:1.5mm;display:flex;align-items:center;gap:2mm}
+.r-a4 .a4-shipment{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm;margin-bottom:6mm}
+.r-a4 .a4-ship-cell{border:1px solid #e2e8f0;border-radius:3mm;padding:4mm;text-align:center}
+.r-a4 .a4-ship-label{font-size:8px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2mm}
+.r-a4 .a4-ship-val{font-size:14px;font-weight:800;color:#0a0a0f}
+.r-a4 .a4-financials{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-bottom:8mm}
+.r-a4 .a4-fin-box{border-radius:4mm;padding:5mm}
+.r-a4 .a4-fin-box.shipping{background:#eff6ff;border:1px solid #bfdbfe}
+.r-a4 .a4-fin-box.cod{background:#fef2f2;border:1px solid #fecaca}
+.r-a4 .a4-fin-label{font-size:9px;font-weight:800;margin-bottom:2mm}
+.r-a4 .a4-fin-box.shipping .a4-fin-label{color:#1d4ed8}
+.r-a4 .a4-fin-box.cod .a4-fin-label{color:#dc2626}
+.r-a4 .a4-fin-val{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:800;color:#0a0a0f}
+.r-a4 .a4-notes{border:1px solid #fde68a;background:#fffbeb;border-radius:4mm;padding:5mm;margin-bottom:8mm}
+.r-a4 .a4-notes-label{font-size:9px;font-weight:800;color:#92400e;margin-bottom:2mm}
+.r-a4 .a4-notes-text{font-size:11px;color:#78350f;line-height:1.7}
+.r-a4 .a4-footer{display:flex;align-items:center;justify-content:space-between;padding-top:6mm;border-top:1px solid #e2e8f0}
+.r-a4 .a4-footer-brand{font-size:10px;color:#94a3b8}
+.r-a4 .a4-footer-mono{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#94a3b8}
+
+/* 200x80mm */
+.r-200x80{width:200mm;height:80mm;display:flex;overflow:hidden}
+.r-200x80 .r-left-strip{width:50mm;background:#0a0a0f;color:#fff;padding:4mm;display:flex;flex-direction:column;justify-content:space-between;flex-shrink:0}
+.r-200x80 .r-right-body{flex:1;padding:4mm;display:flex;flex-direction:column;justify-content:space-between}
+.r-200x80 .rs-company{font-size:11px;font-weight:900;line-height:1.2}
+.r-200x80 .rs-phone{font-size:7px;color:rgba(255,255,255,.5);font-family:'IBM Plex Mono',monospace;margin-top:1mm}
+.r-200x80 .rs-inv-label{font-size:5px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px}
+.r-200x80 .rs-inv-num{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:#e8c97a}
+.r-200x80 .rs-barcode svg{width:100%;height:16mm;display:block}
+.r-200x80 .rs-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #e8e4db;padding-bottom:2mm;margin-bottom:2mm}
+.r-200x80 .rs-flow{display:flex;align-items:center;gap:3mm}
+.r-200x80 .rs-city-block{font-size:10px;font-weight:800;color:#0a0a0f}
+.r-200x80 .rs-city-sub{font-size:7px;color:#64748b}
+.r-200x80 .rs-arrow{font-size:14px;color:#e2e8f0}
+.r-200x80 .rs-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm}
+.r-200x80 .rs-cell{background:#f8f7f4;border:1px solid #e8e4db;border-radius:1.5mm;padding:2mm;text-align:center}
+.r-200x80 .rs-cell-label{font-size:5.5px;color:#94a3b8;font-weight:700;text-transform:uppercase}
+.r-200x80 .rs-cell-val{font-size:9px;font-weight:800;color:#0a0a0f;margin-top:.5mm}
+.r-200x80 .rs-footer{display:flex;justify-content:space-between;align-items:center;font-size:7px;color:#64748b;border-top:1px solid #e8e4db;padding-top:1.5mm}
+
+/* 100x150mm */
+.r-100x150{width:100mm;height:150mm;padding:0;overflow:hidden;display:flex;flex-direction:column}
+.r-100x150 .rp-header{background:#0a0a0f;padding:4mm;flex-shrink:0}
+.r-100x150 .rp-company{font-size:10px;font-weight:900;color:#fff;margin-bottom:.5mm}
+.r-100x150 .rp-phone{font-size:6.5px;color:rgba(255,255,255,.45);font-family:'IBM Plex Mono',monospace}
+.r-100x150 .rp-inv{display:flex;justify-content:space-between;align-items:center;margin-top:2mm}
+.r-100x150 .rp-inv-label{font-size:5.5px;color:rgba(255,255,255,.4);text-transform:uppercase}
+.r-100x150 .rp-inv-val{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:#e8c97a}
+.r-100x150 .rp-gold{height:2px;background:linear-gradient(90deg,#c9a84c,#e8c97a,#c9a84c)}
+.r-100x150 .rp-body{padding:3mm;flex:1;overflow:hidden;display:flex;flex-direction:column;gap:2mm}
+.r-100x150 .rp-party{background:#f8f7f4;border:1px solid #e8e4db;border-radius:2mm;padding:2.5mm}
+.r-100x150 .rp-party-label{font-size:5.5px;color:#94a3b8;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:1.5mm}
+.r-100x150 .rp-party-city{font-size:10px;font-weight:900;color:#0a0a0f}
+.r-100x150 .rp-party-name{font-size:7px;color:#64748b;margin-top:.5mm}
+.r-100x150 .rp-party-phone{font-size:6.5px;color:#64748b;font-family:'IBM Plex Mono',monospace;margin-top:.5mm}
+.r-100x150 .rp-grid2{display:grid;grid-template-columns:1fr 1fr;gap:2mm}
+.r-100x150 .rp-stat{background:#f8f7f4;border:1px solid #e8e4db;border-radius:2mm;padding:2mm;text-align:center}
+.r-100x150 .rp-stat-label{font-size:5px;color:#94a3b8;font-weight:700;text-transform:uppercase}
+.r-100x150 .rp-stat-val{font-size:9px;font-weight:800;color:#0a0a0f;margin-top:.5mm}
+.r-100x150 .rp-cod{background:#fef2f2;border:1px solid #fecaca;border-radius:2mm;padding:2mm;text-align:center}
+.r-100x150 .rp-cod-label{font-size:5.5px;color:#dc2626;font-weight:800;text-transform:uppercase;letter-spacing:.3px}
+.r-100x150 .rp-cod-val{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:800;color:#dc2626;margin-top:.5mm}
+.r-100x150 .rp-barcode{flex-shrink:0;padding:2mm 3mm;border-top:1px solid #e8e4db}
+.r-100x150 .rp-barcode svg{width:100%;height:13mm;display:block}
+.r-100x150 .rp-barcode-num{font-family:'IBM Plex Mono',monospace;font-size:6px;color:#64748b;text-align:center;margin-top:1mm}
+
+/* 100x70mm */
+.r-100x70{width:100mm;height:70mm;display:flex;overflow:hidden}
+.r-100x70 .r7-strip{width:24mm;background:#0a0a0f;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:3mm 2mm;flex-shrink:0}
+.r-100x70 .r7-strip-text{writing-mode:vertical-lr;transform:rotate(180deg);font-size:7px;font-weight:900;color:rgba(255,255,255,.25);letter-spacing:2px;text-transform:uppercase}
+.r-100x70 .r7-strip-inv{writing-mode:vertical-lr;transform:rotate(180deg);font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;color:#e8c97a;letter-spacing:1px}
+.r-100x70 .r7-body{flex:1;padding:3mm;display:flex;flex-direction:column;justify-content:space-between}
+.r-100x70 .r7-top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #e8e4db;padding-bottom:2mm;margin-bottom:2mm}
+.r-100x70 .r7-company{font-size:9px;font-weight:900;color:#0a0a0f}
+.r-100x70 .r7-date{font-size:6.5px;font-family:'IBM Plex Mono',monospace;color:#94a3b8}
+.r-100x70 .r7-flow{display:flex;align-items:center;gap:2mm;margin-bottom:2mm}
+.r-100x70 .r7-city{font-size:10px;font-weight:900;color:#0a0a0f}
+.r-100x70 .r7-city-sub{font-size:6px;color:#64748b;margin-top:.5mm}
+.r-100x70 .r7-arrow{font-size:10px;color:#e2e8f0;flex:1;text-align:center}
+.r-100x70 .r7-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5mm;margin-bottom:2mm}
+.r-100x70 .r7-cell{background:#f8f7f4;border:1px solid #e8e4db;border-radius:1.5mm;padding:1.5mm;text-align:center}
+.r-100x70 .r7-cell-label{font-size:5px;color:#94a3b8;font-weight:700;text-transform:uppercase}
+.r-100x70 .r7-cell-val{font-size:8.5px;font-weight:800;color:#0a0a0f;margin-top:.5mm}
+.r-100x70 .r7-cell-val.red{color:#dc2626}
+.r-100x70 .r7-barcode svg{width:100%;height:11mm;display:block}
+
+/* RIGHT PANEL */
+.right-panel{background:#fff;border-right:1px solid #e2e8f0;overflow-y:auto;display:flex;flex-direction:column}
+.right-header{padding:18px;border-bottom:1px solid #e2e8f0}
+.right-header h2{font-size:16px;font-weight:900;color:#0a0a0f;margin-bottom:2px}
+.right-header p{font-size:11px;color:#94a3b8}
+.right-search{padding:12px 16px;border-bottom:1px solid #e2e8f0}
+.right-search input{width:100%;background:#f8f7f4;border:1px solid #e2e8f0;border-radius:10px;padding:9px 12px;font-size:12px;font-family:'Cairo',sans-serif;outline:none;color:#0a0a0f;transition:.2s}
+.right-search input:focus{border-color:#c9a84c;box-shadow:0 0 0 3px rgba(201,168,76,.1)}
+.right-actions{padding:10px 16px;border-bottom:1px solid #e2e8f0;display:flex;gap:6px}
+.right-actions .btn{flex:1}
+.history-list{flex:1;padding:12px;overflow-y:auto}
+.hist-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;color:#94a3b8;text-align:center;border:1.5px dashed #e2e8f0;border-radius:12px;margin-top:8px}
+.hist-empty-icon{font-size:32px;margin-bottom:8px;opacity:.4}
+.hist-empty-text{font-size:12px}
+.hist-item{border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;transition:.18s;background:#fff}
+.hist-item:hover{border-color:#c9a84c;box-shadow:0 2px 12px rgba(201,168,76,.12)}
+.hist-item.active{border-color:#0a0a0f;box-shadow:0 0 0 3px rgba(10,10,15,.06)}
+.hist-num{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:#0a0a0f;margin-bottom:3px}
+.hist-route{font-size:11px;color:#64748b;margin-bottom:2px}
+.hist-meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.hist-amount{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:#dc2626}
+.hist-date{font-size:10px;color:#94a3b8}
+.hist-actions{display:flex;gap:4px;margin-top:8px}
+.hist-actions .btn{flex:1;font-size:11px;padding:6px 10px}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(10,10,15,.85);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.overlay.active{display:flex}
+.overlay-box{background:#fff;border-radius:20px;padding:24px;width:min(90vw,480px);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.overlay-title{font-size:18px;font-weight:900;color:#0a0a0f;margin-bottom:4px}
+.overlay-sub{font-size:12px;color:#94a3b8;margin-bottom:16px}
+.overlay-actions{display:flex;gap:8px;margin-top:16px}
+.overlay-actions .btn{flex:1}
+textarea.overlay-ta{width:100%;min-height:160px;border:1px solid #e2e8f0;border-radius:12px;padding:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#0a0a0f;background:#f8f7f4;outline:none;resize:vertical}
+textarea.overlay-ta:focus{border-color:#c9a84c}
+
+/* SCANNER */
+.scanner-box{background:#0a0a0f;border:1px solid #1e293b;border-radius:20px;padding:20px;width:min(90vw,380px);color:#e2e8f0;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.scanner-frame{position:relative;width:100%;aspect-ratio:1;border-radius:14px;overflow:hidden;border:2px solid #c9a84c;margin-top:14px}
+.scanner-frame video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.scanner-line{position:absolute;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,#e8c97a,transparent);animation:scan 2s ease-in-out infinite}
+@keyframes scan{0%{top:10%;opacity:.3}50%{top:88%;opacity:1}100%{top:10%;opacity:.3}}
+
+.count-badge{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 8px;border-radius:99px;font-size:11px;font-weight:800;background:#0a0a0f;color:#e8c97a}
+
+@media print{
+@page{margin:0;size:80mm auto}
+html,body{width:80mm!important;height:auto!important;background:#fff!important;overflow:visible!important}
+body *{visibility:hidden!important}
+#printRoot,#printRoot *{visibility:visible!important}
+#printRoot{display:block!important;position:fixed;inset:0;margin:0;padding:0;background:#fff!important}
+.no-print{display:none!important}
+.receipt{box-shadow:none!important;border:0!important}
+}
+.no-print-shell{display:none}
+/* =========================
+   200x80 — Premium Wide Layout
+========================= */
+.r-200x80{
+  width:200mm;
+  height:80mm;
+  display:flex;
+  overflow:hidden;
+  background:#fff;
+  border-radius:0;
+}
+
+.r-200x80 .r-left-strip{
+  width:48mm;
+  flex-shrink:0;
+  background:linear-gradient(180deg,#0a0a0f 0%,#111827 45%,#0a0a0f 100%);
+  color:#fff;
+  padding:4mm 4mm 3.5mm;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  position:relative;
+}
+
+.r-200x80 .r-left-strip::after{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:2px;
+  background:linear-gradient(90deg,#c9a84c,#e8c97a,#c9a84c);
+}
+
+.r-200x80 .rs-company{
+  font-size:11.5px;
+  font-weight:900;
+  line-height:1.25;
+  color:#fff;
+}
+
+.r-200x80 .rs-phone{
+  font-size:7px;
+  color:rgba(255,255,255,.56);
+  font-family:'IBM Plex Mono',monospace;
+  margin-top:1mm;
+}
+
+.r-200x80 .rs-inv-label{
+  font-size:5.5px;
+  color:rgba(255,255,255,.42);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-bottom:1mm;
+}
+
+.r-200x80 .rs-inv-num{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9.2px;
+  font-weight:800;
+  color:#e8c97a;
+  letter-spacing:.4px;
+}
+
+.r-200x80 .rs-barcode svg{
+  width:100%;
+  height:14mm;
+  display:block;
+}
+
+.r-200x80 .r-right-body{
+  flex:1;
+  padding:4mm 4.5mm 3.5mm;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  background:
+    radial-gradient(circle at top right, rgba(201,168,76,.08), transparent 28%),
+    linear-gradient(180deg,#ffffff 0%,#fbfbf8 100%);
+}
+
+.r-200x80 .rs-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:6mm;
+  border-bottom:1px solid #e8e4db;
+  padding-bottom:2.5mm;
+  margin-bottom:2.5mm;
+}
+
+.r-200x80 .rs-flow{
+  display:flex;
+  align-items:center;
+  gap:3mm;
+  min-width:0;
+}
+
+.r-200x80 .rs-city-block{
+  font-size:10px;
+  font-weight:900;
+  color:#0a0a0f;
+  line-height:1.15;
+}
+
+.r-200x80 .rs-city-sub{
+  font-size:7px;
+  color:#64748b;
+  line-height:1.3;
+  max-width:26mm;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.r-200x80 .rs-arrow{
+  font-size:15px;
+  color:#c9a84c;
+  flex-shrink:0;
+  transform:translateY(-1px);
+}
+
+.r-200x80 .rs-grid4{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:2mm;
+  margin-bottom:2.5mm;
+}
+
+.r-200x80 .rs-cell{
+  background:#f8f7f4;
+  border:1px solid #e8e4db;
+  border-radius:2mm;
+  padding:2.2mm 1.8mm;
+  text-align:center;
+  box-shadow:0 1px 0 rgba(255,255,255,.9) inset;
+}
+
+.r-200x80 .rs-cell-label{
+  font-size:5.5px;
+  color:#94a3b8;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.45px;
+  margin-bottom:.8mm;
+}
+
+.r-200x80 .rs-cell-val{
+  font-size:9px;
+  font-weight:900;
+  color:#0a0a0f;
+  line-height:1.15;
+}
+
+.r-200x80 .rs-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:3mm;
+  font-size:7px;
+  color:#64748b;
+  border-top:1px solid #e8e4db;
+  padding-top:1.6mm;
+}
+
+.r-200x80 .rs-footer span:first-child{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* =========================
+   100x70 — Compact Premium Layout
+========================= */
+.r-100x70{
+  width:100mm;
+  height:70mm;
+  display:flex;
+  overflow:hidden;
+  background:#fff;
+  border-radius:0;
+}
+
+.r-100x70 .r7-strip{
+  width:24mm;
+  flex-shrink:0;
+  background:linear-gradient(180deg,#0a0a0f 0%,#111827 100%);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  align-items:center;
+  padding:3mm 2mm;
+  position:relative;
+}
+
+.r-100x70 .r7-strip::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:2px;
+  background:linear-gradient(90deg,#c9a84c,#e8c97a,#c9a84c);
+}
+
+.r-100x70 .r7-strip-text{
+  writing-mode:vertical-lr;
+  transform:rotate(180deg);
+  font-size:7px;
+  font-weight:900;
+  color:rgba(255,255,255,.25);
+  letter-spacing:2px;
+  text-transform:uppercase;
+  line-height:1;
+}
+
+.r-100x70 .r7-strip-inv{
+  writing-mode:vertical-lr;
+  transform:rotate(180deg);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:7.2px;
+  font-weight:800;
+  color:#e8c97a;
+  letter-spacing:1px;
+}
+
+.r-100x70 .r7-body{
+  flex:1;
+  padding:3mm;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  background:
+    radial-gradient(circle at top right, rgba(201,168,76,.09), transparent 30%),
+    linear-gradient(180deg,#ffffff 0%,#fcfcfa 100%);
+}
+
+.r-100x70 .r7-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:3mm;
+  border-bottom:1px solid #e8e4db;
+  padding-bottom:1.8mm;
+  margin-bottom:1.8mm;
+}
+
+.r-100x70 .r7-company{
+  font-size:9px;
+  font-weight:900;
+  color:#0a0a0f;
+  line-height:1.2;
+  max-width:24mm;
+}
+
+.r-100x70 .r7-date{
+  font-size:6.5px;
+  font-family:'IBM Plex Mono',monospace;
+  color:#94a3b8;
+  white-space:nowrap;
+}
+
+.r-100x70 .r7-flow{
+  display:flex;
+  align-items:center;
+  gap:2mm;
+  margin-bottom:1.8mm;
+}
+
+.r-100x70 .r7-city{
+  font-size:9.5px;
+  font-weight:900;
+  color:#0a0a0f;
+  line-height:1.15;
+  max-width:20mm;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.r-100x70 .r7-city-sub{
+  font-size:6px;
+  color:#64748b;
+  margin-top:.5mm;
+  max-width:20mm;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.r-100x70 .r7-arrow{
+  font-size:11px;
+  color:#c9a84c;
+  flex:1;
+  text-align:center;
+  transform:translateY(-1px);
+}
+
+.r-100x70 .r7-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1.5mm;
+  margin-bottom:1.8mm;
+}
+
+.r-100x70 .r7-cell{
+  background:#f8f7f4;
+  border:1px solid #e8e4db;
+  border-radius:1.5mm;
+  padding:1.5mm 1.2mm;
+  text-align:center;
+}
+
+.r-100x70 .r7-cell-label{
+  font-size:5px;
+  color:#94a3b8;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.35px;
+  margin-bottom:.5mm;
+}
+
+.r-100x70 .r7-cell-val{
+  font-size:8.2px;
+  font-weight:900;
+  color:#0a0a0f;
+  line-height:1.15;
+}
+
+.r-100x70 .r7-cell-val.red{
+  color:#dc2626;
+}
+
+.r-100x70 .r7-barcode{
+  padding-top:1mm;
+  border-top:1px solid #e8e4db;
+}
+
+.r-100x70 .r7-barcode svg{
+  width:100%;
+  height:11mm;
+  display:block;
+}
+</style>
+</head>
+<body>
+
+<!-- PRINT ROOT -->
+<div id="printRoot" class="no-print-shell"></div>
+
+<!-- SCANNER OVERLAY -->
+<div id="scannerModal" class="overlay no-print" onclick="if(event.target===this)closeScanner()">
+  <div class="scanner-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <div>
+        <div style="font-size:16px;font-weight:900">قارئ الباركود</div>
+        <div style="font-size:11px;color:#64748b;margin-top:3px">وجّه الكاميرا نحو الباركود أو QR</div>
+      </div>
+      <button class="btn btn-dark" style="width:36px;height:36px;padding:0;border-radius:10px" onclick="closeScanner()">✕</button>
+    </div>
+    <div class="scanner-frame">
+      <video id="scannerVideo" autoplay playsinline muted></video>
+      <canvas id="scannerCanvas" style="display:none"></canvas>
+      <div class="scanner-line"></div>
+    </div>
+    <div id="scannerStatus" style="font-size:11px;color:#64748b;margin-top:10px;min-height:18px">جارِ تشغيل الكاميرا...</div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-gold" style="flex:1" onclick="switchCamera()">⟳ تبديل الكاميرا</button>
+      <button class="btn btn-danger" onclick="closeScanner()">✕ إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT OVERLAY -->
+<div id="importModal" class="overlay no-print" onclick="if(event.target===this)closeImport()">
+  <div class="overlay-box">
+    <div class="overlay-title">استيراد JSON</div>
+    <div class="overlay-sub">الصق مصفوفة الفواتير المصدّرة مسبقاً</div>
+    <textarea id="importArea" class="overlay-ta" placeholder='[{"invoiceNumber":"GR-123456"}]'></textarea>
+    <div class="overlay-actions">
+      <button class="btn btn-gold" onclick="doImport()">↑ استيراد</button>
+      <button class="btn btn-dark" onclick="closeImport()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div class="app no-print">
+  <!-- LEFT PANEL -->
+  <aside class="left-panel">
+    <div class="brand-header">
+      <div class="brand-logo">
+        <div class="brand-icon">🖨</div>
+        <div>
+          <div class="brand-name">Granada Pro</div>
+          <div class="brand-sub">نظام الفواتير الحرارية</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="left-content">
+      <!-- Company -->
+      <div class="section">
+        <div class="section-title">بيانات الشركة</div>
+        <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="loadLogo(this)">
+        <label for="logoInput" class="logo-upload">
+          <div class="logo-thumb" id="logoThumb">🏢</div>
+          <div class="logo-info"><strong>شعار الشركة</strong>PNG / JPG / SVG</div>
+        </label>
+        <div class="grid2">
+          <div class="fld"><label>اسم الشركة</label><input id="companyName" value="Granada Print" oninput="updateUI()"></div>
+          <div class="fld"><label>الهاتف</label><input id="companyPhone" value="01XXXXXXXXX" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
+        </div>
+        <div class="fld"><label>العنوان</label><textarea id="companyAddress" oninput="updateUI()" placeholder="عنوان الشركة..."></textarea></div>
+      </div>
+
+      <!-- Invoice number -->
+      <div class="section">
+        <div class="section-title">رقم الفاتورة</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="invoiceNumber" value="GR-719635" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;letter-spacing:1px;flex:1">
+          <button class="btn btn-dark" onclick="generateInvoiceNumber()" style="height:40px;padding:0 12px;border-radius:10px;flex-shrink:0">⟳ توليد</button>
+        </div>
+      </div>
+
+      <!-- Sender -->
+      <div class="section">
+        <div class="section-title" style="color:#3b82f6">المرسل</div>
+        <div class="fld"><label>الاسم</label><input id="senderName" oninput="updateUI()"></div>
+        <div class="grid2">
+          <div class="fld"><label>الهاتف</label><input id="senderPhone" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
+          <div class="fld"><label>المدينة</label><input id="senderCity" oninput="updateUI()"></div>
+        </div>
+        <div class="fld"><label>العنوان</label><textarea id="senderAddress" oninput="updateUI()"></textarea></div>
+      </div>
+
+      <!-- Receiver -->
+      <div class="section">
+        <div class="section-title" style="color:#10b981">المستلم</div>
+        <div class="fld"><label>الاسم</label><input id="receiverName" oninput="updateUI()"></div>
+        <div class="grid2">
+          <div class="fld"><label>الهاتف</label><input id="receiverPhone" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
+          <div class="fld"><label>المدينة</label><input id="receiverCity" oninput="updateUI()"></div>
+        </div>
+        <div class="fld"><label>العنوان</label><textarea id="receiverAddress" oninput="updateUI()"></textarea></div>
+      </div>
+
+      <!-- Shipment -->
+      <div class="section">
+        <div class="section-title">تفاصيل الشحنة</div>
+        <div class="fld"><label>محتوى الشحنة</label><input id="content" oninput="updateUI()" placeholder="ملابس، إلكترونيات..."></div>
+        <div class="grid3">
+          <div class="fld"><label>القطع</label><input id="pieces" type="number" min="1" value="1" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
+          <div class="fld"><label>الوزن (كجم)</label><input id="weight" type="number" step="0.1" min="0" value="0.5" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
+          <div class="fld"><label>التاريخ</label><input id="shipDate" type="date" oninput="updateUI()"></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label>مصاريف الشحن</label><input id="shippingCost" type="number" min="0" value="0" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
+          <div class="fld"><label>التحصيل (COD)</label><input id="codAmount" type="number" min="0" value="0" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
+        </div>
+        <div class="fld"><label>ملاحظات</label><textarea id="notes" oninput="updateUI()" placeholder="ملاحظات إضافية..."></textarea></div>
+        <div class="fld">
+          <label>مقاس الفاتورة</label>
+          <select id="printSize" onchange="changeSize()">
+            <option value="thermal80">🖨 حراري 80mm (الافتراضي)</option>
+            <option value="a4">📄 A4 كامل</option>
+            <option value="100x150">🏷 100 × 150 mm</option>
+            <option value="100x70">🔖 100 × 70 mm</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-gold" style="flex:1" onclick="saveInvoice()">💾 حفظ الفاتورة</button>
+      <button class="btn btn-dark" onclick="newInvoice()" title="فاتورة جديدة">＋</button>
+      <button class="btn btn-dark" onclick="printInvoice()" title="طباعة">🖨</button>
+    </div>
+  </aside>
+
+  <!-- CENTER PANEL -->
+  <main class="center-panel">
+    <div class="center-toolbar no-print">
+      <div class="toolbar-left">
+        <span class="pill">👁 معاينة</span>
+        <span id="sizeBadge" class="pill pill-gold">حراري 80mm</span>
+      </div>
+      <div class="toolbar-right">
+        <button class="tool-btn" onclick="openScanner()">▣ قراءة باركود</button>
+        <button class="zoom-btn" onclick="setZoom(.65)">65%</button>
+        <button class="zoom-btn" onclick="setZoom(.80)">80%</button>
+        <button class="zoom-btn active" id="zoom85" onclick="setZoom(.9)">90%</button>
+        <button class="zoom-btn" onclick="setZoom(1.1)">110%</button>
+      </div>
+    </div>
+
+    <div class="paper-area">
+      <div id="previewWrap" class="preview-wrap" style="transform:scale(0.9);transform-origin:top center">
+
+        <!-- THERMAL 80mm -->
+        <article id="page-thermal80" class="receipt r-thermal">
+          <div class="r-header">
+            <div class="r-header-logo">
+              <div class="r-hlogo" id="logoThermal">🖨</div>
+              <div style="flex:1">
+                <div id="companyNameThermal" class="r-hname">Granada Print</div>
+                <div id="companyPhoneThermal" class="r-hsub" style="font-family:'IBM Plex Mono',monospace">01XXXXXXXXX</div>
+                <div id="companyAddressThermal" class="r-hsub" style="margin-top:1px"></div>
+              </div>
+              <div class="r-hnum">
+                <div class="r-hnum-label">رقم الفاتورة</div>
+                <div id="invoiceNumberThermal" class="r-hnum-val">GR-719635</div>
+              </div>
+            </div>
+          </div>
+          <div class="r-gold-bar"></div>
+          <div class="r-body">
+            <div class="r-barcode-area"><svg id="barcodeThermal"></svg></div>
+            <div class="r-cards">
+              <div class="r-card">
+                <div class="r-card-title sender">المرسل</div>
+                <div class="r-kv"><div class="r-k">الاسم</div><div id="senderNameThermal" class="r-v">-</div></div>
+                <div class="r-kv"><div class="r-k">الهاتف</div><div id="senderPhoneThermal" class="r-v" style="font-family:'IBM Plex Mono',monospace">-</div></div>
+                <div class="r-kv"><div class="r-k">المدينة</div><div id="senderCityThermal" class="r-v">-</div></div>
+                <div class="r-kv"><div class="r-k">العنوان</div><div id="senderAddressThermal" class="r-v">-</div></div>
+              </div>
+              <div class="r-card">
+                <div class="r-card-title receiver">المستلم</div>
+                <div class="r-kv"><div class="r-k">الاسم</div><div id="receiverNameThermal" class="r-v">-</div></div>
+                <div class="r-kv"><div class="r-k">الهاتف</div><div id="receiverPhoneThermal" class="r-v" style="font-family:'IBM Plex Mono',monospace">-</div></div>
+                <div class="r-kv"><div class="r-k">المدينة</div><div id="receiverCityThermal" class="r-v">-</div></div>
+                <div class="r-kv"><div class="r-k">العنوان</div><div id="receiverAddressThermal" class="r-v">-</div></div>
+              </div>
+            </div>
+            <div class="r-details">
+              <div class="r-details-grid">
+                <div class="r-detail-cell"><div class="r-detail-label">المحتوى</div><div id="contentThermal" class="r-detail-val">-</div></div>
+                <div class="r-detail-cell"><div class="r-detail-label">القطع</div><div id="piecesThermal" class="r-detail-val">1</div></div>
+                <div class="r-detail-cell"><div class="r-detail-label">الوزن</div><div id="weightThermal" class="r-detail-val">0.5 كجم</div></div>
+                <div class="r-detail-cell"><div class="r-detail-label">التاريخ</div><div id="shipDateThermal" class="r-detail-val">-</div></div>
+              </div>
+            </div>
+            <div class="r-amounts">
+              <div class="r-amount-box shipping">
+                <div class="r-amount-label">مصاريف الشحن</div>
+                <div id="shippingCostThermal" class="r-amount-val">0 ج.م</div>
+              </div>
+              <div class="r-amount-box cod">
+                <div class="r-amount-label">التحصيل COD</div>
+                <div id="codAmountThermal" class="r-amount-val">0 ج.م</div>
+              </div>
+            </div>
+            <div id="notesBoxThermal" class="r-notes-box" style="display:none">
+              <div class="r-notes-title">📝 ملاحظات</div>
+              <div id="notesThermal" class="r-notes-text"></div>
+            </div>
+          </div>
+          <div class="r-footer">
+            <div class="r-footer-barcode"><svg id="barcodeThermalSmall"></svg></div>
+            <div class="r-footer-info">
+              <span id="companyFooterThermal">Granada Print</span>
+              <span id="barcodeNumThermal" class="r-footer-inv">GR-719635</span>
+              <span style="font-family:'IBM Plex Mono',monospace">THERMAL 80MM</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- A4 -->
+        <article id="page-a4" class="receipt r-a4" style="display:none">
+          <div class="a4-header">
+            <div class="a4-brand">
+              <div id="logoA4" class="a4-logo">🖨</div>
+              <div>
+                <div id="companyNameA4" class="a4-company-name">Granada Print</div>
+                <div id="companyInfoA4" class="a4-company-info"></div>
+              </div>
+            </div>
+            <div class="a4-inv-block">
+              <div class="a4-inv-label">رقم الفاتورة</div>
+              <div id="invoiceNumberA4" class="a4-inv-num">GR-719635</div>
+              <div class="a4-barcode"><svg id="barcodeA4"></svg></div>
+            </div>
+          </div>
+          <div class="a4-section-title">بيانات المرسل والمستلم</div>
+          <div class="a4-parties">
+            <div class="a4-party">
+              <div class="a4-party-label"><span style="background:#3b82f6"></span>المرسل</div>
+              <div id="senderNameA4" class="a4-party-name">-</div>
+              <div id="senderPhoneA4" class="a4-party-detail" style="font-family:'IBM Plex Mono',monospace">-</div>
+              <div id="senderCityA4" class="a4-party-detail">-</div>
+              <div id="senderAddressA4" class="a4-party-detail">-</div>
+            </div>
+            <div class="a4-party">
+              <div class="a4-party-label"><span style="background:#10b981"></span>المستلم</div>
+              <div id="receiverNameA4" class="a4-party-name">-</div>
+              <div id="receiverPhoneA4" class="a4-party-detail" style="font-family:'IBM Plex Mono',monospace">-</div>
+              <div id="receiverCityA4" class="a4-party-detail">-</div>
+              <div id="receiverAddressA4" class="a4-party-detail">-</div>
+            </div>
+          </div>
+          <div class="a4-section-title">تفاصيل الشحنة</div>
+          <div class="a4-shipment">
+            <div class="a4-ship-cell"><div class="a4-ship-label">المحتوى</div><div id="contentA4" class="a4-ship-val">-</div></div>
+            <div class="a4-ship-cell"><div class="a4-ship-label">القطع</div><div id="piecesA4" class="a4-ship-val">1</div></div>
+            <div class="a4-ship-cell"><div class="a4-ship-label">الوزن</div><div id="weightA4" class="a4-ship-val">0.5 كجم</div></div>
+            <div class="a4-ship-cell"><div class="a4-ship-label">التاريخ</div><div id="shipDateA4" class="a4-ship-val">-</div></div>
+          </div>
+          <div class="a4-section-title">المبالغ</div>
+          <div class="a4-financials">
+            <div class="a4-fin-box shipping"><div class="a4-fin-label">مصاريف الشحن</div><div id="shippingCostA4" class="a4-fin-val">0 ج.م</div></div>
+            <div class="a4-fin-box cod"><div class="a4-fin-label">التحصيل COD</div><div id="codAmountA4" class="a4-fin-val">0 ج.م</div></div>
+          </div>
+          <div id="notesBoxA4" class="a4-notes" style="display:none">
+            <div class="a4-notes-label">ملاحظات</div>
+            <div id="notesA4" class="a4-notes-text"></div>
+          </div>
+          <div class="a4-footer">
+            <div id="footerBrandA4" class="a4-footer-brand">Granada Print</div>
+            <div class="a4-footer-mono">A4 · GRANADA PRO</div>
+          </div>
+        </article>
+
+        <!-- 200x80 -->
+     <!-- 200x80 -->
+<article id="page-200x80" class="receipt r-200x80" style="display:none">
+  <div class="r-left-strip">
+    <div>
+      <div id="companyName200" class="rs-company">Granada Print</div>
+      <div id="companyPhone200" class="rs-phone">01XXXXXXXXX</div>
+    </div>
+
+    <div>
+      <div class="rs-inv-label">Invoice</div>
+      <div id="invoiceNumber200" class="rs-inv-num">GR-719635</div>
+    </div>
+
+    <div class="rs-barcode">
+      <svg id="barcode200" style="width:100%;height:12mm;display:block"></svg>
+    </div>
+  </div>
+
+  <div class="r-right-body">
+    <div class="rs-header">
+      <div class="rs-flow">
+        <div>
+          <div id="senderCity200" class="rs-city-block">-</div>
+          <div id="senderName200" class="rs-city-sub">-</div>
+        </div>
+        <div class="rs-arrow">⟶</div>
+        <div>
+          <div id="receiverCity200" class="rs-city-block">-</div>
+          <div id="receiverName200" class="rs-city-sub">-</div>
+        </div>
+      </div>
+
+      <div style="text-align:left;flex-shrink:0">
+        <div style="font-size:6px;color:#94a3b8">التاريخ</div>
+        <div id="shipDate200" style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:800;color:#0a0a0f">-</div>
+      </div>
+    </div>
+
+    <div class="rs-grid4">
+      <div class="rs-cell">
+        <div class="rs-cell-label">قطع</div>
+        <div id="pieces200" class="rs-cell-val">1</div>
+      </div>
+      <div class="rs-cell">
+        <div class="rs-cell-label">وزن</div>
+        <div id="weight200" class="rs-cell-val">0.5</div>
+      </div>
+      <div class="rs-cell">
+        <div class="rs-cell-label">شحن</div>
+        <div id="shippingCost200" class="rs-cell-val">0</div>
+      </div>
+      <div class="rs-cell">
+        <div class="rs-cell-label">COD</div>
+        <div id="codAmount200" class="rs-cell-val" style="color:#dc2626">0</div>
+      </div>
+    </div>
+
+    <div class="rs-footer">
+      <span id="content200">-</span>
+      <span style="font-family:'IBM Plex Mono',monospace">200×80mm</span>
+    </div>
+  </div>
+</article>
+
+<!-- 100x70 -->
+<article id="page-100x70" class="receipt r-100x70" style="display:none">
+  <div class="r7-strip">
+    <div class="r7-strip-text">GRANADA PRO</div>
+    <div class="r7-strip-inv" id="invoiceNumber70v">GR-719635</div>
+    <svg id="barcode70" style="width:12mm;height:50mm;display:block;transform:rotate(-90deg) translateX(-20mm);transform-origin:top left"></svg>
+  </div>
+
+  <div class="r7-body">
+    <div class="r7-top">
+      <div id="companyName70" class="r7-company">Granada Print</div>
+      <div id="shipDate70" class="r7-date">-</div>
+    </div>
+
+    <div class="r7-flow">
+      <div>
+        <div id="senderCity70" class="r7-city">-</div>
+        <div id="senderName70" class="r7-city-sub">-</div>
+      </div>
+      <div class="r7-arrow">→</div>
+      <div>
+        <div id="receiverCity70" class="r7-city">-</div>
+        <div id="receiverName70" class="r7-city-sub">-</div>
+      </div>
+    </div>
+
+    <div class="r7-grid">
+      <div class="r7-cell">
+        <div class="r7-cell-label">قطع</div>
+        <div id="pieces70" class="r7-cell-val">1</div>
+      </div>
+      <div class="r7-cell">
+        <div class="r7-cell-label">وزن</div>
+        <div id="weight70" class="r7-cell-val">0.5</div>
+      </div>
+      <div class="r7-cell">
+        <div class="r7-cell-label">COD</div>
+        <div id="codAmount70" class="r7-cell-val red">0</div>
+      </div>
+    </div>
+
+    <div class="r7-barcode">
+      <svg id="barcode70main" style="width:100%;height:10mm;display:block"></svg>
+    </div>
+  </div>
+</article>
+
+        <!-- 100x150 -->
+        <article id="page-100x150" class="receipt r-100x150" style="display:none">
+          <div class="rp-header">
+            <div id="companyName100" class="rp-company">Granada Print</div>
+            <div id="companyPhone100" class="rp-phone">01XXXXXXXXX</div>
+            <div class="rp-inv">
+              <span class="rp-inv-label">رقم الفاتورة</span>
+              <span id="invoiceNumber100" class="rp-inv-val">GR-719635</span>
+            </div>
+          </div>
+          <div class="rp-gold"></div>
+          <div class="rp-body">
+            <div class="rp-party">
+              <div class="rp-party-label" style="color:#3b82f6">المرسل</div>
+              <div id="senderCity100" class="rp-party-city">-</div>
+              <div id="senderName100" class="rp-party-name">-</div>
+              <div id="senderPhone100" class="rp-party-phone">-</div>
+            </div>
+            <div class="rp-party">
+              <div class="rp-party-label" style="color:#10b981">المستلم</div>
+              <div id="receiverCity100" class="rp-party-city">-</div>
+              <div id="receiverName100" class="rp-party-name">-</div>
+              <div id="receiverPhone100" class="rp-party-phone">-</div>
+            </div>
+            <div class="rp-grid2">
+              <div class="rp-stat"><div class="rp-stat-label">القطع</div><div id="pieces100" class="rp-stat-val">1</div></div>
+              <div class="rp-stat"><div class="rp-stat-label">الوزن (كجم)</div><div id="weight100" class="rp-stat-val">0.5</div></div>
+            </div>
+            <div class="rp-grid2">
+              <div class="rp-stat"><div class="rp-stat-label">الشحن</div><div id="shippingCost100" class="rp-stat-val">0</div></div>
+              <div class="rp-stat"><div class="rp-stat-label">التاريخ</div><div id="shipDate100" class="rp-stat-val">-</div></div>
+            </div>
+            <div class="rp-cod">
+              <div class="rp-cod-label">💰 التحصيل عند الاستلام</div>
+              <div id="codAmount100" class="rp-cod-val">0 ج.م</div>
+            </div>
+          </div>
+          <div class="rp-barcode">
+            <svg id="barcode100" style="width:100%;height:11mm;display:block"></svg>
+            <div id="barcodeNum100" class="rp-barcode-num">GR-719635</div>
+          </div>
+        </article>
+
+        <!-- 100x70 -->
+        <article id="page-100x70" class="receipt r-100x70" style="display:none">
+          <div class="r7-strip">
+            <div class="r7-strip-text">GRANADA PRO</div>
+            <div class="r7-strip-inv" id="invoiceNumber70v">GR-719635</div>
+            <svg id="barcode70" style="width:12mm;height:50mm;display:block;transform:rotate(-90deg) translateX(-20mm);transform-origin:top left"></svg>
+          </div>
+          <div class="r7-body">
+            <div class="r7-top">
+              <div id="companyName70" class="r7-company">Granada Print</div>
+              <div id="shipDate70" class="r7-date">-</div>
+            </div>
+            <div class="r7-flow">
+              <div><div id="senderCity70" class="r7-city">-</div><div id="senderName70" class="r7-city-sub">-</div></div>
+              <div class="r7-arrow">→</div>
+              <div><div id="receiverCity70" class="r7-city">-</div><div id="receiverName70" class="r7-city-sub">-</div></div>
+            </div>
+            <div class="r7-grid">
+              <div class="r7-cell"><div class="r7-cell-label">قطع</div><div id="pieces70" class="r7-cell-val">1</div></div>
+              <div class="r7-cell"><div class="r7-cell-label">وزن</div><div id="weight70" class="r7-cell-val">0.5</div></div>
+              <div class="r7-cell"><div class="r7-cell-label">COD</div><div id="codAmount70" class="r7-cell-val red">0</div></div>
+            </div>
+            <div><svg id="barcode70main" style="width:100%;height:10mm;display:block"></svg></div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- RIGHT PANEL -->
+  <aside class="right-panel">
+    <div class="right-header">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <h2>الأرشيف</h2>
+        <span id="histCount" class="count-badge">0</span>
+      </div>
+      <p>الفواتير المحفوظة محلياً</p>
+    </div>
+    <div class="right-search">
+      <input id="histSearch" placeholder="🔍 بحث برقم أو اسم..." oninput="renderHistory()">
+    </div>
+    <div class="right-actions">
+      <button class="btn btn-dark" onclick="exportInvoices()">↓ تصدير</button>
+      <button class="btn btn-dark" onclick="openImport()">↑ استيراد</button>
+      <button class="btn btn-danger" onclick="clearHistory()">🗑</button>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </aside>
+</div>
+
+<script>
+const SK='granada_v2_invoices';
+const DK='granada_v2_draft';
+let logo='',editId=null,scanStream=null,scanAnim=null,camFace='environment';
+const $=id=>document.getElementById(id);
+const v=id=>($(id)?.value||'').trim();
+const today=()=>new Date().toISOString().slice(0,10);
+const money=n=>new Intl.NumberFormat('ar-EG').format(Number(n)||0)+' ج.م';
+const niceDate=iso=>{if(!iso)return'-';const d=new Date(iso);return isNaN(d)?iso:new Intl.DateTimeFormat('ar-EG',{day:'numeric',month:'short',year:'numeric'}).format(d)};
+const loadList=()=>{try{return JSON.parse(localStorage.getItem(SK)||'[]')}catch{return[]}};
+const saveList=l=>localStorage.setItem(SK,JSON.stringify(l));
+
+function getData(){
+  return{
+    id:editId||null,
+    companyName:v('companyName')||'Granada Print',
+    companyPhone:v('companyPhone')||'',
+    companyAddress:v('companyAddress')||'',
+    invoiceNumber:v('invoiceNumber')||'GR-000000',
+    senderName:v('senderName')||'',senderPhone:v('senderPhone')||'',senderCity:v('senderCity')||'',senderAddress:v('senderAddress')||'',
+    receiverName:v('receiverName')||'',receiverPhone:v('receiverPhone')||'',receiverCity:v('receiverCity')||'',receiverAddress:v('receiverAddress')||'',
+    content:v('content')||'',pieces:v('pieces')||'1',weight:v('weight')||'0.5',
+    shippingCost:v('shippingCost')||'0',codAmount:v('codAmount')||'0',
+    shipDate:v('shipDate')||today(),notes:v('notes')||'',
+    logo:logo,printSize:$('printSize').value||'thermal80',
+    createdAt:new Date().toISOString()
+  }
+}
+
+function setData(d){
+  editId=d.id||null;
+  ['companyName','companyPhone','companyAddress','invoiceNumber','senderName','senderPhone','senderCity','senderAddress',
+   'receiverName','receiverPhone','receiverCity','receiverAddress','content','pieces','weight','shippingCost','codAmount','shipDate','notes'].forEach(k=>{if($(k))$(k).value=d[k]??''});
+  if(d.printSize)$('printSize').value=d.printSize;
+  logo=d.logo||'';
+  $('logoThumb').innerHTML=logo?`<img src="${logo}" style="width:100%;height:100%;object-fit:contain;padding:4px">`:'🏢';
+  updateUI();saveDraft();
+}
+
+function loadLogo(inp){
+  if(!inp.files||!inp.files[0])return;
+  const r=new FileReader();
+  r.onload=e=>{logo=e.target.result;$('logoThumb').innerHTML=`<img src="${logo}" style="width:100%;height:100%;object-fit:contain;padding:4px">`;updateUI();saveDraft()};
+  r.readAsDataURL(inp.files[0]);
+}
+
+function generateInvoiceNumber(){
+  const n='GR-'+Math.floor(100000+Math.random()*900000);
+  $('invoiceNumber').value=n;updateUI();
+}
+
+function setEl(id,txt){const e=$(id);if(e)e.textContent=txt}
+function setLogoEl(id,html){const e=$(id);if(e)e.innerHTML=html}
+
+function bc(id,val,h,w){
+  const el=$(id);if(!el||typeof JsBarcode==='undefined')return;
+  try{JsBarcode(el,String(val||'GR-000000'),{format:'CODE128',displayValue:false,margin:0,lineColor:'#0a0a0f',background:'transparent',width:w,height:h})}catch(e){el.innerHTML=''}
+}
+
+function updateUI(){
+  const d=getData();
+  const s=(id,v)=>setEl(id,v);
+  const logoHTML=logo?`<img src="${logo}" style="width:100%;height:100%;object-fit:contain;padding:2px">`:'🖨';
+  const logoA4HTML=logo?`<img src="${logo}" style="width:100%;height:100%;object-fit:contain;padding:4px">`:'🖨';
+
+  // Thermal
+  setLogoEl('logoThermal',logoHTML);
+  s('companyNameThermal',d.companyName);s('companyPhoneThermal',d.companyPhone);s('companyAddressThermal',d.companyAddress);
+  s('invoiceNumberThermal',d.invoiceNumber);s('barcodeNumThermal',d.invoiceNumber);s('companyFooterThermal',d.companyName);
+  s('senderNameThermal',d.senderName||'-');s('senderPhoneThermal',d.senderPhone||'-');s('senderCityThermal',d.senderCity||'-');s('senderAddressThermal',d.senderAddress||'-');
+  s('receiverNameThermal',d.receiverName||'-');s('receiverPhoneThermal',d.receiverPhone||'-');s('receiverCityThermal',d.receiverCity||'-');s('receiverAddressThermal',d.receiverAddress||'-');
+  s('contentThermal',d.content||'-');s('piecesThermal',d.pieces||'1');s('weightThermal',(d.weight||'0')+' كجم');s('shipDateThermal',niceDate(d.shipDate));
+  s('shippingCostThermal',money(d.shippingCost));s('codAmountThermal',money(d.codAmount));
+  if(d.notes){$('notesBoxThermal').style.display='block';s('notesThermal',d.notes)}else{$('notesBoxThermal').style.display='none'}
+  bc('barcodeThermal',d.invoiceNumber,40,1.4);
+  bc('barcodeThermalSmall',d.invoiceNumber,28,1.1);
+
+  // A4
+  setLogoEl('logoA4',logoA4HTML);
+  s('companyNameA4',d.companyName);
+  $('companyInfoA4').innerHTML=`${d.companyAddress?d.companyAddress+'<br>':''}${d.companyPhone||''}`;
+  s('invoiceNumberA4',d.invoiceNumber);
+  s('footerBrandA4',d.companyName);
+  s('senderNameA4',d.senderName||'-');s('senderPhoneA4',d.senderPhone||'-');s('senderCityA4',d.senderCity||'-');s('senderAddressA4',d.senderAddress||'-');
+  s('receiverNameA4',d.receiverName||'-');s('receiverPhoneA4',d.receiverPhone||'-');s('receiverCityA4',d.receiverCity||'-');s('receiverAddressA4',d.receiverAddress||'-');
+  s('contentA4',d.content||'-');s('piecesA4',d.pieces||'1');s('weightA4',(d.weight||'0')+' كجم');s('shipDateA4',niceDate(d.shipDate));
+  s('shippingCostA4',money(d.shippingCost));s('codAmountA4',money(d.codAmount));
+  if(d.notes){$('notesBoxA4').style.display='block';s('notesA4',d.notes)}else{$('notesBoxA4').style.display='none'}
+  bc('barcodeA4',d.invoiceNumber,48,2.2);
+
+  // 200x80
+  s('companyName200',d.companyName);s('companyPhone200',d.companyPhone);s('invoiceNumber200',d.invoiceNumber);
+  s('senderCity200',d.senderCity||'-');s('senderName200',d.senderName||'-');s('receiverCity200',d.receiverCity||'-');s('receiverName200',d.receiverName||'-');
+  s('pieces200',d.pieces||'1');s('weight200',d.weight||'0');s('shippingCost200',d.shippingCost||'0');s('codAmount200',d.codAmount||'0');
+  s('content200',d.content||'-');s('shipDate200',niceDate(d.shipDate));
+  bc('barcode200',d.invoiceNumber,34,1.0);
+
+  // 100x150
+  s('companyName100',d.companyName);s('companyPhone100',d.companyPhone);s('invoiceNumber100',d.invoiceNumber);s('barcodeNum100',d.invoiceNumber);
+  s('senderCity100',d.senderCity||'-');s('senderName100',d.senderName||'-');s('senderPhone100',d.senderPhone||'-');
+  s('receiverCity100',d.receiverCity||'-');s('receiverName100',d.receiverName||'-');s('receiverPhone100',d.receiverPhone||'-');
+  s('pieces100',d.pieces||'1');s('weight100',d.weight||'0');s('shippingCost100',d.shippingCost||'0');
+  s('codAmount100',money(d.codAmount));s('shipDate100',niceDate(d.shipDate));
+  bc('barcode100',d.invoiceNumber,28,1.0);
+
+  // 100x70
+  s('companyName70',d.companyName);s('invoiceNumber70v',d.invoiceNumber);s('shipDate70',niceDate(d.shipDate));
+  s('senderCity70',d.senderCity||'-');s('senderName70',d.senderName||'-');s('receiverCity70',d.receiverCity||'-');s('receiverName70',d.receiverName||'-');
+  s('pieces70',d.pieces||'1');s('weight70',d.weight||'0');s('codAmount70',d.codAmount||'0');
+  bc('barcode70',d.invoiceNumber,100,0.85);
+  bc('barcode70main',d.invoiceNumber,22,1.0);
+
+  saveDraft();renderHistory(false);
+}
+
+function saveDraft(){localStorage.setItem(DK,JSON.stringify(getData()))}
+
+function changeSize(){
+  const sz=$('printSize').value;
+  ['thermal80','a4','200x80','100x150','100x70'].forEach(id=>{
+    const el=$('page-'+id);if(el){el.style.display=el.id==='page-'+sz?'':'none'}
+  });
+  const names={thermal80:'حراري 80mm',a4:'A4 كامل','200x80':'200 × 80 mm','100x150':'100 × 150 mm','100x70':'100 × 70 mm'};
+  $('sizeBadge').textContent=names[sz]||'حراري 80mm';
+  const zooms={thermal80:.9,a4:.65,'200x80':.72,'100x150':.95,'100x70':1.05};
+  setZoom(zooms[sz]||.9);
+  updateUI();
+}
+
+function setZoom(scale){
+  $('previewWrap').style.transform=`scale(${scale})`;
+}
+
+function saveInvoice(){
+  const d=getData();const list=loadList();
+  const item={...d,id:d.id||crypto.randomUUID(),updatedAt:new Date().toISOString()};
+  const idx=list.findIndex(x=>x.id===item.id||x.invoiceNumber===item.invoiceNumber);
+  if(idx>=0)list[idx]=item;else list.unshift(item);
+  saveList(list);editId=item.id;renderHistory();
+  const btn=document.querySelector('.action-bar .btn-gold');
+  if(btn){const old=btn.innerHTML;btn.innerHTML='✓ تم الحفظ';btn.classList.add('btn-success');btn.classList.remove('btn-gold');setTimeout(()=>{btn.innerHTML=old;btn.classList.remove('btn-success');btn.classList.add('btn-gold')},1300)}
+}
+
+function newInvoice(){
+  if(!confirm('بدء فاتورة جديدة؟'))return;
+  editId=null;
+  setData({companyName:v('companyName')||'Granada Print',companyPhone:v('companyPhone')||'',companyAddress:v('companyAddress')||'',
+    invoiceNumber:'GR-'+Math.floor(100000+Math.random()*900000),
+    senderName:'',senderPhone:'',senderCity:'',senderAddress:'',
+    receiverName:'',receiverPhone:'',receiverCity:'',receiverAddress:'',
+    content:'',pieces:'1',weight:'0.5',shippingCost:'0',codAmount:'0',
+    shipDate:today(),notes:'',logo:logo,printSize:$('printSize').value||'thermal80'});
+}
+
+function openInvoice(id){
+  const item=loadList().find(x=>x.id===id);if(!item)return;
+  setData(item);editId=item.id;renderHistory();
+  if(item.printSize){$('printSize').value=item.printSize;changeSize()}
+}
+
+function deleteInvoice(id){
+  if(!confirm('حذف هذه الفاتورة نهائياً؟'))return;
+  saveList(loadList().filter(x=>x.id!==id));
+  if(editId===id)editId=null;renderHistory();
+}
+
+function clearHistory(){
+  if(!confirm('حذف كل الفواتير؟'))return;
+  localStorage.removeItem(SK);renderHistory();
+}
+
+function exportInvoices(){
+  const b=new Blob([JSON.stringify(loadList(),null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);
+  a.download='granada_'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);
+}
+
+function openImport(){$('importModal').classList.add('active');$('importArea').value='';$('importArea').focus()}
+function closeImport(){$('importModal').classList.remove('active')}
+
+function doImport(){
+  try{
+    const raw=v('importArea');if(!raw)return;
+    const imp=JSON.parse(raw);if(!Array.isArray(imp))throw new Error('يجب مصفوفة JSON');
+    const cur=loadList(),map=new Map(cur.map(x=>[x.invoiceNumber,x]));
+    imp.forEach(item=>{if(item&&item.invoiceNumber)map.set(item.invoiceNumber,{...item,id:item.id||crypto.randomUUID()})});
+    saveList(Array.from(map.values()));closeImport();renderHistory();alert('تم الاستيراد بنجاح')
+  }catch(e){alert('خطأ: '+e.message)}
+}
+
+function renderHistory(full=true){
+  const list=loadList(),q=(v('histSearch')||'').toLowerCase();
+  const fil=list.filter(x=>!q||[x.invoiceNumber,x.senderName,x.receiverName,x.senderCity,x.receiverCity,x.content].join(' ').toLowerCase().includes(q));
+  $('histCount').textContent=fil.length;
+  const wrap=$('historyList');
+  if(!fil.length){
+    wrap.innerHTML=`<div class="hist-empty"><div class="hist-empty-icon">📋</div><div class="hist-empty-text">لا توجد فواتير محفوظة</div></div>`;return;
+  }
+  wrap.innerHTML=fil.map(item=>`
+    <div class="hist-item ${item.id===editId?'active':''}" onclick="openInvoice('${item.id}')">
+      <div class="hist-num">${item.invoiceNumber}</div>
+      <div class="hist-route">${item.senderName||'-'} ← ${item.receiverName||'-'}</div>
+      <div style="font-size:10px;color:#94a3b8">${item.senderCity||'-'} ← ${item.receiverCity||'-'}</div>
+      <div class="hist-meta">
+        <span class="hist-amount">${money(item.codAmount)}</span>
+        <span class="hist-date">${niceDate(item.shipDate)}</span>
+      </div>
+      <div class="hist-actions">
+        <button class="btn btn-dark" onclick="event.stopPropagation();openInvoice('${item.id}')">👁 فتح</button>
+        <button class="btn btn-danger" onclick="event.stopPropagation();deleteInvoice('${item.id}')">🗑</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function getVisiblePage(){return document.querySelector('#previewWrap article:not([style*="display:none"]):not([style*="display: none"])')||$('page-thermal80')}
+
+function printInvoice(){
+  const src=getVisiblePage();if(!src){alert('لا توجد فاتورة للطباعة');return}
+  const pr=$('printRoot');pr.innerHTML='';
+  const cl=src.cloneNode(true);
+  cl.style.cssText='visibility:visible;display:block;box-shadow:none;border:0;transform:none';
+  pr.appendChild(cl);pr.style.display='block';
+  setTimeout(()=>{
+    window.print();
+    setTimeout(()=>{pr.innerHTML='';pr.style.display='none'},700)
+  },200);
+}
+
+async function openScanner(){
+  $('scannerModal').classList.add('active');
+  $('scannerStatus').textContent='جارِ تشغيل الكاميرا...';
+  try{
+    scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:camFace,width:{ideal:1280},height:{ideal:720}}});
+    const vid=$('scannerVideo');vid.srcObject=scanStream;await vid.play();
+    $('scannerStatus').textContent='وجّه الكاميرا نحو الباركود...';
+    startScan();
+  }catch(e){$('scannerStatus').textContent='خطأ: '+e.message}
+}
+function closeScanner(){
+  $('scannerModal').classList.remove('active');
+  if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null}
+  if(scannerAnim)cancelAnimationFrame(scannerAnim);scannerAnim=null;
+}
+function switchCamera(){camFace=camFace==='environment'?'user':'environment';closeScanner();setTimeout(openScanner,250)}
+function startScan(){
+  const vid=$('scannerVideo'),cvs=$('scannerCanvas'),ctx=cvs.getContext('2d',{willReadFrequently:true});
+  function tick(){
+    if(!scanStream)return;
+    if(vid.readyState===vid.HAVE_ENOUGH_DATA){
+      cvs.width=vid.videoWidth;cvs.height=vid.videoHeight;ctx.drawImage(vid,0,0,cvs.width,cvs.height);
+      const data=ctx.getImageData(0,0,cvs.width,cvs.height);
+      const code=jsQR(data.data,data.width,data.height,{inversionAttempts:'dontInvert'});
+      if(code){
+        $('scannerStatus').innerHTML=`<span style="color:#059669;font-weight:700">✓ تم:</span> <span style="font-family:'IBM Plex Mono',monospace">${code.data}</span>`;
+        const found=loadList().find(x=>x.invoiceNumber===code.data);
+        if(found)setTimeout(()=>{closeScanner();openInvoice(found.id)},700);
+        return;
+      }
+    }
+    scannerAnim=requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey&&e.key.toLowerCase()==='s'){e.preventDefault();saveInvoice()}
+  if(e.ctrlKey&&e.key.toLowerCase()==='p'){e.preventDefault();printInvoice()}
+  if(e.ctrlKey&&e.key.toLowerCase()==='b'){e.preventDefault();openScanner()}
+});
+
+document.addEventListener('DOMContentLoaded',()=>{
+  $('shipDate').value=today();
+  const draft=localStorage.getItem(DK);
+  const saved=loadList();
+  if(draft){try{const d=JSON.parse(draft);setData(d);editId=d.id||null}catch{updateUI()}}
+  else if(saved.length){setData(saved[0])}
+  else{updateUI()}
+  changeSize();renderHistory();
+});
+</script>
+</body>
+</html>
