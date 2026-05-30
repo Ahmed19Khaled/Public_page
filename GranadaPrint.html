@@ -33,13 +33,41 @@
 --shadow-lg:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);
 }
 html,body{height:100%;font-family:'Cairo',sans-serif;background:var(--bg);color:var(--ink);overflow:hidden}
-
+html,body{
+    height:100%;
+    overflow-x:auto;
+    overflow-y:hidden;
+}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
 ::-webkit-scrollbar-track{background:transparent}
 
 .app{display:grid;grid-template-columns:340px 1fr 300px;height:100vh}
+.app{
+    display:grid;
+    grid-template-columns:340px 1fr 300px;
+    min-width:1200px; /* أو أي عرض مناسب */
+    height:100vh;
+} body{
+    overflow-x:auto;
+}
 
+.app{
+    min-width:1200px;
+} @media (max-width:768px){
+
+    .app{
+        display:flex;
+        flex-direction:column;
+        height:auto;
+    }
+
+    .left-panel,
+    .right-panel{
+        width:100%;
+    }
+
+}
 /* ===== LEFT PANEL ===== */
 .left-panel{background:var(--panel-bg);overflow-y:auto;border-left:1px solid var(--line);display:flex;flex-direction:column}
 .brand-header{padding:22px 18px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fffdf7 0%,#f4eee1 100%)}
