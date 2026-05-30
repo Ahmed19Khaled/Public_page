@@ -98,7 +98,48 @@ html,body{height:100%;font-family:'Cairo',sans-serif;background:var(--bg);color:
 .tool-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:11px;font-weight:700;cursor:pointer;color:var(--ink3);transition:.15s;font-family:'Cairo',sans-serif}
 .tool-btn:hover{background:var(--ink);color:var(--gold2);border-color:var(--ink)}
 
-.paper-area{flex:1;overflow:auto;display:flex;justify-content:center;padding:24px;background:repeating-linear-gradient(0deg,transparent,transparent 24px,rgba(0,0,0,.025) 24px,rgba(0,0,0,.025) 25px),repeating-linear-gradient(90deg,transparent,transparent 24px,rgba(0,0,0,.025) 24px,rgba(0,0,0,.025) 25px)}
+.paper-area{
+    flex:1;
+    overflow-x:auto;
+    overflow-y:auto;
+    display:block;
+    padding:24px;
+    white-space:nowrap;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 24px,
+            rgba(0,0,0,.025) 24px,
+            rgba(0,0,0,.025) 25px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 24px,
+            rgba(0,0,0,.025) 24px,
+            rgba(0,0,0,.025) 25px
+        );
+}
+   .preview-wrap{
+    display:inline-block;
+    min-width:max-content;
+    transform-origin:top center;
+    transition:transform .2s ease;
+   }
+   .paper-area{
+    overflow-x:scroll;
+    overflow-y:auto;
+   }
+   @media (max-width:768px){
+    .paper-area{
+        overflow-x:auto;
+    }
+
+    .preview-wrap{
+        min-width:max-content;
+    }
+   }
 .preview-wrap{transform-origin:top center;transition:transform .2s ease}
 
 /* ===== RECEIPT DESIGNS ===== */
