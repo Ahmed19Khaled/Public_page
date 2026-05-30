@@ -3,653 +3,758 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Granada Pro — نظام الفواتير الحرارية</title>
+<title>Granada Print — نظام الفواتير الاحترافي</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<!-- Font Awesome icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
---ink:#0a0a0f;
---ink2:#1a1a2e;
---ink3:#16213e;
---gold:#c9a84c;
---gold2:#e8c97a;
---gold3:#f5e4a8;
---silver:#8892a4;
+--ink:#0f172a;
+--ink2:#334155;
+--ink3:#475569;
+--gold:#c79c3c;
+--gold2:#d4b86b;
+--gold3:#f0e6c8;
+--silver:#94a3b8;
 --line:#e2e8f0;
---bg:#f8f7f4;
+--line2:#cbd5e1;
+--bg:#f1f5f9;
 --panel-bg:#ffffff;
---accent:#1a1a2e;
+--accent:#0f172a;
 --success:#059669;
 --danger:#dc2626;
 --paper:#ffffff;
---paper-w:80mm;
+--shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);
+--shadow-lg:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);
 }
 html,body{height:100%;font-family:'Cairo',sans-serif;background:var(--bg);color:var(--ink);overflow:hidden}
 
-::-webkit-scrollbar{width:4px;height:4px}
-::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:99px}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
 ::-webkit-scrollbar-track{background:transparent}
 
 .app{display:grid;grid-template-columns:340px 1fr 300px;height:100vh}
 
-/* LEFT PANEL */
-.left-panel{background:#0a0a0f;color:#e2e8f0;overflow-y:auto;border-left:1px solid #1e293b;display:flex;flex-direction:column}
-.brand-header{padding:20px 18px 16px;border-bottom:1px solid #1e293b;background:linear-gradient(180deg,#0f0f1a 0%,#0a0a0f 100%)}
-.brand-logo{display:flex;align-items:center;gap:12px;margin-bottom:4px}
-.brand-icon{width:44px;height:44px;background:linear-gradient(135deg,#c9a84c,#e8c97a);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.brand-name{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.5px}
-.brand-sub{font-size:11px;color:#64748b;font-weight:400}
+/* ===== LEFT PANEL ===== */
+.left-panel{background:var(--panel-bg);overflow-y:auto;border-left:1px solid var(--line);display:flex;flex-direction:column}
+.brand-header{padding:22px 18px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fffdf7 0%,#f4eee1 100%)}
+.brand-logo{display:flex;align-items:center;gap:14px;margin-bottom:4px}
+.brand-icon{width:52px;height:52px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 4px 12px rgba(199,156,60,.25)}
+.brand-name{font-family:'Tajawal',sans-serif;font-size:24px;font-weight:900;color:var(--ink);letter-spacing:-0.4px}
+.brand-sub{font-size:11px;color:var(--ink3);font-weight:500}
 
-.left-content{padding:14px;flex:1;overflow-y:auto}
-.section{background:#111827;border:1px solid #1e293b;border-radius:14px;padding:14px;margin-bottom:12px}
-.section-title{font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.section-title::before{content:'';display:block;width:3px;height:14px;background:var(--gold);border-radius:99px}
+.left-content{padding:16px;flex:1;overflow-y:auto}
+.section{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.section-title{font-size:11px;font-weight:800;color:var(--silver);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-title::before{content:'';display:block;width:4px;height:14px;background:var(--gold);border-radius:99px}
 
 .fld{margin-bottom:10px}
-.fld label{display:block;font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
-.fld input,.fld select,.fld textarea{width:100%;background:#0a0a0f;color:#e2e8f0;border:1px solid #1e293b;border-radius:10px;padding:9px 12px;font-size:12px;font-family:'Cairo',sans-serif;outline:none;transition:.2s}
-.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:#c9a84c;box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.fld label{display:block;font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.fld input,.fld select,.fld textarea{width:100%;background:#ffffff;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:12px;font-family:'Cairo',sans-serif;outline:none;transition:.2s;box-shadow:inset 0 1px 2px rgba(15,23,42,.04)}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(199,156,60,.12)}
 .fld textarea{min-height:64px;resize:vertical;line-height:1.5}
-.fld select option{background:#0a0a0f}
+.fld select option{background:#fff}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:12px;padding:10px 14px;font-size:12px;font-weight:800;cursor:pointer;transition:.18s;font-family:'Cairo',sans-serif;white-space:nowrap;min-height:42px}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0f172a;box-shadow:0 8px 16px rgba(199,156,60,.2)}
+.btn-dark{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:var(--shadow)}
+.btn-danger{background:rgba(220,38,38,.1);color:#b91c1c;border:1px solid rgba(220,38,38,.18)}
+.btn-success{background:rgba(5,150,105,.1);color:#047857;border:1px solid rgba(5,150,105,.18)}
+.btn-full{width:100%;display:flex}
+
+.logo-upload{display:flex;align-items:center;gap:10px;border:1px dashed var(--line2);border-radius:12px;padding:10px;cursor:pointer;transition:.2s;margin-bottom:10px;background:#fafaf8}
+.logo-upload:hover{border-color:var(--gold)}
+.logo-thumb{width:48px;height:48px;border-radius:10px;background:#f8faf7;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-size:20px;color:var(--ink3)}
+.logo-info{font-size:11px;color:var(--silver)}
+.logo-info strong{display:block;color:var(--ink2);font-size:12px;margin-bottom:2px}
+
+/* Font Awesome icon helpers */
+.fa-icon{font-size:16px;display:inline-block;margin-inline-start:6px;vertical-align:middle}
+.brand-icon .fa{font-size:28px}
+.tool-icon{font-size:15px;margin-inline-end:6px}
+.action-icon{font-size:16px;margin-inline-end:8px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:.18s;font-family:'Cairo',sans-serif;white-space:nowrap}
-.btn:hover{transform:translateY(-1px)}
-.btn:active{transform:scale(.97)}
-.btn-gold{background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#0a0a0f}
-.btn-dark{background:#1e293b;color:#e2e8f0;border:1px solid #334155}
-.btn-danger{background:rgba(220,38,38,.12);color:#fca5a5;border:1px solid rgba(220,38,38,.2)}
-.btn-success{background:rgba(5,150,105,.12);color:#6ee7b7;border:1px solid rgba(5,150,105,.2)}
-.btn-full{width:100%;display:flex}
+.action-bar{padding:12px;border-top:1px solid var(--line);display:flex;gap:8px;background:#fff}
 
-.logo-upload{display:flex;align-items:center;gap:10px;border:1px dashed #334155;border-radius:12px;padding:10px;cursor:pointer;transition:.2s;margin-bottom:10px}
-.logo-upload:hover{border-color:#c9a84c}
-.logo-thumb{width:46px;height:46px;border-radius:8px;background:#0a0a0f;border:1px solid #1e293b;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-size:20px;color:#475569}
-.logo-info{font-size:11px;color:#64748b}
-.logo-info strong{display:block;color:#94a3b8;font-size:12px;margin-bottom:2px}
-
-.action-bar{padding:14px;border-top:1px solid #1e293b;display:flex;gap:8px}
-
-/* CENTER */
-.center-panel{background:#f1efe9;display:flex;flex-direction:column;overflow:hidden}
-.center-toolbar{padding:12px 18px;background:#ffffff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+/* ===== CENTER PANEL ===== */
+.center-panel{background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.center-toolbar{padding:10px 16px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .toolbar-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .toolbar-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:99px;font-size:11px;font-weight:700;border:1px solid #e2e8f0;color:#64748b;background:#f8fafc}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:99px;font-size:11px;font-weight:700;border:1px solid var(--line);color:var(--ink3);background:#f8fafc}
 .pill-gold{background:#fefce8;border-color:#fbbf24;color:#92400e}
-.zoom-btn{width:34px;height:34px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;cursor:pointer;font-size:11px;font-weight:700;color:#475569;transition:.15s;font-family:'Cairo',sans-serif}
-.zoom-btn:hover{background:#f8fafc;border-color:#c9a84c;color:#0a0a0f}
-.zoom-btn.active{background:#0a0a0f;color:#e8c97a;border-color:#0a0a0f}
-.tool-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;font-size:11px;font-weight:700;cursor:pointer;color:#475569;transition:.15s;font-family:'Cairo',sans-serif}
-.tool-btn:hover{background:#0a0a0f;color:#e8c97a;border-color:#0a0a0f}
+.zoom-btn{width:32px;height:32px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;font-size:11px;font-weight:700;color:var(--ink3);transition:.15s;font-family:'Cairo',sans-serif}
+.zoom-btn:hover{background:var(--ink);color:var(--gold2);border-color:var(--ink)}
+.zoom-btn.active{background:var(--ink);color:var(--gold2);border-color:var(--ink)}
+.tool-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:11px;font-weight:700;cursor:pointer;color:var(--ink3);transition:.15s;font-family:'Cairo',sans-serif}
+.tool-btn:hover{background:var(--ink);color:var(--gold2);border-color:var(--ink)}
 
-.paper-area{flex:1;overflow:auto;display:flex;justify-content:center;padding:28px 24px;background:repeating-linear-gradient(0deg,transparent,transparent 24px,rgba(0,0,0,.03) 24px,rgba(0,0,0,.03) 25px),repeating-linear-gradient(90deg,transparent,transparent 24px,rgba(0,0,0,.03) 24px,rgba(0,0,0,.03) 25px)}
-
+.paper-area{flex:1;overflow:auto;display:flex;justify-content:center;padding:24px;background:repeating-linear-gradient(0deg,transparent,transparent 24px,rgba(0,0,0,.025) 24px,rgba(0,0,0,.025) 25px),repeating-linear-gradient(90deg,transparent,transparent 24px,rgba(0,0,0,.025) 24px,rgba(0,0,0,.025) 25px)}
 .preview-wrap{transform-origin:top center;transition:transform .2s ease}
 
-/* ============= RECEIPT DESIGNS ============= */
-.receipt{background:#fff;direction:rtl;font-family:'Cairo',sans-serif;box-shadow:0 4px 32px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.08)}
+/* ===== RECEIPT DESIGNS ===== */
+.receipt{background:#fff;direction:rtl;font-family:'Cairo',sans-serif;box-shadow:0 8px 32px rgba(0,0,0,.12),0 0 0 1px rgba(0,0,0,.06)}
 
-/* THERMAL 80mm — PREMIUM DESIGN */
-.r-thermal{width:80mm;padding:0;overflow:hidden}
-.r-thermal .r-header{background:#0a0a0f;color:#fff;padding:5mm 4mm 4mm}
-.r-thermal .r-header-logo{display:flex;align-items:center;gap:3mm;margin-bottom:3mm}
-.r-thermal .r-hlogo{width:12mm;height:12mm;border-radius:3mm;overflow:hidden;border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06);flex-shrink:0;font-size:6px;color:rgba(255,255,255,.4)}
-.r-thermal .r-hname{font-weight:900;font-size:12px;color:#fff;line-height:1.2}
-.r-thermal .r-hsub{font-size:7px;color:rgba(255,255,255,.5);margin-top:1px}
-.r-thermal .r-hnum{text-align:left;margin-right:auto}
-.r-thermal .r-hnum-label{font-size:6px;color:rgba(255,255,255,.4);margin-bottom:1px}
-.r-thermal .r-hnum-val{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:#e8c97a;letter-spacing:.5px}
+/* ===== THERMAL 80mm PREMIUM ===== */
+.r-thermal{width:80mm;padding:0;overflow:hidden;background:#fff}
+.r-thermal .r-top-band{height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold))}
+.r-thermal .r-header{padding:4mm 4mm 3mm;display:flex;align-items:center;gap:3mm;border-bottom:1px solid #f1f5f9}
+.r-thermal .r-hlogo{width:14mm;height:14mm;border-radius:3mm;overflow:hidden;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:#fafaf8;flex-shrink:0;font-size:7px;color:var(--silver)}
+.r-thermal .r-hmeta{flex:1;min-width:0}
+.r-thermal .r-hname{font-weight:900;font-size:11px;color:var(--ink);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r-thermal .r-hsub{font-size:6.5px;color:var(--silver);margin-top:1px;font-family:'IBM Plex Mono',monospace}
+.r-thermal .r-hnum{text-align:left;margin-right:auto;flex-shrink:0}
+.r-thermal .r-hnum-label{font-size:5.5px;color:var(--silver);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1px}
+.r-thermal .r-hnum-val{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:800;color:var(--gold);letter-spacing:.5px}
 
-.r-thermal .r-gold-bar{height:2.5px;background:linear-gradient(90deg,#c9a84c,#e8c97a,#c9a84c);width:100%}
+.r-thermal .r-body{padding:3mm 4mm 2mm}
+.r-thermal .r-barcode-wrap{text-align:center;margin-bottom:3mm;padding:2mm;background:#fafaf8;border-radius:2mm;border:1px solid var(--line)}
+.r-thermal .r-barcode-wrap svg{width:100%;height:12mm;display:block}
+.r-thermal .r-barcode-num{font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--ink3);margin-top:1.5mm;letter-spacing:1px}
 
-.r-thermal .r-body{padding:3.5mm 3.5mm 2mm}
-.r-thermal .r-barcode-area{margin-bottom:3mm;text-align:center}
-.r-thermal .r-barcode-area svg{width:100%;height:14mm;display:block}
-
-.r-thermal .r-cards{display:grid;grid-template-columns:1fr 1fr;gap:2mm;margin-bottom:2mm}
-.r-thermal .r-card{background:#f8f7f4;border:1px solid #e8e4db;border-radius:2.5mm;padding:2.5mm}
-.r-thermal .r-card-title{font-size:6px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2mm;display:flex;align-items:center;gap:1.5mm}
-.r-thermal .r-card-title::before{content:'';display:block;width:1.5mm;height:1.5mm;border-radius:99px}
-.r-thermal .r-card-title.sender::before{background:#3b82f6}
-.r-thermal .r-card-title.receiver::before{background:#10b981}
-.r-thermal .r-kv{margin-bottom:1.5mm}
+.r-thermal .r-parties{display:grid;grid-template-columns:1fr 1fr;gap:2mm;margin-bottom:2.5mm}
+.r-thermal .r-party{background:#fafaf8;border:1px solid var(--line);border-radius:2.5mm;padding:2.5mm}
+.r-thermal .r-party-label{font-size:6px;font-weight:800;color:var(--silver);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2mm;display:flex;align-items:center;gap:1.5mm}
+.r-thermal .r-party-label::before{content:'';display:block;width:2mm;height:2mm;border-radius:99px}
+.r-thermal .r-party-label.snd::before{background:#3b82f6}
+.r-thermal .r-party-label.rcv::before{background:#10b981}
+.r-thermal .r-kv{margin-bottom:1.2mm}
 .r-thermal .r-kv:last-child{margin-bottom:0}
-.r-thermal .r-k{font-size:6px;color:#94a3b8}
-.r-thermal .r-v{font-size:7.5px;font-weight:700;color:#1a1a2e;word-break:break-word;line-height:1.3}
+.r-thermal .r-k{font-size:5.5px;color:var(--silver);font-weight:600}
+.r-thermal .r-v{font-size:7px;font-weight:800;color:var(--ink);word-break:break-word;line-height:1.3}
+.r-thermal .r-v.mono{font-family:'IBM Plex Mono',monospace}
 
-.r-thermal .r-details{background:#f8f7f4;border:1px solid #e8e4db;border-radius:2.5mm;padding:2.5mm;margin-bottom:2mm}
+.r-thermal .r-details{background:#fafaf8;border:1px solid var(--line);border-radius:2.5mm;padding:2.5mm;margin-bottom:2mm}
 .r-thermal .r-details-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm}
 .r-thermal .r-detail-cell{text-align:center}
-.r-thermal .r-detail-label{font-size:5.5px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
-.r-thermal .r-detail-val{font-size:8px;font-weight:800;color:#1a1a2e;margin-top:0.5mm;line-height:1.2}
+.r-thermal .r-detail-label{font-size:5px;color:var(--silver);font-weight:800;text-transform:uppercase;letter-spacing:.3px}
+.r-thermal .r-detail-val{font-size:7.5px;font-weight:900;color:var(--ink);margin-top:.5mm;line-height:1.2}
+.r-thermal .r-detail-val.mono{font-family:'IBM Plex Mono',monospace}
+
+.r-thermal .r-delivery-type{text-align:center;font-size:6.5px;color:var(--ink3);font-weight:700;margin-bottom:2mm;padding:1.5mm;background:var(--gold3);border-radius:2mm;border:1px solid var(--gold2)}
+.r-thermal .r-delivery-type span{color:var(--ink);font-weight:900}
 
 .r-thermal .r-amounts{display:grid;grid-template-columns:1fr 1fr;gap:2mm;margin-bottom:2mm}
 .r-thermal .r-amount-box{border-radius:2.5mm;padding:2.5mm;text-align:center}
 .r-thermal .r-amount-box.shipping{background:#eff6ff;border:1px solid #bfdbfe}
 .r-thermal .r-amount-box.cod{background:#fef2f2;border:1px solid #fecaca}
-.r-thermal .r-amount-label{font-size:6px;font-weight:800;margin-bottom:1mm}
+.r-thermal .r-amount-label{font-size:6px;font-weight:800;margin-bottom:1mm;text-transform:uppercase;letter-spacing:.3px}
 .r-thermal .r-amount-box.shipping .r-amount-label{color:#1d4ed8}
 .r-thermal .r-amount-box.cod .r-amount-label{color:#dc2626}
-.r-thermal .r-amount-val{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:800;color:#0a0a0f}
+.r-thermal .r-amount-val{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:800;color:var(--ink)}
 
 .r-thermal .r-notes-box{background:#fffbeb;border:1px solid #fde68a;border-radius:2.5mm;padding:2.5mm;margin-bottom:2mm}
-.r-thermal .r-notes-title{font-size:6px;font-weight:800;color:#92400e;margin-bottom:1.5mm}
-.r-thermal .r-notes-text{font-size:7px;color:#78350f;line-height:1.5}
+.r-thermal .r-notes-title{font-size:6px;font-weight:800;color:#92400e;margin-bottom:1mm;text-transform:uppercase;letter-spacing:.3px}
+.r-thermal .r-notes-text{font-size:6.5px;color:#78350f;line-height:1.5}
 
-.r-thermal .r-footer{background:#f8f7f4;border-top:1px solid #e8e4db;padding:2mm 3.5mm}
-.r-thermal .r-footer-barcode svg{width:100%;height:11mm;display:block;margin-bottom:1.5mm}
-.r-thermal .r-footer-info{display:flex;align-items:center;justify-content:space-between;font-size:6px;color:#94a3b8}
-.r-thermal .r-footer-inv{font-family:'IBM Plex Mono',monospace;font-weight:700;color:#64748b;font-size:7px}
+.r-thermal .r-footer{background:#fafaf8;border-top:1px solid var(--line);padding:2.5mm 4mm;text-align:center}
+.r-thermal .r-footer-barcode svg{width:70%;height:10mm;display:block;margin:0 auto 1.5mm}
+.r-thermal .r-footer-info{display:flex;align-items:center;justify-content:space-between;font-size:6px;color:var(--silver)}
+.r-thermal .r-footer-inv{font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--ink3);font-size:6.5px}
 
-/* A4 */
-.r-a4{width:210mm;min-height:297mm;padding:18mm 16mm 14mm}
-.r-a4 .a4-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10mm;padding-bottom:6mm;border-bottom:2.5px solid #0a0a0f}
-.r-a4 .a4-brand{display:flex;align-items:center;gap:6mm}
-.r-a4 .a4-logo{width:20mm;height:20mm;border-radius:5mm;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#f8f7f4;flex-shrink:0;font-size:10px;color:#94a3b8}
-.r-a4 .a4-company-name{font-size:24px;font-weight:900;color:#0a0a0f;line-height:1.1;margin-bottom:2mm}
-.r-a4 .a4-company-info{font-size:10px;color:#64748b;line-height:1.6}
+/* ===== A4 PREMIUM ===== */
+.r-a4{width:210mm;min-height:297mm;padding:0;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.r-a4 .a4-top-band{height:4px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold))}
+.r-a4 .a4-header{padding:12mm 16mm 8mm;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--line)}
+.r-a4 .a4-brand{display:flex;align-items:center;gap:5mm}
+.r-a4 .a4-logo{width:18mm;height:18mm;border-radius:4mm;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fafaf8;flex-shrink:0;font-size:9px;color:var(--silver)}
+.r-a4 .a4-company-name{font-size:22px;font-weight:900;color:var(--ink);line-height:1.1;margin-bottom:1.5mm}
+.r-a4 .a4-company-info{font-size:9px;color:var(--ink3);line-height:1.7}
 .r-a4 .a4-inv-block{text-align:left}
-.r-a4 .a4-inv-label{font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:2mm}
-.r-a4 .a4-inv-num{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:800;color:#0a0a0f}
-.r-a4 .a4-barcode svg{width:55mm;height:18mm;display:block;margin-top:3mm}
-.r-a4 .a4-section-title{font-size:9px;font-weight:800;color:#0a0a0f;text-transform:uppercase;letter-spacing:1px;margin-bottom:4mm;display:flex;align-items:center;gap:3mm}
-.r-a4 .a4-section-title::after{content:'';flex:1;height:1px;background:#e2e8f0}
-.r-a4 .a4-parties{display:grid;grid-template-columns:1fr 1fr;gap:8mm;margin-bottom:8mm}
-.r-a4 .a4-party{border:1px solid #e2e8f0;border-radius:4mm;padding:5mm}
-.r-a4 .a4-party-label{font-size:8px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3mm;display:flex;align-items:center;gap:2mm}
+.r-a4 .a4-inv-label{font-size:8px;color:var(--silver);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.5mm}
+.r-a4 .a4-inv-num{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:800;color:var(--ink)}
+.r-a4 .a4-barcode{margin-top:3mm;padding:2mm;background:#fafaf8;border-radius:2mm;border:1px solid var(--line);display:inline-block}
+.r-a4 .a4-barcode svg{width:50mm;height:14mm;display:block}
+.r-a4 .a4-barcode-num{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--ink3);text-align:center;margin-top:1mm;letter-spacing:1px}
+
+.r-a4 .a4-content{padding:8mm 16mm;flex:1}
+.r-a4 .a4-section-title{font-size:9px;font-weight:800;color:var(--ink);text-transform:uppercase;letter-spacing:1px;margin-bottom:4mm;display:flex;align-items:center;gap:3mm}
+.r-a4 .a4-section-title::after{content:'';flex:1;height:1px;background:var(--line)}
+.r-a4 .a4-parties{display:grid;grid-template-columns:1fr 1fr;gap:6mm;margin-bottom:8mm}
+.r-a4 .a4-party{border:1px solid var(--line);border-radius:3mm;padding:4mm;background:#fafaf8}
+.r-a4 .a4-party-label{font-size:8px;font-weight:800;color:var(--silver);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3mm;display:flex;align-items:center;gap:2mm}
 .r-a4 .a4-party-label span{width:3mm;height:3mm;border-radius:50%;display:inline-block}
-.r-a4 .a4-party-name{font-size:15px;font-weight:800;color:#0a0a0f;margin-bottom:2mm}
-.r-a4 .a4-party-detail{font-size:10px;color:#64748b;margin-bottom:1.5mm;display:flex;align-items:center;gap:2mm}
+.r-a4 .a4-party-name{font-size:14px;font-weight:900;color:var(--ink);margin-bottom:2mm}
+.r-a4 .a4-party-detail{font-size:9.5px;color:var(--ink3);margin-bottom:1.5mm;display:flex;align-items:center;gap:2mm}
+.r-a4 .a4-party-detail.mono{font-family:'IBM Plex Mono',monospace}
+
 .r-a4 .a4-shipment{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm;margin-bottom:6mm}
-.r-a4 .a4-ship-cell{border:1px solid #e2e8f0;border-radius:3mm;padding:4mm;text-align:center}
-.r-a4 .a4-ship-label{font-size:8px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2mm}
-.r-a4 .a4-ship-val{font-size:14px;font-weight:800;color:#0a0a0f}
-.r-a4 .a4-financials{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-bottom:8mm}
-.r-a4 .a4-fin-box{border-radius:4mm;padding:5mm}
+.r-a4 .a4-ship-cell{border:1px solid var(--line);border-radius:2.5mm;padding:3mm;text-align:center;background:#fafaf8}
+.r-a4 .a4-ship-label{font-size:7.5px;color:var(--silver);font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:1.5mm}
+.r-a4 .a4-ship-val{font-size:13px;font-weight:900;color:var(--ink)}
+.r-a4 .a4-ship-val.mono{font-family:'IBM Plex Mono',monospace}
+
+.r-a4 .a4-delivery-type{text-align:center;font-size:10px;color:var(--ink3);font-weight:700;margin-bottom:5mm;padding:2mm;background:var(--gold3);border-radius:2mm;border:1px solid var(--gold2)}
+.r-a4 .a4-delivery-type span{color:var(--ink);font-weight:900}
+
+.r-a4 .a4-financials{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-bottom:6mm}
+.r-a4 .a4-fin-box{border-radius:3mm;padding:4mm}
 .r-a4 .a4-fin-box.shipping{background:#eff6ff;border:1px solid #bfdbfe}
 .r-a4 .a4-fin-box.cod{background:#fef2f2;border:1px solid #fecaca}
-.r-a4 .a4-fin-label{font-size:9px;font-weight:800;margin-bottom:2mm}
+.r-a4 .a4-fin-label{font-size:8px;font-weight:800;margin-bottom:2mm;text-transform:uppercase;letter-spacing:.5px}
 .r-a4 .a4-fin-box.shipping .a4-fin-label{color:#1d4ed8}
 .r-a4 .a4-fin-box.cod .a4-fin-label{color:#dc2626}
-.r-a4 .a4-fin-val{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:800;color:#0a0a0f}
-.r-a4 .a4-notes{border:1px solid #fde68a;background:#fffbeb;border-radius:4mm;padding:5mm;margin-bottom:8mm}
-.r-a4 .a4-notes-label{font-size:9px;font-weight:800;color:#92400e;margin-bottom:2mm}
-.r-a4 .a4-notes-text{font-size:11px;color:#78350f;line-height:1.7}
-.r-a4 .a4-footer{display:flex;align-items:center;justify-content:space-between;padding-top:6mm;border-top:1px solid #e2e8f0}
-.r-a4 .a4-footer-brand{font-size:10px;color:#94a3b8}
-.r-a4 .a4-footer-mono{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#94a3b8}
+.r-a4 .a4-fin-val{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:800;color:var(--ink)}
 
-/* 200x80mm */
-.r-200x80{width:200mm;height:80mm;display:flex;overflow:hidden}
-.r-200x80 .r-left-strip{width:50mm;background:#0a0a0f;color:#fff;padding:4mm;display:flex;flex-direction:column;justify-content:space-between;flex-shrink:0}
-.r-200x80 .r-right-body{flex:1;padding:4mm;display:flex;flex-direction:column;justify-content:space-between}
+.r-a4 .a4-notes{border:1px solid #fde68a;background:#fffbeb;border-radius:3mm;padding:4mm;margin-bottom:6mm}
+.r-a4 .a4-notes-label{font-size:8px;font-weight:800;color:#92400e;margin-bottom:2mm;text-transform:uppercase;letter-spacing:.5px}
+.r-a4 .a4-notes-text{font-size:10px;color:#78350f;line-height:1.7}
+
+.r-a4 .a4-footer{margin-top:auto;padding:6mm 16mm;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:#fafaf8}
+.r-a4 .a4-footer-brand{font-size:9px;color:var(--silver)}
+.r-a4 .a4-footer-mono{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--silver)}
+
+/* ===== 200x80mm PREMIUM ===== */
+.r-200x80{width:200mm;height:80mm;display:flex;overflow:hidden;background:#fff}
+.r-200x80 .r-left-strip{width:46mm;background:linear-gradient(180deg,var(--ink) 0%,#1e293b 100%);color:#fff;padding:4mm;display:flex;flex-direction:column;justify-content:space-between;flex-shrink:0;position:relative}
+.r-200x80 .r-left-strip::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold))}
 .r-200x80 .rs-company{font-size:11px;font-weight:900;line-height:1.2}
-.r-200x80 .rs-phone{font-size:7px;color:rgba(255,255,255,.5);font-family:'IBM Plex Mono',monospace;margin-top:1mm}
-.r-200x80 .rs-inv-label{font-size:5px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px}
-.r-200x80 .rs-inv-num{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:#e8c97a}
-.r-200x80 .rs-barcode svg{width:100%;height:16mm;display:block}
-.r-200x80 .rs-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #e8e4db;padding-bottom:2mm;margin-bottom:2mm}
-.r-200x80 .rs-flow{display:flex;align-items:center;gap:3mm}
-.r-200x80 .rs-city-block{font-size:10px;font-weight:800;color:#0a0a0f}
-.r-200x80 .rs-city-sub{font-size:7px;color:#64748b}
-.r-200x80 .rs-arrow{font-size:14px;color:#e2e8f0}
-.r-200x80 .rs-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm}
-.r-200x80 .rs-cell{background:#f8f7f4;border:1px solid #e8e4db;border-radius:1.5mm;padding:2mm;text-align:center}
-.r-200x80 .rs-cell-label{font-size:5.5px;color:#94a3b8;font-weight:700;text-transform:uppercase}
-.r-200x80 .rs-cell-val{font-size:9px;font-weight:800;color:#0a0a0f;margin-top:.5mm}
-.r-200x80 .rs-footer{display:flex;justify-content:space-between;align-items:center;font-size:7px;color:#64748b;border-top:1px solid #e8e4db;padding-top:1.5mm}
+.r-200x80 .rs-phone{font-size:6.5px;color:rgba(255,255,255,.55);font-family:'IBM Plex Mono',monospace;margin-top:1mm}
+.r-200x80 .rs-inv-label{font-size:5px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px}
+.r-200x80 .rs-inv-num{font-family:'IBM Plex Mono',monospace;font-size:8.5px;font-weight:800;color:var(--gold);letter-spacing:.5px}
+.r-200x80 .rs-barcode svg{width:100%;height:13mm;display:block}
+.r-200x80 .r-right-body{flex:1;padding:4mm;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(180deg,#ffffff 0%,#fafaf8 100%)}
+.r-200x80 .rs-header{display:flex;justify-content:space-between;align-items:flex-start;gap:5mm;border-bottom:1px solid var(--line);padding-bottom:2.5mm;margin-bottom:2.5mm}
+.r-200x80 .rs-flow{display:flex;align-items:center;gap:3mm;min-width:0}
+.r-200x80 .rs-city-block{font-size:9.5px;font-weight:900;color:var(--ink);line-height:1.15}
+.r-200x80 .rs-city-sub{font-size:6.5px;color:var(--ink3);line-height:1.3;max-width:26mm;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.r-200x80 .rs-arrow{font-size:14px;color:var(--gold);flex-shrink:0}
+.r-200x80 .rs-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm;margin-bottom:2mm}
+.r-200x80 .rs-cell{background:#fafaf8;border:1px solid var(--line);border-radius:2mm;padding:2mm;text-align:center}
+.r-200x80 .rs-cell-label{font-size:5px;color:var(--silver);font-weight:800;text-transform:uppercase;letter-spacing:.4px}
+.r-200x80 .rs-cell-val{font-size:8.5px;font-weight:900;color:var(--ink);margin-top:.5mm;line-height:1.15}
+.r-200x80 .rs-cell-val.mono{font-family:'IBM Plex Mono',monospace}
+.r-200x80 .rs-cell-val.red{color:var(--danger)}
+.r-200x80 .rs-footer{display:flex;justify-content:space-between;align-items:center;gap:3mm;font-size:6.5px;color:var(--ink3);border-top:1px solid var(--line);padding-top:1.5mm}
+.r-200x80 .rs-footer span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* 100x150mm */
-.r-100x150{width:100mm;height:150mm;padding:0;overflow:hidden;display:flex;flex-direction:column}
-.r-100x150 .rp-header{background:#0a0a0f;padding:4mm;flex-shrink:0}
+/* ===== 100x150mm PREMIUM ===== */
+.r-100x150{width:100mm;height:150mm;padding:0;overflow:hidden;display:flex;flex-direction:column;background:#fff}
+.r-100x150 .rp-header{background:var(--ink);padding:4mm;flex-shrink:0;position:relative}
+.r-100x150 .rp-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold))}
 .r-100x150 .rp-company{font-size:10px;font-weight:900;color:#fff;margin-bottom:.5mm}
-.r-100x150 .rp-phone{font-size:6.5px;color:rgba(255,255,255,.45);font-family:'IBM Plex Mono',monospace}
+.r-100x150 .rp-phone{font-size:6px;color:rgba(255,255,255,.5);font-family:'IBM Plex Mono',monospace}
 .r-100x150 .rp-inv{display:flex;justify-content:space-between;align-items:center;margin-top:2mm}
-.r-100x150 .rp-inv-label{font-size:5.5px;color:rgba(255,255,255,.4);text-transform:uppercase}
-.r-100x150 .rp-inv-val{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:#e8c97a}
-.r-100x150 .rp-gold{height:2px;background:linear-gradient(90deg,#c9a84c,#e8c97a,#c9a84c)}
-.r-100x150 .rp-body{padding:3mm;flex:1;overflow:hidden;display:flex;flex-direction:column;gap:2mm}
-.r-100x150 .rp-party{background:#f8f7f4;border:1px solid #e8e4db;border-radius:2mm;padding:2.5mm}
-.r-100x150 .rp-party-label{font-size:5.5px;color:#94a3b8;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:1.5mm}
-.r-100x150 .rp-party-city{font-size:10px;font-weight:900;color:#0a0a0f}
-.r-100x150 .rp-party-name{font-size:7px;color:#64748b;margin-top:.5mm}
-.r-100x150 .rp-party-phone{font-size:6.5px;color:#64748b;font-family:'IBM Plex Mono',monospace;margin-top:.5mm}
+.r-100x150 .rp-inv-label{font-size:5px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.5px}
+.r-100x150 .rp-inv-val{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:800;color:var(--gold);letter-spacing:.5px}
+.r-100x150 .rp-body{padding:3mm;flex:1;overflow:hidden;display:flex;flex-direction:column;gap:2mm;background:linear-gradient(180deg,#ffffff 0%,#fafaf8 100%)}
+.r-100x150 .rp-party{background:#fafaf8;border:1px solid var(--line);border-radius:2mm;padding:2.5mm}
+.r-100x150 .rp-party-label{font-size:5.5px;color:var(--silver);font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:1.5mm}
+.r-100x150 .rp-party-city{font-size:9.5px;font-weight:900;color:var(--ink)}
+.r-100x150 .rp-party-name{font-size:6.5px;color:var(--ink3);margin-top:.5mm}
+.r-100x150 .rp-party-phone{font-size:6px;color:var(--ink3);font-family:'IBM Plex Mono',monospace;margin-top:.5mm}
 .r-100x150 .rp-grid2{display:grid;grid-template-columns:1fr 1fr;gap:2mm}
-.r-100x150 .rp-stat{background:#f8f7f4;border:1px solid #e8e4db;border-radius:2mm;padding:2mm;text-align:center}
-.r-100x150 .rp-stat-label{font-size:5px;color:#94a3b8;font-weight:700;text-transform:uppercase}
-.r-100x150 .rp-stat-val{font-size:9px;font-weight:800;color:#0a0a0f;margin-top:.5mm}
-.r-100x150 .rp-cod{background:#fef2f2;border:1px solid #fecaca;border-radius:2mm;padding:2mm;text-align:center}
-.r-100x150 .rp-cod-label{font-size:5.5px;color:#dc2626;font-weight:800;text-transform:uppercase;letter-spacing:.3px}
-.r-100x150 .rp-cod-val{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:800;color:#dc2626;margin-top:.5mm}
-.r-100x150 .rp-barcode{flex-shrink:0;padding:2mm 3mm;border-top:1px solid #e8e4db}
-.r-100x150 .rp-barcode svg{width:100%;height:13mm;display:block}
-.r-100x150 .rp-barcode-num{font-family:'IBM Plex Mono',monospace;font-size:6px;color:#64748b;text-align:center;margin-top:1mm}
+.r-100x150 .rp-stat{background:#fafaf8;border:1px solid var(--line);border-radius:2mm;padding:2mm;text-align:center}
+.r-100x150 .rp-stat-label{font-size:5px;color:var(--silver);font-weight:800;text-transform:uppercase;letter-spacing:.3px}
+.r-100x150 .rp-stat-val{font-size:8.5px;font-weight:900;color:var(--ink);margin-top:.5mm}
+.r-100x150 .rp-stat-val.mono{font-family:'IBM Plex Mono',monospace}
+.r-100x150 .rp-cod{background:#fef2f2;border:1px solid #fecaca;border-radius:2mm;padding:2.5mm;text-align:center}
+.r-100x150 .rp-cod-label{font-size:5.5px;color:var(--danger);font-weight:800;text-transform:uppercase;letter-spacing:.3px}
+.r-100x150 .rp-cod-val{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:800;color:var(--danger);margin-top:.5mm}
+.r-100x150 .rp-barcode{flex-shrink:0;padding:2mm 3mm;border-top:1px solid var(--line);background:#fafaf8}
+.r-100x150 .rp-barcode svg{width:100%;height:10mm;display:block}
+.r-100x150 .rp-barcode-num{font-family:'IBM Plex Mono',monospace;font-size:6px;color:var(--ink3);text-align:center;margin-top:1mm;letter-spacing:.5px}
 
-/* 100x70mm */
-.r-100x70{width:100mm;height:70mm;display:flex;overflow:hidden}
-.r-100x70 .r7-strip{width:24mm;background:#0a0a0f;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:3mm 2mm;flex-shrink:0}
-.r-100x70 .r7-strip-text{writing-mode:vertical-lr;transform:rotate(180deg);font-size:7px;font-weight:900;color:rgba(255,255,255,.25);letter-spacing:2px;text-transform:uppercase}
-.r-100x70 .r7-strip-inv{writing-mode:vertical-lr;transform:rotate(180deg);font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;color:#e8c97a;letter-spacing:1px}
-.r-100x70 .r7-body{flex:1;padding:3mm;display:flex;flex-direction:column;justify-content:space-between}
-.r-100x70 .r7-top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #e8e4db;padding-bottom:2mm;margin-bottom:2mm}
-.r-100x70 .r7-company{font-size:9px;font-weight:900;color:#0a0a0f}
-.r-100x70 .r7-date{font-size:6.5px;font-family:'IBM Plex Mono',monospace;color:#94a3b8}
-.r-100x70 .r7-flow{display:flex;align-items:center;gap:2mm;margin-bottom:2mm}
-.r-100x70 .r7-city{font-size:10px;font-weight:900;color:#0a0a0f}
-.r-100x70 .r7-city-sub{font-size:6px;color:#64748b;margin-top:.5mm}
-.r-100x70 .r7-arrow{font-size:10px;color:#e2e8f0;flex:1;text-align:center}
-.r-100x70 .r7-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5mm;margin-bottom:2mm}
-.r-100x70 .r7-cell{background:#f8f7f4;border:1px solid #e8e4db;border-radius:1.5mm;padding:1.5mm;text-align:center}
-.r-100x70 .r7-cell-label{font-size:5px;color:#94a3b8;font-weight:700;text-transform:uppercase}
-.r-100x70 .r7-cell-val{font-size:8.5px;font-weight:800;color:#0a0a0f;margin-top:.5mm}
-.r-100x70 .r7-cell-val.red{color:#dc2626}
-.r-100x70 .r7-barcode svg{width:100%;height:11mm;display:block}
 
-/* RIGHT PANEL */
-.right-panel{background:#fff;border-right:1px solid #e2e8f0;overflow-y:auto;display:flex;flex-direction:column}
-.right-header{padding:18px;border-bottom:1px solid #e2e8f0}
-.right-header h2{font-size:16px;font-weight:900;color:#0a0a0f;margin-bottom:2px}
-.right-header p{font-size:11px;color:#94a3b8}
-.right-search{padding:12px 16px;border-bottom:1px solid #e2e8f0}
-.right-search input{width:100%;background:#f8f7f4;border:1px solid #e2e8f0;border-radius:10px;padding:9px 12px;font-size:12px;font-family:'Cairo',sans-serif;outline:none;color:#0a0a0f;transition:.2s}
-.right-search input:focus{border-color:#c9a84c;box-shadow:0 0 0 3px rgba(201,168,76,.1)}
-.right-actions{padding:10px 16px;border-bottom:1px solid #e2e8f0;display:flex;gap:6px}
+/* ===== RIGHT PANEL ===== */
+.right-panel{background:#fff;border-right:1px solid var(--line);overflow-y:auto;display:flex;flex-direction:column}
+.right-header{padding:16px;border-bottom:1px solid var(--line)}
+.right-header h2{font-size:15px;font-weight:900;color:var(--ink);margin-bottom:2px}
+.right-header p{font-size:11px;color:var(--silver)}
+.right-search{padding:10px 14px;border-bottom:1px solid var(--line)}
+.right-search input{width:100%;background:#fafaf8;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:12px;font-family:'Cairo',sans-serif;outline:none;color:var(--ink);transition:.2s}
+.right-search input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(199,156,60,.1)}
+.right-actions{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;gap:6px}
 .right-actions .btn{flex:1}
-.history-list{flex:1;padding:12px;overflow-y:auto}
-.hist-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;color:#94a3b8;text-align:center;border:1.5px dashed #e2e8f0;border-radius:12px;margin-top:8px}
-.hist-empty-icon{font-size:32px;margin-bottom:8px;opacity:.4}
-.hist-empty-text{font-size:12px}
-.hist-item{border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;transition:.18s;background:#fff}
-.hist-item:hover{border-color:#c9a84c;box-shadow:0 2px 12px rgba(201,168,76,.12)}
-.hist-item.active{border-color:#0a0a0f;box-shadow:0 0 0 3px rgba(10,10,15,.06)}
-.hist-num{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:#0a0a0f;margin-bottom:3px}
-.hist-route{font-size:11px;color:#64748b;margin-bottom:2px}
-.hist-meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
-.hist-amount{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:#dc2626}
-.hist-date{font-size:10px;color:#94a3b8}
+.history-list{flex:1;padding:10px;overflow-y:auto}
+.hist-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 14px;color:var(--silver);text-align:center;border:1.5px dashed var(--line);border-radius:12px;margin-top:6px}
+.hist-empty-icon{font-size:28px;margin-bottom:6px;opacity:.4}
+.hist-empty-text{font-size:11px}
+.hist-item{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;transition:.18s;background:#fff}
+.hist-item:hover{border-color:var(--gold);box-shadow:0 2px 10px rgba(199,156,60,.1)}
+.hist-item.active{border-color:var(--ink);box-shadow:0 0 0 3px rgba(15,23,42,.06)}
+.hist-num{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:800;color:var(--ink);margin-bottom:2px}
+.hist-route{font-size:11px;color:var(--ink3);margin-bottom:2px}
+.hist-meta{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.hist-amount{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:800;color:var(--danger)}
+.hist-date{font-size:10px;color:var(--silver)}
 .hist-actions{display:flex;gap:4px;margin-top:8px}
 .hist-actions .btn{flex:1;font-size:11px;padding:6px 10px}
 
-/* OVERLAY */
-.overlay{position:fixed;inset:0;background:rgba(10,10,15,.85);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+/* ===== OVERLAYS ===== */
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.85);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 .overlay.active{display:flex}
 .overlay-box{background:#fff;border-radius:20px;padding:24px;width:min(90vw,480px);box-shadow:0 20px 60px rgba(0,0,0,.25)}
-.overlay-title{font-size:18px;font-weight:900;color:#0a0a0f;margin-bottom:4px}
-.overlay-sub{font-size:12px;color:#94a3b8;margin-bottom:16px}
+.overlay-title{font-size:17px;font-weight:900;color:var(--ink);margin-bottom:4px}
+.overlay-sub{font-size:11px;color:var(--silver);margin-bottom:16px}
 .overlay-actions{display:flex;gap:8px;margin-top:16px}
 .overlay-actions .btn{flex:1}
-textarea.overlay-ta{width:100%;min-height:160px;border:1px solid #e2e8f0;border-radius:12px;padding:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#0a0a0f;background:#f8f7f4;outline:none;resize:vertical}
-textarea.overlay-ta:focus{border-color:#c9a84c}
+textarea.overlay-ta{width:100%;min-height:140px;border:1px solid var(--line);border-radius:12px;padding:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink);background:#fafaf8;outline:none;resize:vertical}
+textarea.overlay-ta:focus{border-color:var(--gold)}
 
-/* SCANNER */
-.scanner-box{background:#0a0a0f;border:1px solid #1e293b;border-radius:20px;padding:20px;width:min(90vw,380px);color:#e2e8f0;box-shadow:0 20px 60px rgba(0,0,0,.45)}
-.scanner-frame{position:relative;width:100%;aspect-ratio:1;border-radius:14px;overflow:hidden;border:2px solid #c9a84c;margin-top:14px}
+.scanner-box{background:var(--ink);border:1px solid #334155;border-radius:20px;padding:20px;width:min(90vw,380px);color:#e2e8f0;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.scanner-frame{position:relative;width:100%;aspect-ratio:1;border-radius:14px;overflow:hidden;border:2px solid var(--gold);margin-top:14px}
 .scanner-frame video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
-.scanner-line{position:absolute;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,#e8c97a,transparent);animation:scan 2s ease-in-out infinite}
+.scanner-line{position:absolute;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);animation:scan 2s ease-in-out infinite}
 @keyframes scan{0%{top:10%;opacity:.3}50%{top:88%;opacity:1}100%{top:10%;opacity:.3}}
 
-.count-badge{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 8px;border-radius:99px;font-size:11px;font-weight:800;background:#0a0a0f;color:#e8c97a}
+.count-badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 7px;border-radius:99px;font-size:11px;font-weight:800;background:var(--ink);color:var(--gold2)}
 
+/* ============================================================
+   PRINT STYLES — PROFESSIONAL INVOICE PRINTING
+   ============================================================ */
 @media print{
-@page{margin:0;size:80mm auto}
-html,body{width:80mm!important;height:auto!important;background:#fff!important;overflow:visible!important}
-body *{visibility:hidden!important}
-#printRoot,#printRoot *{visibility:visible!important}
-#printRoot{display:block!important;position:fixed;inset:0;margin:0;padding:0;background:#fff!important}
-.no-print{display:none!important}
-.receipt{box-shadow:none!important;border:0!important}
+@page{margin:0}
+
+/* Hide everything except print root */
+body *{visibility:hidden !important}
+#printRoot,#printRoot *{visibility:visible !important}
+
+/* Show print root */
+#printRoot{display:block !important;position:fixed;inset:0;margin:0;padding:0;background:#fff !important;z-index:99999;overflow:visible}
+.no-print{display:none !important}
+
+/* Reset receipt styles for clean print */
+.receipt{box-shadow:none !important;border:0 !important;margin:0 !important;transform:none !important;position:static !important}
+
+/* ===== THERMAL 80mm PRINT ===== */
+.receipt.r-thermal{width:80mm !important;max-width:80mm !important;min-height:auto !important;height:auto !important}
+.receipt.r-thermal .r-top-band{height:2pt !important}
+.receipt.r-thermal .r-header{padding:3mm 3.5mm 2.5mm !important}
+.receipt.r-thermal .r-hlogo{width:12mm !important;height:12mm !important;border-radius:2mm !important}
+.receipt.r-thermal .r-hname{font-size:10pt !important}
+.receipt.r-thermal .r-hsub{font-size:6pt !important}
+.receipt.r-thermal .r-hnum-label{font-size:5pt !important}
+.receipt.r-thermal .r-hnum-val{font-size:8pt !important}
+.receipt.r-thermal .r-body{padding:2.5mm 3.5mm 2mm !important}
+.receipt.r-thermal .r-barcode-wrap{padding:1.5mm !important;margin-bottom:2mm !important}
+.receipt.r-thermal .r-barcode-wrap svg{height:10mm !important}
+.receipt.r-thermal .r-barcode-num{font-size:6pt !important}
+.receipt.r-thermal .r-parties{gap:1.5mm !important;margin-bottom:2mm !important}
+.receipt.r-thermal .r-party{padding:2mm !important;border-radius:2mm !important}
+.receipt.r-thermal .r-party-label{font-size:5.5pt !important;margin-bottom:1.5mm !important}
+.receipt.r-thermal .r-k{font-size:5pt !important}
+.receipt.r-thermal .r-v{font-size:6.5pt !important}
+.receipt.r-thermal .r-details{padding:2mm !important;border-radius:2mm !important;margin-bottom:2mm !important}
+.receipt.r-thermal .r-detail-label{font-size:4.5pt !important}
+.receipt.r-thermal .r-detail-val{font-size:7pt !important}
+.receipt.r-thermal .r-delivery-type{font-size:6pt !important;padding:1mm !important;margin-bottom:1.5mm !important}
+.receipt.r-thermal .r-amounts{gap:1.5mm !important;margin-bottom:1.5mm !important}
+.receipt.r-thermal .r-amount-box{padding:2mm !important;border-radius:2mm !important}
+.receipt.r-thermal .r-amount-label{font-size:5.5pt !important}
+.receipt.r-thermal .r-amount-val{font-size:9pt !important}
+.receipt.r-thermal .r-notes-box{padding:2mm !important;border-radius:2mm !important;margin-bottom:1.5mm !important}
+.receipt.r-thermal .r-notes-title{font-size:5.5pt !important}
+.receipt.r-thermal .r-notes-text{font-size:6pt !important}
+.receipt.r-thermal .r-footer{padding:2mm 3.5mm !important}
+.receipt.r-thermal .r-footer-barcode svg{height:8mm !important;width:60% !important}
+.receipt.r-thermal .r-footer-info{font-size:5pt !important}
+.receipt.r-thermal .r-footer-inv{font-size:5.5pt !important}
+
+/* ===== A4 PRINT ===== */
+.receipt.r-a4{width:210mm !important;min-height:297mm !important;max-width:210mm !important}
+.receipt.r-a4 .a4-top-band{height:3pt !important}
+.receipt.r-a4 .a4-header{padding:10mm 14mm 7mm !important}
+.receipt.r-a4 .a4-logo{width:16mm !important;height:16mm !important;border-radius:3mm !important}
+.receipt.r-a4 .a4-company-name{font-size:20pt !important}
+.receipt.r-a4 .a4-company-info{font-size:8pt !important}
+.receipt.r-a4 .a4-inv-label{font-size:7pt !important}
+.receipt.r-a4 .a4-inv-num{font-size:16pt !important}
+.receipt.r-a4 .a4-barcode{padding:1.5mm !important}
+.receipt.r-a4 .a4-barcode svg{width:45mm !important;height:12mm !important}
+.receipt.r-a4 .a4-barcode-num{font-size:7pt !important}
+.receipt.r-a4 .a4-content{padding:6mm 14mm !important}
+.receipt.r-a4 .a4-section-title{font-size:8pt !important;margin-bottom:3mm !important}
+.receipt.r-a4 .a4-parties{gap:5mm !important;margin-bottom:6mm !important}
+.receipt.r-a4 .a4-party{padding:3mm !important;border-radius:2.5mm !important}
+.receipt.r-a4 .a4-party-label{font-size:7pt !important;margin-bottom:2mm !important}
+.receipt.r-a4 .a4-party-name{font-size:12pt !important;margin-bottom:1.5mm !important}
+.receipt.r-a4 .a4-party-detail{font-size:8.5pt !important;margin-bottom:1mm !important}
+.receipt.r-a4 .a4-shipment{gap:3mm !important;margin-bottom:5mm !important}
+.receipt.r-a4 .a4-ship-cell{padding:2.5mm !important;border-radius:2mm !important}
+.receipt.r-a4 .a4-ship-label{font-size:6.5pt !important;margin-bottom:1mm !important}
+.receipt.r-a4 .a4-ship-val{font-size:11pt !important}
+.receipt.r-a4 .a4-delivery-type{font-size:9pt !important;padding:1.5mm !important;margin-bottom:4mm !important}
+.receipt.r-a4 .a4-financials{gap:3mm !important;margin-bottom:5mm !important}
+.receipt.r-a4 .a4-fin-box{padding:3mm !important;border-radius:2.5mm !important}
+.receipt.r-a4 .a4-fin-label{font-size:7pt !important;margin-bottom:1.5mm !important}
+.receipt.r-a4 .a4-fin-val{font-size:18pt !important}
+.receipt.r-a4 .a4-notes{padding:3mm !important;border-radius:2.5mm !important;margin-bottom:5mm !important}
+.receipt.r-a4 .a4-notes-label{font-size:7pt !important;margin-bottom:1.5mm !important}
+.receipt.r-a4 .a4-notes-text{font-size:9pt !important}
+.receipt.r-a4 .a4-footer{padding:5mm 14mm !important}
+.receipt.r-a4 .a4-footer-brand{font-size:8pt !important}
+.receipt.r-a4 .a4-footer-mono{font-size:7pt !important}
+
+/* ===== 200x80 PRINT ===== */
+.receipt.r-200x80{width:200mm !important;height:80mm !important;max-width:200mm !important;max-height:80mm !important}
+.receipt.r-200x80 .r-left-strip{width:44mm !important;padding:3.5mm !important}
+.receipt.r-200x80 .r-left-strip::after{height:2pt !important}
+.receipt.r-200x80 .rs-company{font-size:10pt !important}
+.receipt.r-200x80 .rs-phone{font-size:6pt !important}
+.receipt.r-200x80 .rs-inv-label{font-size:4.5pt !important}
+.receipt.r-200x80 .rs-inv-num{font-size:8pt !important}
+.receipt.r-200x80 .rs-barcode svg{height:11mm !important}
+.receipt.r-200x80 .r-right-body{padding:3.5mm !important}
+.receipt.r-200x80 .rs-header{padding-bottom:2mm !important;margin-bottom:2mm !important}
+.receipt.r-200x80 .rs-city-block{font-size:9pt !important}
+.receipt.r-200x80 .rs-city-sub{font-size:6pt !important}
+.receipt.r-200x80 .rs-arrow{font-size:12pt !important}
+.receipt.r-200x80 .rs-grid4{gap:1.5mm !important;margin-bottom:1.5mm !important}
+.receipt.r-200x80 .rs-cell{padding:1.5mm !important;border-radius:1.5mm !important}
+.receipt.r-200x80 .rs-cell-label{font-size:4.5pt !important}
+.receipt.r-200x80 .rs-cell-val{font-size:8pt !important}
+.receipt.r-200x80 .rs-footer{padding-top:1.2mm !important;font-size:6pt !important}
+
+/* ===== 100x150 PRINT ===== */
+.receipt.r-100x150{width:100mm !important;height:150mm !important;max-width:100mm !important;max-height:150mm !important}
+.receipt.r-100x150 .rp-header{padding:3.5mm !important}
+.receipt.r-100x150 .rp-header::after{height:1.5pt !important}
+.receipt.r-100x150 .rp-company{font-size:9pt !important}
+.receipt.r-100x150 .rp-phone{font-size:5.5pt !important}
+.receipt.r-100x150 .rp-inv{margin-top:1.5mm !important}
+.receipt.r-100x150 .rp-inv-label{font-size:4.5pt !important}
+.receipt.r-100x150 .rp-inv-val{font-size:7pt !important}
+.receipt.r-100x150 .rp-body{padding:2.5mm !important;gap:1.5mm !important}
+.receipt.r-100x150 .rp-party{padding:2mm !important;border-radius:1.5mm !important}
+.receipt.r-100x150 .rp-party-label{font-size:5pt !important;margin-bottom:1mm !important}
+.receipt.r-100x150 .rp-party-city{font-size:9pt !important}
+.receipt.r-100x150 .rp-party-name{font-size:6pt !important}
+.receipt.r-100x150 .rp-party-phone{font-size:5.5pt !important}
+.receipt.r-100x150 .rp-grid2{gap:1.5mm !important}
+.receipt.r-100x150 .rp-stat{padding:1.5mm !important;border-radius:1.5mm !important}
+.receipt.r-100x150 .rp-stat-label{font-size:4.5pt !important}
+.receipt.r-100x150 .rp-stat-val{font-size:8pt !important}
+.receipt.r-100x150 .rp-cod{padding:2mm !important;border-radius:1.5mm !important}
+.receipt.r-100x150 .rp-cod-label{font-size:5pt !important}
+.receipt.r-100x150 .rp-cod-val{font-size:10pt !important}
+.receipt.r-100x150 .rp-barcode{padding:1.5mm 2.5mm !important}
+.receipt.r-100x150 .rp-barcode svg{height:9mm !important}
+.receipt.r-100x150 .rp-barcode-num{font-size:5.5pt !important}
+
+/* ===== 100x70 PRINT ===== */
+.receipt.r-100x70{width:100mm !important;height:70mm !important;max-width:100mm !important;max-height:70mm !important}
+.receipt.r-100x70 .r7-top-band{height:2pt !important}
+.receipt.r-100x70 .r7-header{padding:2mm 2.5mm 1.5mm !important}
+.receipt.r-100x70 .r7-hlogo{width:9mm !important;height:9mm !important;border-radius:1.5mm !important}
+.receipt.r-100x70 .r7-hname{font-size:8pt !important}
+.receipt.r-100x70 .r7-hsub{font-size:5pt !important}
+.receipt.r-100x70 .r7-hnum-label{font-size:4pt !important}
+.receipt.r-100x70 .r7-hnum-val{font-size:6.5pt !important}
+.receipt.r-100x70 .r7-body{padding:1.5mm 2.5mm !important;gap:1.2mm !important}
+.receipt.r-100x70 .r7-barcode-wrap{padding:1.2mm !important;border-radius:1.2mm !important}
+.receipt.r-100x70 .r7-barcode-wrap svg{height:8mm !important}
+.receipt.r-100x70 .r7-barcode-num{font-size:5pt !important}
+.receipt.r-100x70 .r7-parties{gap:1.2mm !important}
+.receipt.r-100x70 .r7-party{padding:1.5mm !important;border-radius:1.2mm !important}
+.receipt.r-100x70 .r7-party-label{font-size:4.5pt !important;margin-bottom:.8mm !important}
+.receipt.r-100x70 .r7-k{font-size:4pt !important}
+.receipt.r-100x70 .r7-v{font-size:5.5pt !important}
+.receipt.r-100x70 .r7-details{padding:1.2mm !important;border-radius:1.2mm !important}
+.receipt.r-100x70 .r7-detail-label{font-size:3.5pt !important}
+.receipt.r-100x70 .r7-detail-val{font-size:5.5pt !important}
+.receipt.r-100x70 .r7-delivery-type{font-size:5pt !important;padding:.8mm !important}
+.receipt.r-100x70 .r7-amounts{gap:1.2mm !important}
+.receipt.r-100x70 .r7-amount-box{padding:1.2mm !important;border-radius:1.2mm !important}
+.receipt.r-100x70 .r7-amount-label{font-size:4.5pt !important}
+.receipt.r-100x70 .r7-amount-val{font-size:7pt !important}
+.receipt.r-100x70 .r7-footer{padding:1.2mm 2.5mm !important}
+.receipt.r-100x70 .r7-footer-info{font-size:4.5pt !important}
+.receipt.r-100x70 .r7-footer-inv{font-size:5pt !important}
+}
+/* ===========================
+   100 × 70 LABEL
+=========================== */
+
+.r-100x70{
+    width:100mm;
+    height:73mm;
+    background:#fff;
+    color:#111827;
+    border:1px solid #dbe2ea;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    font-family:'Cairo',sans-serif;
+    position:relative;
+}
+
+.r7-top-band{
+    height:3mm;
+    background:linear-gradient(90deg,#0f172a,#334155,#0f172a);
+    flex-shrink:0;
+}
+
+/* HEADER */
+.r7-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:4px;
+    padding:4px 6px;
+    border-bottom:1px dashed #cbd5e1;
+    flex-shrink:0;
+}
+
+.r7-hlogo{
+    width:30px;
+    height:30px;
+    border:1px solid #dbe2ea;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    background:#fff;
+    flex-shrink:0;
+}
+
+.r7-hlogo i{
+    font-size:13px;
+    color:#334155;
+}
+
+.r7-hmeta{
+    flex:1;
+    min-width:0;
+}
+
+.r7-hname{
+    font-size:10px;
+    font-weight:900;
+    color:#0f172a;
+    line-height:1.1;
+}
+
+.r7-hsub{
+    font-size:7px;
+    color:#64748b;
+    line-height:1.1;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.r7-hnum{
+    text-align:left;
+    flex-shrink:0;
+}
+
+.r7-hnum-label{
+    font-size:6px;
+    color:#64748b;
+    font-weight:700;
+}
+
+.r7-hnum-val{
+    font-size:8px;
+    font-weight:900;
+    font-family:'IBM Plex Mono',monospace;
+    color:#111827;
+}
+
+/* BODY */
+
+.r7-body{
+    flex:1;
+    padding:4px 6px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    overflow:hidden;
+}
+
+/* BARCODE */
+
+.r7-barcode-wrap{
+    text-align:center;
+    padding-bottom:2px;
+    border-bottom:1px dashed #e2e8f0;
+}
+
+.r7-barcode-wrap svg{
+    max-width:100%;
+    height:18px;
+}
+
+.r7-barcode-num{
+    font-size:6px;
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:700;
+    color:#475569;
+}
+
+/* PARTIES */
+
+.r7-parties{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:4px;
+}
+
+.r7-party{
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:3px;
+    background:#fafafa;
+}
+
+.r7-party-label{
+    font-size:6px;
+    font-weight:800;
+    margin-bottom:2px;
+    display:flex;
+    align-items:center;
+    gap:3px;
+}
+
+.r7-party-label.snd{
+    color:#2563eb;
+}
+
+.r7-party-label.rcv{
+    color:#10b981;
+}
+
+.r7-kv{
+    display:flex;
+    justify-content:space-between;
+    gap:3px;
+    margin-bottom:1px;
+}
+
+.r7-k{
+    font-size:5.5px;
+    color:#64748b;
+    font-weight:700;
+    white-space:nowrap;
+}
+
+.r7-v{
+    font-size:5.8px;
+    color:#111827;
+    font-weight:800;
+    text-align:left;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.mono{
+    font-family:'IBM Plex Mono',monospace;
+}
+
+/* DETAILS */
+
+.r7-details-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:3px;
+}
+
+.r7-detail-cell{
+    border:1px solid #e2e8f0;
+    border-radius:6px;
+    padding:2px;
+    text-align:center;
+    background:#fff;
+}
+
+.r7-detail-label{
+    font-size:5.5px;
+    color:#64748b;
+    font-weight:700;
+}
+
+.r7-detail-val{
+    font-size:6px;
+    font-weight:900;
+    color:#111827;
+    margin-top:1px;
+}
+
+/* DELIVERY */
+
+.r7-delivery-type{
+    text-align:center;
+    font-size:6px;
+    font-weight:800;
+    color:#334155;
+    background:#f8fafc;
+    border-radius:6px;
+    padding:2px;
+}
+
+/* AMOUNTS */
+
+.r7-amounts{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:4px;
+}
+
+.r7-amount-box{
+    border-radius:8px;
+    padding:4px;
+    text-align:center;
+}
+
+.r7-amount-box.shipping{
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+}
+
+.r7-amount-box.cod{
+    background:#ecfdf5;
+    border:1px solid #bbf7d0;
+}
+
+.r7-amount-label{
+    font-size:5.5px;
+    font-weight:800;
+}
+
+.r7-amount-val{
+    font-size:8px;
+    font-weight:900;
+    margin-top:2px;
+    font-family:'IBM Plex Mono',monospace;
+}
+
+/* FOOTER */
+
+.r7-footer{
+    border-top:1px dashed #cbd5e1;
+    padding:3px 6px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:5.5px;
+    flex-shrink:0;
+}
+
+.r7-footer-info{
+    font-weight:800;
+    color:#334155;
+}
+
+.r7-footer-inv{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:900;
+    color:#111827;
 }
 .no-print-shell{display:none}
-/* =========================
-   200x80 — Premium Wide Layout
-========================= */
-.r-200x80{
-  width:200mm;
-  height:80mm;
-  display:flex;
-  overflow:hidden;
-  background:#fff;
-  border-radius:0;
-}
-
-.r-200x80 .r-left-strip{
-  width:48mm;
-  flex-shrink:0;
-  background:linear-gradient(180deg,#0a0a0f 0%,#111827 45%,#0a0a0f 100%);
-  color:#fff;
-  padding:4mm 4mm 3.5mm;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  position:relative;
-}
-
-.r-200x80 .r-left-strip::after{
-  content:'';
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  height:2px;
-  background:linear-gradient(90deg,#c9a84c,#e8c97a,#c9a84c);
-}
-
-.r-200x80 .rs-company{
-  font-size:11.5px;
-  font-weight:900;
-  line-height:1.25;
-  color:#fff;
-}
-
-.r-200x80 .rs-phone{
-  font-size:7px;
-  color:rgba(255,255,255,.56);
-  font-family:'IBM Plex Mono',monospace;
-  margin-top:1mm;
-}
-
-.r-200x80 .rs-inv-label{
-  font-size:5.5px;
-  color:rgba(255,255,255,.42);
-  text-transform:uppercase;
-  letter-spacing:1px;
-  margin-bottom:1mm;
-}
-
-.r-200x80 .rs-inv-num{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:9.2px;
-  font-weight:800;
-  color:#e8c97a;
-  letter-spacing:.4px;
-}
-
-.r-200x80 .rs-barcode svg{
-  width:100%;
-  height:14mm;
-  display:block;
-}
-
-.r-200x80 .r-right-body{
-  flex:1;
-  padding:4mm 4.5mm 3.5mm;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  background:
-    radial-gradient(circle at top right, rgba(201,168,76,.08), transparent 28%),
-    linear-gradient(180deg,#ffffff 0%,#fbfbf8 100%);
-}
-
-.r-200x80 .rs-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:6mm;
-  border-bottom:1px solid #e8e4db;
-  padding-bottom:2.5mm;
-  margin-bottom:2.5mm;
-}
-
-.r-200x80 .rs-flow{
-  display:flex;
-  align-items:center;
-  gap:3mm;
-  min-width:0;
-}
-
-.r-200x80 .rs-city-block{
-  font-size:10px;
-  font-weight:900;
-  color:#0a0a0f;
-  line-height:1.15;
-}
-
-.r-200x80 .rs-city-sub{
-  font-size:7px;
-  color:#64748b;
-  line-height:1.3;
-  max-width:26mm;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-.r-200x80 .rs-arrow{
-  font-size:15px;
-  color:#c9a84c;
-  flex-shrink:0;
-  transform:translateY(-1px);
-}
-
-.r-200x80 .rs-grid4{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:2mm;
-  margin-bottom:2.5mm;
-}
-
-.r-200x80 .rs-cell{
-  background:#f8f7f4;
-  border:1px solid #e8e4db;
-  border-radius:2mm;
-  padding:2.2mm 1.8mm;
-  text-align:center;
-  box-shadow:0 1px 0 rgba(255,255,255,.9) inset;
-}
-
-.r-200x80 .rs-cell-label{
-  font-size:5.5px;
-  color:#94a3b8;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.45px;
-  margin-bottom:.8mm;
-}
-
-.r-200x80 .rs-cell-val{
-  font-size:9px;
-  font-weight:900;
-  color:#0a0a0f;
-  line-height:1.15;
-}
-
-.r-200x80 .rs-footer{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:3mm;
-  font-size:7px;
-  color:#64748b;
-  border-top:1px solid #e8e4db;
-  padding-top:1.6mm;
-}
-
-.r-200x80 .rs-footer span:first-child{
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-/* =========================
-   100x70 — Compact Premium Layout
-========================= */
-.r-100x70{
-  width:100mm;
-  height:70mm;
-  display:flex;
-  overflow:hidden;
-  background:#fff;
-  border-radius:0;
-}
-
-.r-100x70 .r7-strip{
-  width:24mm;
-  flex-shrink:0;
-  background:linear-gradient(180deg,#0a0a0f 0%,#111827 100%);
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  align-items:center;
-  padding:3mm 2mm;
-  position:relative;
-}
-
-.r-100x70 .r7-strip::before{
-  content:'';
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  height:2px;
-  background:linear-gradient(90deg,#c9a84c,#e8c97a,#c9a84c);
-}
-
-.r-100x70 .r7-strip-text{
-  writing-mode:vertical-lr;
-  transform:rotate(180deg);
-  font-size:7px;
-  font-weight:900;
-  color:rgba(255,255,255,.25);
-  letter-spacing:2px;
-  text-transform:uppercase;
-  line-height:1;
-}
-
-.r-100x70 .r7-strip-inv{
-  writing-mode:vertical-lr;
-  transform:rotate(180deg);
-  font-family:'IBM Plex Mono',monospace;
-  font-size:7.2px;
-  font-weight:800;
-  color:#e8c97a;
-  letter-spacing:1px;
-}
-
-.r-100x70 .r7-body{
-  flex:1;
-  padding:3mm;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  background:
-    radial-gradient(circle at top right, rgba(201,168,76,.09), transparent 30%),
-    linear-gradient(180deg,#ffffff 0%,#fcfcfa 100%);
-}
-
-.r-100x70 .r7-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:3mm;
-  border-bottom:1px solid #e8e4db;
-  padding-bottom:1.8mm;
-  margin-bottom:1.8mm;
-}
-
-.r-100x70 .r7-company{
-  font-size:9px;
-  font-weight:900;
-  color:#0a0a0f;
-  line-height:1.2;
-  max-width:24mm;
-}
-
-.r-100x70 .r7-date{
-  font-size:6.5px;
-  font-family:'IBM Plex Mono',monospace;
-  color:#94a3b8;
-  white-space:nowrap;
-}
-
-.r-100x70 .r7-flow{
-  display:flex;
-  align-items:center;
-  gap:2mm;
-  margin-bottom:1.8mm;
-}
-
-.r-100x70 .r7-city{
-  font-size:9.5px;
-  font-weight:900;
-  color:#0a0a0f;
-  line-height:1.15;
-  max-width:20mm;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-.r-100x70 .r7-city-sub{
-  font-size:6px;
-  color:#64748b;
-  margin-top:.5mm;
-  max-width:20mm;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-.r-100x70 .r7-arrow{
-  font-size:11px;
-  color:#c9a84c;
-  flex:1;
-  text-align:center;
-  transform:translateY(-1px);
-}
-
-.r-100x70 .r7-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:1.5mm;
-  margin-bottom:1.8mm;
-}
-
-.r-100x70 .r7-cell{
-  background:#f8f7f4;
-  border:1px solid #e8e4db;
-  border-radius:1.5mm;
-  padding:1.5mm 1.2mm;
-  text-align:center;
-}
-
-.r-100x70 .r7-cell-label{
-  font-size:5px;
-  color:#94a3b8;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.35px;
-  margin-bottom:.5mm;
-}
-
-.r-100x70 .r7-cell-val{
-  font-size:8.2px;
-  font-weight:900;
-  color:#0a0a0f;
-  line-height:1.15;
-}
-
-.r-100x70 .r7-cell-val.red{
-  color:#dc2626;
-}
-
-.r-100x70 .r7-barcode{
-  padding-top:1mm;
-  border-top:1px solid #e8e4db;
-}
-
-.r-100x70 .r7-barcode svg{
-  width:100%;
-  height:11mm;
-  display:block;
-}
 </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -661,10 +766,13 @@ body *{visibility:hidden!important}
   <div class="scanner-box">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
       <div>
-        <div style="font-size:16px;font-weight:900">قارئ الباركود</div>
+        <div style="font-size:16px;font-weight:900;display:flex;align-items:center;gap:8px">
+          <i class="fa-solid fa-qrcode"></i>
+          قارئ الباركود
+        </div>
         <div style="font-size:11px;color:#64748b;margin-top:3px">وجّه الكاميرا نحو الباركود أو QR</div>
       </div>
-      <button class="btn btn-dark" style="width:36px;height:36px;padding:0;border-radius:10px" onclick="closeScanner()">✕</button>
+      <button class="btn btn-dark" style="width:36px;height:36px;padding:0;border-radius:10px" onclick="closeScanner()"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="scanner-frame">
       <video id="scannerVideo" autoplay playsinline muted></video>
@@ -673,8 +781,8 @@ body *{visibility:hidden!important}
     </div>
     <div id="scannerStatus" style="font-size:11px;color:#64748b;margin-top:10px;min-height:18px">جارِ تشغيل الكاميرا...</div>
     <div style="display:flex;gap:8px;margin-top:14px">
-      <button class="btn btn-gold" style="flex:1" onclick="switchCamera()">⟳ تبديل الكاميرا</button>
-      <button class="btn btn-danger" onclick="closeScanner()">✕ إغلاق</button>
+      <button class="btn btn-gold" style="flex:1" onclick="switchCamera()"><i class="fa-solid fa-camera-retro"></i>تبديل الكاميرا</button>
+      <button class="btn btn-danger" onclick="closeScanner()"><i class="fa-solid fa-xmark"></i>إغلاق</button>
     </div>
   </div>
 </div>
@@ -682,12 +790,12 @@ body *{visibility:hidden!important}
 <!-- IMPORT OVERLAY -->
 <div id="importModal" class="overlay no-print" onclick="if(event.target===this)closeImport()">
   <div class="overlay-box">
-    <div class="overlay-title">استيراد JSON</div>
+    <div class="overlay-title"><i class="fa-solid fa-file-import action-icon"></i> استيراد JSON</div>
     <div class="overlay-sub">الصق مصفوفة الفواتير المصدّرة مسبقاً</div>
     <textarea id="importArea" class="overlay-ta" placeholder='[{"invoiceNumber":"GR-123456"}]'></textarea>
     <div class="overlay-actions">
-      <button class="btn btn-gold" onclick="doImport()">↑ استيراد</button>
-      <button class="btn btn-dark" onclick="closeImport()">إلغاء</button>
+      <button class="btn btn-gold" onclick="doImport()"><i class="fa-solid fa-file-import action-icon"></i>استيراد</button>
+      <button class="btn btn-dark" onclick="closeImport()"><i class="fa-solid fa-ban action-icon"></i>إلغاء</button>
     </div>
   </div>
 </div>
@@ -697,10 +805,10 @@ body *{visibility:hidden!important}
   <aside class="left-panel">
     <div class="brand-header">
       <div class="brand-logo">
-        <div class="brand-icon">🖨</div>
+        <div class="brand-icon"><i class="fa-solid fa-print"></i></div>
         <div>
-          <div class="brand-name">Granada Pro</div>
-          <div class="brand-sub">نظام الفواتير الحرارية</div>
+          <div class="brand-name">Granada Print</div>
+          <div class="brand-sub">نظام الفواتير الاحترافي</div>
         </div>
       </div>
     </div>
@@ -708,68 +816,82 @@ body *{visibility:hidden!important}
     <div class="left-content">
       <!-- Company -->
       <div class="section">
-        <div class="section-title">بيانات الشركة</div>
+        <div class="section-title"><i class="fa-solid fa-building action-icon"></i> بيانات الشركة</div>
         <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="loadLogo(this)">
         <label for="logoInput" class="logo-upload">
-          <div class="logo-thumb" id="logoThumb">🏢</div>
-          <div class="logo-info"><strong>شعار الشركة</strong>PNG / JPG / SVG</div>
+          <div class="logo-thumb" id="logoThumb"><i class="fa-solid fa-building"></i></div>
+          <div class="logo-info"><strong><i class="fa-solid fa-image"></i> شعار الشركة</strong>PNG / JPG / SVG</div>
         </label>
         <div class="grid2">
-          <div class="fld"><label>اسم الشركة</label><input id="companyName" value="Granada Print" oninput="updateUI()"></div>
-          <div class="fld"><label>الهاتف</label><input id="companyPhone" value="01XXXXXXXXX" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
+          <div class="fld"><label><i class="fa-solid fa-signature"></i> اسم الشركة</label><input id="companyName" value="Granada Print" oninput="updateUI()"></div>
+          <div class="fld"><label><i class="fa-solid fa-phone"></i> الهاتف</label><input id="companyPhone" value="01102952777" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
         </div>
-        <div class="fld"><label>العنوان</label><textarea id="companyAddress" oninput="updateUI()" placeholder="عنوان الشركة..."></textarea></div>
+        <div class="fld"><label><i class="fa-solid fa-location-dot"></i> العنوان</label><textarea id="companyAddress" oninput="updateUI()" placeholder="40 شارع الشيخ ابراهيم من شارع الجيش باب الشعريه">40 شارع الشيخ ابراهيم من شارع الجيش باب الشعريه</textarea></div>
+        <div class="fld" style="display:flex;align-items:center;gap:10px;margin-top:12px">
+          <input id="companyInfoVisible" type="checkbox" checked onchange="updateUI()" style="width:18px;height:18px;accent-color:var(--gold)">
+          <label for="companyInfoVisible" style="margin:0;font-size:13px;color:var(--ink2);cursor:pointer;font-weight:700;display:flex;align-items:center;gap:6px">
+            <i class="fa-solid fa-eye"></i>
+            أضف معلومات الشركة في الفاتورة
+          </label>
+        </div>
       </div>
 
       <!-- Invoice number -->
       <div class="section">
-        <div class="section-title">رقم الفاتورة</div>
+        <div class="section-title"><i class="fa-solid fa-file-invoice action-icon"></i> رقم الفاتورة</div>
         <div style="display:flex;gap:8px;align-items:center">
-          <input id="invoiceNumber" value="GR-719635" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;letter-spacing:1px;flex:1">
-          <button class="btn btn-dark" onclick="generateInvoiceNumber()" style="height:40px;padding:0 12px;border-radius:10px;flex-shrink:0">⟳ توليد</button>
+          <input id="invoiceNumber" value="GP1170-0001" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;letter-spacing:1px;flex:1">
+          <button class="btn btn-dark" onclick="generateInvoiceNumber()" style="height:40px;padding:0 12px;border-radius:10px;flex-shrink:0"><i class="fa-solid fa-sync action-icon"></i>توليد</button>
         </div>
       </div>
 
       <!-- Sender -->
       <div class="section">
-        <div class="section-title" style="color:#3b82f6">المرسل</div>
-        <div class="fld"><label>الاسم</label><input id="senderName" oninput="updateUI()"></div>
+        <div class="section-title" style="color:#3b82f6"><i class="fa-solid fa-truck-fast action-icon"></i> المرسل</div>
+        <div class="fld"><label><i class="fa-solid fa-user"></i> الاسم</label><input id="senderName" oninput="updateUI()"></div>
         <div class="grid2">
-          <div class="fld"><label>الهاتف</label><input id="senderPhone" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
-          <div class="fld"><label>المدينة</label><input id="senderCity" oninput="updateUI()"></div>
+          <div class="fld"><label><i class="fa-solid fa-phone"></i> الهاتف</label><input id="senderPhone" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
+          <div class="fld"><label><i class="fa-solid fa-city"></i> المدينة</label><input id="senderCity" oninput="updateUI()"></div>
         </div>
-        <div class="fld"><label>العنوان</label><textarea id="senderAddress" oninput="updateUI()"></textarea></div>
+        <div class="fld"><label><i class="fa-solid fa-location-dot"></i> العنوان</label><textarea id="senderAddress" oninput="updateUI()"></textarea></div>
       </div>
 
       <!-- Receiver -->
       <div class="section">
-        <div class="section-title" style="color:#10b981">المستلم</div>
-        <div class="fld"><label>الاسم</label><input id="receiverName" oninput="updateUI()"></div>
+        <div class="section-title" style="color:#10b981"><i class="fa-solid fa-user-check action-icon"></i> المستلم</div>
+        <div class="fld"><label><i class="fa-solid fa-user"></i> الاسم</label><input id="receiverName" oninput="updateUI()"></div>
         <div class="grid2">
-          <div class="fld"><label>الهاتف</label><input id="receiverPhone" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
-          <div class="fld"><label>المدينة</label><input id="receiverCity" oninput="updateUI()"></div>
+          <div class="fld"><label><i class="fa-solid fa-phone"></i> الهاتف</label><input id="receiverPhone" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
+          <div class="fld"><label><i class="fa-solid fa-city"></i> المدينة</label><input id="receiverCity" oninput="updateUI()"></div>
         </div>
-        <div class="fld"><label>العنوان</label><textarea id="receiverAddress" oninput="updateUI()"></textarea></div>
+        <div class="fld"><label><i class="fa-solid fa-location-dot"></i> العنوان</label><textarea id="receiverAddress" oninput="updateUI()"></textarea></div>
       </div>
 
       <!-- Shipment -->
       <div class="section">
-        <div class="section-title">تفاصيل الشحنة</div>
-        <div class="fld"><label>محتوى الشحنة</label><input id="content" oninput="updateUI()" placeholder="ملابس، إلكترونيات..."></div>
+        <div class="section-title"><i class="fa-solid fa-box-open action-icon"></i> تفاصيل الشحنة</div>
+        <div class="fld"><label><i class="fa-solid fa-box"></i> محتوى الشحنة</label><input id="content" oninput="updateUI()" placeholder="ملابس، إلكترونيات..."></div>
+        <div class="fld"><label><i class="fa-solid fa-truck"></i> نوع التسليم</label>
+          <select id="deliveryType" onchange="updateUI()">
+            <option value="توصيل">توصيل</option>
+            <option value="استلام محل">استلام محل</option>
+            <option value="شحن">شحن</option>
+          </select>
+        </div>
         <div class="grid3">
-          <div class="fld"><label>القطع</label><input id="pieces" type="number" min="1" value="1" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
-          <div class="fld"><label>الوزن (كجم)</label><input id="weight" type="number" step="0.1" min="0" value="0.5" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
-          <div class="fld"><label>التاريخ</label><input id="shipDate" type="date" oninput="updateUI()"></div>
+          <div class="fld"><label><i class="fa-solid fa-cubes"></i> القطع</label><input id="pieces" type="number" min="1" value="1" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
+          <div class="fld"><label><i class="fa-solid fa-weight-hanging"></i> الوزن (كجم)</label><input id="weight" type="number" step="0.1" min="0" value="0.5" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
+          <div class="fld"><label><i class="fa-solid fa-calendar-days"></i> التاريخ</label><input id="shipDate" type="date" oninput="updateUI()"></div>
         </div>
         <div class="grid2">
-          <div class="fld"><label>مصاريف الشحن</label><input id="shippingCost" type="number" min="0" value="0" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
-          <div class="fld"><label>التحصيل (COD)</label><input id="codAmount" type="number" min="0" value="0" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
+          <div class="fld"><label><i class="fa-solid fa-truck-fast"></i> مصاريف الشحن</label><input id="shippingCost" type="number" min="0" value="0" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
+          <div class="fld"><label><i class="fa-solid fa-sack-dollar"></i> التحصيل (COD)</label><input id="codAmount" type="number" min="0" value="0" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
         </div>
-        <div class="fld"><label>ملاحظات</label><textarea id="notes" oninput="updateUI()" placeholder="ملاحظات إضافية..."></textarea></div>
+        <div class="fld"><label><i class="fa-solid fa-note-sticky"></i> ملاحظات</label><textarea id="notes" oninput="updateUI()" placeholder="ملاحظات إضافية..."></textarea></div>
         <div class="fld">
-          <label>مقاس الفاتورة</label>
+          <label><i class="fa-solid fa-ruler-combined"></i> مقاس الفاتورة</label>
           <select id="printSize" onchange="changeSize()">
-            <option value="thermal80">🖨 حراري 80mm (الافتراضي)</option>
+            <option value="thermal80">حراري 80mm (الافتراضي)</option>
             <option value="a4">📄 A4 كامل</option>
             <option value="100x150">🏷 100 × 150 mm</option>
             <option value="100x70">🔖 100 × 70 mm</option>
@@ -779,9 +901,9 @@ body *{visibility:hidden!important}
     </div>
 
     <div class="action-bar">
-      <button class="btn btn-gold" style="flex:1" onclick="saveInvoice()">💾 حفظ الفاتورة</button>
-      <button class="btn btn-dark" onclick="newInvoice()" title="فاتورة جديدة">＋</button>
-      <button class="btn btn-dark" onclick="printInvoice()" title="طباعة">🖨</button>
+      <button class="btn btn-gold" style="flex:1" onclick="saveInvoice()"><i class="fa-solid fa-floppy-disk action-icon"></i>حفظ الفاتورة</button>
+      <button class="btn btn-dark" onclick="newInvoice()" title="فاتورة جديدة"><i class="fa-solid fa-plus action-icon"></i></button>
+      <button class="btn btn-dark" onclick="printInvoice()" title="طباعة"><i class="fa-solid fa-print action-icon"></i></button>
     </div>
   </aside>
 
@@ -789,11 +911,11 @@ body *{visibility:hidden!important}
   <main class="center-panel">
     <div class="center-toolbar no-print">
       <div class="toolbar-left">
-        <span class="pill">👁 معاينة</span>
+        <span class="pill"><i class="fa-solid fa-eye tool-icon"></i>معاينة</span>
         <span id="sizeBadge" class="pill pill-gold">حراري 80mm</span>
       </div>
       <div class="toolbar-right">
-        <button class="tool-btn" onclick="openScanner()">▣ قراءة باركود</button>
+        <button class="tool-btn" onclick="openScanner()"><i class="fa-solid fa-qrcode tool-icon"></i>قراءة باركود</button>
         <button class="zoom-btn" onclick="setZoom(.65)">65%</button>
         <button class="zoom-btn" onclick="setZoom(.80)">80%</button>
         <button class="zoom-btn active" id="zoom85" onclick="setZoom(.9)">90%</button>
@@ -806,305 +928,282 @@ body *{visibility:hidden!important}
 
         <!-- THERMAL 80mm -->
         <article id="page-thermal80" class="receipt r-thermal">
+          <div class="r-top-band"></div>
           <div class="r-header">
-            <div class="r-header-logo">
-              <div class="r-hlogo" id="logoThermal">🖨</div>
-              <div style="flex:1">
-                <div id="companyNameThermal" class="r-hname">Granada Print</div>
-                <div id="companyPhoneThermal" class="r-hsub" style="font-family:'IBM Plex Mono',monospace">01XXXXXXXXX</div>
-                <div id="companyAddressThermal" class="r-hsub" style="margin-top:1px"></div>
-              </div>
-              <div class="r-hnum">
-                <div class="r-hnum-label">رقم الفاتورة</div>
-                <div id="invoiceNumberThermal" class="r-hnum-val">GR-719635</div>
-              </div>
+            <div class="r-hlogo" id="logoThermal"><i class="fa-solid fa-print"></i></div>
+            <div class="r-hmeta">
+              <div id="companyNameThermal" class="r-hname">Granada Print</div>
+              <div id="companyPhoneThermal" class="r-hsub">01102952777</div>
+              <div id="companyAddressThermal" class="r-hsub"></div>
+            </div>
+            <div class="r-hnum">
+              <div class="r-hnum-label"><i class="fa-solid fa-barcode"></i> رقم الفاتورة</div>
+              <div id="invoiceNumberThermal" class="r-hnum-val">GP1170-0001</div>
             </div>
           </div>
-          <div class="r-gold-bar"></div>
           <div class="r-body">
-            <div class="r-barcode-area"><svg id="barcodeThermal"></svg></div>
-            <div class="r-cards">
-              <div class="r-card">
-                <div class="r-card-title sender">المرسل</div>
-                <div class="r-kv"><div class="r-k">الاسم</div><div id="senderNameThermal" class="r-v">-</div></div>
-                <div class="r-kv"><div class="r-k">الهاتف</div><div id="senderPhoneThermal" class="r-v" style="font-family:'IBM Plex Mono',monospace">-</div></div>
-                <div class="r-kv"><div class="r-k">المدينة</div><div id="senderCityThermal" class="r-v">-</div></div>
-                <div class="r-kv"><div class="r-k">العنوان</div><div id="senderAddressThermal" class="r-v">-</div></div>
+            <div class="r-barcode-wrap">
+              <svg id="barcodeThermal"></svg>
+              <div id="barcodeNumThermal" class="r-barcode-num">GP1170-0001</div>
+            </div>
+            <div class="r-parties">
+              <div class="r-party">
+                <div class="r-party-label snd"><i class="fa-solid fa-truck-fast"></i> المرسل</div>
+                <div class="r-kv"><div class="r-k"><i class="fa-solid fa-user"></i> الاسم</div><div id="senderNameThermal" class="r-v">-</div></div>
+                <div class="r-kv"><div class="r-k"><i class="fa-solid fa-phone"></i> الهاتف</div><div id="senderPhoneThermal" class="r-v mono">-</div></div>
+                <div class="r-kv"><div class="r-k"><i class="fa-solid fa-city"></i> المدينة</div><div id="senderCityThermal" class="r-v">-</div></div>
+                <div class="r-kv"><div class="r-k"><i class="fa-solid fa-location-dot"></i> العنوان</div><div id="senderAddressThermal" class="r-v">-</div></div>
               </div>
-              <div class="r-card">
-                <div class="r-card-title receiver">المستلم</div>
-                <div class="r-kv"><div class="r-k">الاسم</div><div id="receiverNameThermal" class="r-v">-</div></div>
-                <div class="r-kv"><div class="r-k">الهاتف</div><div id="receiverPhoneThermal" class="r-v" style="font-family:'IBM Plex Mono',monospace">-</div></div>
-                <div class="r-kv"><div class="r-k">المدينة</div><div id="receiverCityThermal" class="r-v">-</div></div>
-                <div class="r-kv"><div class="r-k">العنوان</div><div id="receiverAddressThermal" class="r-v">-</div></div>
+              <div class="r-party">
+                <div class="r-party-label rcv"><i class="fa-solid fa-user-check"></i> المستلم</div>
+                <div class="r-kv"><div class="r-k"><i class="fa-solid fa-user"></i> الاسم</div><div id="receiverNameThermal" class="r-v">-</div></div>
+                <div class="r-kv"><div class="r-k"><i class="fa-solid fa-phone"></i> الهاتف</div><div id="receiverPhoneThermal" class="r-v mono">-</div></div>
+                <div class="r-kv"><div class="r-k"><i class="fa-solid fa-city"></i> المدينة</div><div id="receiverCityThermal" class="r-v">-</div></div>
+                <div class="r-kv"><div class="r-k"><i class="fa-solid fa-location-dot"></i> العنوان</div><div id="receiverAddressThermal" class="r-v">-</div></div>
               </div>
             </div>
             <div class="r-details">
               <div class="r-details-grid">
-                <div class="r-detail-cell"><div class="r-detail-label">المحتوى</div><div id="contentThermal" class="r-detail-val">-</div></div>
-                <div class="r-detail-cell"><div class="r-detail-label">القطع</div><div id="piecesThermal" class="r-detail-val">1</div></div>
-                <div class="r-detail-cell"><div class="r-detail-label">الوزن</div><div id="weightThermal" class="r-detail-val">0.5 كجم</div></div>
-                <div class="r-detail-cell"><div class="r-detail-label">التاريخ</div><div id="shipDateThermal" class="r-detail-val">-</div></div>
+                <div class="r-detail-cell"><div class="r-detail-label"><i class="fa-solid fa-box"></i> المحتوى</div><div id="contentThermal" class="r-detail-val">-</div></div>
+                <div class="r-detail-cell"><div class="r-detail-label"><i class="fa-solid fa-cubes"></i> القطع</div><div id="piecesThermal" class="r-detail-val mono">1</div></div>
+                <div class="r-detail-cell"><div class="r-detail-label"><i class="fa-solid fa-weight-hanging"></i> الوزن</div><div id="weightThermal" class="r-detail-val mono">0.5 كجم</div></div>
+                <div class="r-detail-cell"><div class="r-detail-label"><i class="fa-solid fa-calendar-days"></i> التاريخ</div><div id="shipDateThermal" class="r-detail-val">-</div></div>
               </div>
             </div>
+            <div class="r-delivery-type"><i class="fa-solid fa-truck"></i> نوع التسليم: <span id="deliveryTypeThermal">-</span></div>
             <div class="r-amounts">
               <div class="r-amount-box shipping">
-                <div class="r-amount-label">مصاريف الشحن</div>
+                <div class="r-amount-label"><i class="fa-solid fa-truck-fast"></i> مصاريف الشحن</div>
                 <div id="shippingCostThermal" class="r-amount-val">0 ج.م</div>
               </div>
               <div class="r-amount-box cod">
-                <div class="r-amount-label">التحصيل COD</div>
+                <div class="r-amount-label"><i class="fa-solid fa-sack-dollar"></i> التحصيل COD</div>
                 <div id="codAmountThermal" class="r-amount-val">0 ج.م</div>
               </div>
             </div>
             <div id="notesBoxThermal" class="r-notes-box" style="display:none">
-              <div class="r-notes-title">📝 ملاحظات</div>
+              <div class="r-notes-title"><i class="fa-solid fa-note-sticky"></i> ملاحظات</div>
               <div id="notesThermal" class="r-notes-text"></div>
             </div>
           </div>
           <div class="r-footer">
-            <div class="r-footer-barcode"><svg id="barcodeThermalSmall"></svg></div>
             <div class="r-footer-info">
               <span id="companyFooterThermal">Granada Print</span>
-              <span id="barcodeNumThermal" class="r-footer-inv">GR-719635</span>
-              <span style="font-family:'IBM Plex Mono',monospace">THERMAL 80MM</span>
+              <span id="barcodeNumThermal2" class="r-footer-inv">GP1170-0001</span>
+              <span style="font-family:'IBM Plex Mono',monospace"><i class="fa-solid fa-print"></i> THERMAL 80MM</span>
             </div>
           </div>
         </article>
 
         <!-- A4 -->
         <article id="page-a4" class="receipt r-a4" style="display:none">
+          <div class="a4-top-band"></div>
           <div class="a4-header">
             <div class="a4-brand">
-              <div id="logoA4" class="a4-logo">🖨</div>
+              <div id="logoA4" class="a4-logo"><i class="fa-solid fa-print"></i></div>
               <div>
                 <div id="companyNameA4" class="a4-company-name">Granada Print</div>
                 <div id="companyInfoA4" class="a4-company-info"></div>
               </div>
             </div>
             <div class="a4-inv-block">
-              <div class="a4-inv-label">رقم الفاتورة</div>
-              <div id="invoiceNumberA4" class="a4-inv-num">GR-719635</div>
-              <div class="a4-barcode"><svg id="barcodeA4"></svg></div>
+              <div class="a4-inv-label"><i class="fa-solid fa-barcode"></i> رقم الفاتورة</div>
+              <div id="invoiceNumberA4" class="a4-inv-num">GP1170-0001</div>
+              <div class="a4-barcode">
+                <svg id="barcodeA4"></svg>
+                <div id="barcodeNumA4" class="a4-barcode-num">GP1170-0001</div>
+              </div>
             </div>
           </div>
-          <div class="a4-section-title">بيانات المرسل والمستلم</div>
-          <div class="a4-parties">
-            <div class="a4-party">
-              <div class="a4-party-label"><span style="background:#3b82f6"></span>المرسل</div>
-              <div id="senderNameA4" class="a4-party-name">-</div>
-              <div id="senderPhoneA4" class="a4-party-detail" style="font-family:'IBM Plex Mono',monospace">-</div>
-              <div id="senderCityA4" class="a4-party-detail">-</div>
-              <div id="senderAddressA4" class="a4-party-detail">-</div>
+          <div class="a4-content">
+            <div class="a4-section-title"><i class="fa-solid fa-address-card"></i> بيانات المرسل والمستلم</div>
+            <div class="a4-parties">
+              <div class="a4-party">
+                <div class="a4-party-label"><span style="background:#3b82f6"></span><i class="fa-solid fa-truck-fast"></i> المرسل</div>
+                <div id="senderNameA4" class="a4-party-name">-</div>
+                <div id="senderPhoneA4" class="a4-party-detail mono">-</div>
+                <div id="senderCityA4" class="a4-party-detail">-</div>
+                <div id="senderAddressA4" class="a4-party-detail">-</div>
+              </div>
+              <div class="a4-party">
+                <div class="a4-party-label"><span style="background:#10b981"></span><i class="fa-solid fa-user-check"></i> المستلم</div>
+                <div id="receiverNameA4" class="a4-party-name">-</div>
+                <div id="receiverPhoneA4" class="a4-party-detail mono">-</div>
+                <div id="receiverCityA4" class="a4-party-detail">-</div>
+                <div id="receiverAddressA4" class="a4-party-detail">-</div>
+              </div>
             </div>
-            <div class="a4-party">
-              <div class="a4-party-label"><span style="background:#10b981"></span>المستلم</div>
-              <div id="receiverNameA4" class="a4-party-name">-</div>
-              <div id="receiverPhoneA4" class="a4-party-detail" style="font-family:'IBM Plex Mono',monospace">-</div>
-              <div id="receiverCityA4" class="a4-party-detail">-</div>
-              <div id="receiverAddressA4" class="a4-party-detail">-</div>
+            <div class="a4-section-title"><i class="fa-solid fa-box-open"></i> تفاصيل الشحنة</div>
+            <div class="a4-shipment">
+              <div class="a4-ship-cell"><div class="a4-ship-label"><i class="fa-solid fa-box"></i> المحتوى</div><div id="contentA4" class="a4-ship-val">-</div></div>
+              <div class="a4-ship-cell"><div class="a4-ship-label"><i class="fa-solid fa-cubes"></i> القطع</div><div id="piecesA4" class="a4-ship-val mono">1</div></div>
+              <div class="a4-ship-cell"><div class="a4-ship-label"><i class="fa-solid fa-weight-hanging"></i> الوزن</div><div id="weightA4" class="a4-ship-val mono">0.5 كجم</div></div>
+              <div class="a4-ship-cell"><div class="a4-ship-label"><i class="fa-solid fa-calendar-days"></i> التاريخ</div><div id="shipDateA4" class="a4-ship-val">-</div></div>
             </div>
-          </div>
-          <div class="a4-section-title">تفاصيل الشحنة</div>
-          <div class="a4-shipment">
-            <div class="a4-ship-cell"><div class="a4-ship-label">المحتوى</div><div id="contentA4" class="a4-ship-val">-</div></div>
-            <div class="a4-ship-cell"><div class="a4-ship-label">القطع</div><div id="piecesA4" class="a4-ship-val">1</div></div>
-            <div class="a4-ship-cell"><div class="a4-ship-label">الوزن</div><div id="weightA4" class="a4-ship-val">0.5 كجم</div></div>
-            <div class="a4-ship-cell"><div class="a4-ship-label">التاريخ</div><div id="shipDateA4" class="a4-ship-val">-</div></div>
-          </div>
-          <div class="a4-section-title">المبالغ</div>
-          <div class="a4-financials">
-            <div class="a4-fin-box shipping"><div class="a4-fin-label">مصاريف الشحن</div><div id="shippingCostA4" class="a4-fin-val">0 ج.م</div></div>
-            <div class="a4-fin-box cod"><div class="a4-fin-label">التحصيل COD</div><div id="codAmountA4" class="a4-fin-val">0 ج.م</div></div>
-          </div>
-          <div id="notesBoxA4" class="a4-notes" style="display:none">
-            <div class="a4-notes-label">ملاحظات</div>
-            <div id="notesA4" class="a4-notes-text"></div>
+            <div class="a4-delivery-type"><i class="fa-solid fa-truck"></i> نوع التسليم: <span id="deliveryTypeA4">-</span></div>
+            <div class="a4-section-title"><i class="fa-solid fa-coins"></i> المبالغ</div>
+            <div class="a4-financials">
+              <div class="a4-fin-box shipping"><div class="a4-fin-label"><i class="fa-solid fa-truck-fast"></i> مصاريف الشحن</div><div id="shippingCostA4" class="a4-fin-val">0 ج.م</div></div>
+              <div class="a4-fin-box cod"><div class="a4-fin-label"><i class="fa-solid fa-sack-dollar"></i> التحصيل COD</div><div id="codAmountA4" class="a4-fin-val">0 ج.م</div></div>
+            </div>
+            <div id="notesBoxA4" class="a4-notes" style="display:none">
+              <div class="a4-notes-label"><i class="fa-solid fa-note-sticky"></i> ملاحظات</div>
+              <div id="notesA4" class="a4-notes-text"></div>
+            </div>
           </div>
           <div class="a4-footer">
             <div id="footerBrandA4" class="a4-footer-brand">Granada Print</div>
-            <div class="a4-footer-mono">A4 · GRANADA PRO</div>
+            <div class="a4-footer-mono"><i class="fa-solid fa-print"></i> A4 · GRANADA PRINT</div>
           </div>
         </article>
 
         <!-- 200x80 -->
-     <!-- 200x80 -->
-<article id="page-200x80" class="receipt r-200x80" style="display:none">
-  <div class="r-left-strip">
-    <div>
-      <div id="companyName200" class="rs-company">Granada Print</div>
-      <div id="companyPhone200" class="rs-phone">01XXXXXXXXX</div>
-    </div>
-
-    <div>
-      <div class="rs-inv-label">Invoice</div>
-      <div id="invoiceNumber200" class="rs-inv-num">GR-719635</div>
-    </div>
-
-    <div class="rs-barcode">
-      <svg id="barcode200" style="width:100%;height:12mm;display:block"></svg>
-    </div>
-  </div>
-
-  <div class="r-right-body">
-    <div class="rs-header">
-      <div class="rs-flow">
-        <div>
-          <div id="senderCity200" class="rs-city-block">-</div>
-          <div id="senderName200" class="rs-city-sub">-</div>
-        </div>
-        <div class="rs-arrow">⟶</div>
-        <div>
-          <div id="receiverCity200" class="rs-city-block">-</div>
-          <div id="receiverName200" class="rs-city-sub">-</div>
-        </div>
-      </div>
-
-      <div style="text-align:left;flex-shrink:0">
-        <div style="font-size:6px;color:#94a3b8">التاريخ</div>
-        <div id="shipDate200" style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:800;color:#0a0a0f">-</div>
-      </div>
-    </div>
-
-    <div class="rs-grid4">
-      <div class="rs-cell">
-        <div class="rs-cell-label">قطع</div>
-        <div id="pieces200" class="rs-cell-val">1</div>
-      </div>
-      <div class="rs-cell">
-        <div class="rs-cell-label">وزن</div>
-        <div id="weight200" class="rs-cell-val">0.5</div>
-      </div>
-      <div class="rs-cell">
-        <div class="rs-cell-label">شحن</div>
-        <div id="shippingCost200" class="rs-cell-val">0</div>
-      </div>
-      <div class="rs-cell">
-        <div class="rs-cell-label">COD</div>
-        <div id="codAmount200" class="rs-cell-val" style="color:#dc2626">0</div>
-      </div>
-    </div>
-
-    <div class="rs-footer">
-      <span id="content200">-</span>
-      <span style="font-family:'IBM Plex Mono',monospace">200×80mm</span>
-    </div>
-  </div>
-</article>
-
-<!-- 100x70 -->
-<article id="page-100x70" class="receipt r-100x70" style="display:none">
-  <div class="r7-strip">
-    <div class="r7-strip-text">GRANADA PRO</div>
-    <div class="r7-strip-inv" id="invoiceNumber70v">GR-719635</div>
-    <svg id="barcode70" style="width:12mm;height:50mm;display:block;transform:rotate(-90deg) translateX(-20mm);transform-origin:top left"></svg>
-  </div>
-
-  <div class="r7-body">
-    <div class="r7-top">
-      <div id="companyName70" class="r7-company">Granada Print</div>
-      <div id="shipDate70" class="r7-date">-</div>
-    </div>
-
-    <div class="r7-flow">
-      <div>
-        <div id="senderCity70" class="r7-city">-</div>
-        <div id="senderName70" class="r7-city-sub">-</div>
-      </div>
-      <div class="r7-arrow">→</div>
-      <div>
-        <div id="receiverCity70" class="r7-city">-</div>
-        <div id="receiverName70" class="r7-city-sub">-</div>
-      </div>
-    </div>
-
-    <div class="r7-grid">
-      <div class="r7-cell">
-        <div class="r7-cell-label">قطع</div>
-        <div id="pieces70" class="r7-cell-val">1</div>
-      </div>
-      <div class="r7-cell">
-        <div class="r7-cell-label">وزن</div>
-        <div id="weight70" class="r7-cell-val">0.5</div>
-      </div>
-      <div class="r7-cell">
-        <div class="r7-cell-label">COD</div>
-        <div id="codAmount70" class="r7-cell-val red">0</div>
-      </div>
-    </div>
-
-    <div class="r7-barcode">
-      <svg id="barcode70main" style="width:100%;height:10mm;display:block"></svg>
-    </div>
-  </div>
-</article>
+        <article id="page-200x80" class="receipt r-200x80" style="display:none">
+          <div class="r-left-strip">
+            <div>
+              <div id="companyName200" class="rs-company">Granada Print</div>
+              <div id="companyPhone200" class="rs-phone">01102952777</div>
+            </div>
+            <div>
+              <div class="rs-inv-label"><i class="fa-solid fa-file-invoice"></i> Invoice</div>
+              <div id="invoiceNumber200" class="rs-inv-num">GP1170-0001</div>
+            </div>
+            <div class="rs-barcode"><svg id="barcode200"></svg></div>
+          </div>
+          <div class="r-right-body">
+            <div class="rs-header">
+              <div class="rs-flow">
+                <div>
+                  <div id="senderCity200" class="rs-city-block">-</div>
+                  <div id="senderName200" class="rs-city-sub">-</div>
+                </div>
+                <div class="rs-arrow">⟶</div>
+                <div>
+                  <div id="receiverCity200" class="rs-city-block">-</div>
+                  <div id="receiverName200" class="rs-city-sub">-</div>
+                </div>
+              </div>
+              <div style="text-align:left;flex-shrink:0">
+                <div style="font-size:6px;color:var(--silver)"><i class="fa-solid fa-calendar-days"></i> التاريخ</div>
+                <div id="shipDate200" style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;font-weight:800;color:var(--ink)">-</div>
+              </div>
+            </div>
+            <div class="rs-grid4">
+              <div class="rs-cell"><div class="rs-cell-label"><i class="fa-solid fa-cubes"></i> قطع</div><div id="pieces200" class="rs-cell-val mono">1</div></div>
+              <div class="rs-cell"><div class="rs-cell-label"><i class="fa-solid fa-weight-hanging"></i> وزن</div><div id="weight200" class="rs-cell-val mono">0.5</div></div>
+              <div class="rs-cell"><div class="rs-cell-label"><i class="fa-solid fa-truck-fast"></i> شحن</div><div id="shippingCost200" class="rs-cell-val mono">0</div></div>
+              <div class="rs-cell"><div class="rs-cell-label"><i class="fa-solid fa-sack-dollar"></i> COD</div><div id="codAmount200" class="rs-cell-val mono red">0</div></div>
+            </div>
+            <div class="rs-footer">
+              <span id="content200"><i class="fa-solid fa-box"></i> -</span>
+              <span style="font-family:'IBM Plex Mono',monospace"><i class="fa-solid fa-ruler"></i> 200×80mm</span>
+            </div>
+          </div>
+        </article>
 
         <!-- 100x150 -->
         <article id="page-100x150" class="receipt r-100x150" style="display:none">
           <div class="rp-header">
             <div id="companyName100" class="rp-company">Granada Print</div>
-            <div id="companyPhone100" class="rp-phone">01XXXXXXXXX</div>
+            <div id="companyPhone100" class="rp-phone">01102952777</div>
             <div class="rp-inv">
-              <span class="rp-inv-label">رقم الفاتورة</span>
-              <span id="invoiceNumber100" class="rp-inv-val">GR-719635</span>
+              <span class="rp-inv-label"><i class="fa-solid fa-file-invoice"></i> رقم الفاتورة</span>
+              <span id="invoiceNumber100" class="rp-inv-val">GP1170-0001</span>
             </div>
           </div>
-          <div class="rp-gold"></div>
           <div class="rp-body">
             <div class="rp-party">
-              <div class="rp-party-label" style="color:#3b82f6">المرسل</div>
+              <div class="rp-party-label" style="color:#3b82f6"><i class="fa-solid fa-truck-fast"></i> المرسل</div>
               <div id="senderCity100" class="rp-party-city">-</div>
               <div id="senderName100" class="rp-party-name">-</div>
               <div id="senderPhone100" class="rp-party-phone">-</div>
             </div>
             <div class="rp-party">
-              <div class="rp-party-label" style="color:#10b981">المستلم</div>
+              <div class="rp-party-label" style="color:#10b981"><i class="fa-solid fa-user-check"></i> المستلم</div>
               <div id="receiverCity100" class="rp-party-city">-</div>
               <div id="receiverName100" class="rp-party-name">-</div>
               <div id="receiverPhone100" class="rp-party-phone">-</div>
             </div>
             <div class="rp-grid2">
-              <div class="rp-stat"><div class="rp-stat-label">القطع</div><div id="pieces100" class="rp-stat-val">1</div></div>
-              <div class="rp-stat"><div class="rp-stat-label">الوزن (كجم)</div><div id="weight100" class="rp-stat-val">0.5</div></div>
+              <div class="rp-stat"><div class="rp-stat-label"><i class="fa-solid fa-cubes"></i> القطع</div><div id="pieces100" class="rp-stat-val mono">1</div></div>
+              <div class="rp-stat"><div class="rp-stat-label"><i class="fa-solid fa-weight-hanging"></i> الوزن (كجم)</div><div id="weight100" class="rp-stat-val mono">0.5</div></div>
             </div>
             <div class="rp-grid2">
-              <div class="rp-stat"><div class="rp-stat-label">الشحن</div><div id="shippingCost100" class="rp-stat-val">0</div></div>
-              <div class="rp-stat"><div class="rp-stat-label">التاريخ</div><div id="shipDate100" class="rp-stat-val">-</div></div>
+              <div class="rp-stat"><div class="rp-stat-label"><i class="fa-solid fa-truck-fast"></i> الشحن</div><div id="shippingCost100" class="rp-stat-val mono">0</div></div>
+              <div class="rp-stat"><div class="rp-stat-label"><i class="fa-solid fa-calendar-days"></i> التاريخ</div><div id="shipDate100" class="rp-stat-val">-</div></div>
             </div>
+            <div style="font-size:7.5px;color:var(--ink3);font-weight:700;margin-top:3px"><i class="fa-solid fa-truck"></i> نوع التسليم: <span id="deliveryType100">-</span></div>
             <div class="rp-cod">
-              <div class="rp-cod-label">💰 التحصيل عند الاستلام</div>
+              <div class="rp-cod-label">💰 <i class="fa-solid fa-sack-dollar"></i> التحصيل عند الاستلام</div>
               <div id="codAmount100" class="rp-cod-val">0 ج.م</div>
             </div>
           </div>
           <div class="rp-barcode">
-            <svg id="barcode100" style="width:100%;height:11mm;display:block"></svg>
-            <div id="barcodeNum100" class="rp-barcode-num">GR-719635</div>
+            <svg id="barcode100"></svg>
+            <div id="barcodeNum100" class="rp-barcode-num">GP1170-0001</div>
           </div>
         </article>
 
-        <!-- 100x70 -->
+        <!-- 100x70 — REDESIGNED FULL -->
         <article id="page-100x70" class="receipt r-100x70" style="display:none">
-          <div class="r7-strip">
-            <div class="r7-strip-text">GRANADA PRO</div>
-            <div class="r7-strip-inv" id="invoiceNumber70v">GR-719635</div>
-            <svg id="barcode70" style="width:12mm;height:50mm;display:block;transform:rotate(-90deg) translateX(-20mm);transform-origin:top left"></svg>
+          <div class="r7-top-band"></div>
+          <div class="r7-header" id="r7CompanyHeader">
+            <div class="r7-hlogo" id="logo70"><i class="fa-solid fa-print"></i></div>
+            <div class="r7-hmeta">
+              <div id="companyName70" class="r7-hname">Granada Print</div>
+              <div id="companyPhone70" class="r7-hsub">01102952777</div>
+              <div id="companyAddress70" class="r7-hsub"></div>
+            </div>
+            <div class="r7-hnum">
+              <div class="r7-hnum-label"><i class="fa-solid fa-barcode"></i> رقم الفاتورة</div>
+              <div id="invoiceNumber70" class="r7-hnum-val">GP1170-0001</div>
+            </div>
           </div>
           <div class="r7-body">
-            <div class="r7-top">
-              <div id="companyName70" class="r7-company">Granada Print</div>
-              <div id="shipDate70" class="r7-date">-</div>
+            <div class="r7-barcode-wrap">
+              <svg id="barcode70main"></svg>
+              <div id="barcodeNum70" class="r7-barcode-num">GP1170-0001</div>
             </div>
-            <div class="r7-flow">
-              <div><div id="senderCity70" class="r7-city">-</div><div id="senderName70" class="r7-city-sub">-</div></div>
-              <div class="r7-arrow">→</div>
-              <div><div id="receiverCity70" class="r7-city">-</div><div id="receiverName70" class="r7-city-sub">-</div></div>
+            <div class="r7-parties">
+              <div class="r7-party">
+                <div class="r7-party-label snd"><i class="fa-solid fa-truck-fast"></i> المرسل</div>
+                <div class="r7-kv"><div class="r7-k"><i class="fa-solid fa-user"></i> الاسم</div><div id="senderName70" class="r7-v">-</div></div>
+                <div class="r7-kv"><div class="r7-k"><i class="fa-solid fa-phone"></i> الهاتف</div><div id="senderPhone70" class="r7-v mono">-</div></div>
+                <div class="r7-kv"><div class="r7-k"><i class="fa-solid fa-city"></i> المدينة</div><div id="senderCity70" class="r7-v">-</div></div>
+                <div class="r7-kv"><div class="r7-k"><i class="fa-solid fa-location-dot"></i> العنوان</div><div id="senderAddress70" class="r7-v">-</div></div>
+              </div>
+              <div class="r7-party">
+                <div class="r7-party-label rcv"><i class="fa-solid fa-user-check"></i> المستلم</div>
+                <div class="r7-kv"><div class="r7-k"><i class="fa-solid fa-user"></i> الاسم</div><div id="receiverName70" class="r7-v">-</div></div>
+                <div class="r7-kv"><div class="r7-k"><i class="fa-solid fa-phone"></i> الهاتف</div><div id="receiverPhone70" class="r7-v mono">-</div></div>
+                <div class="r7-kv"><div class="r7-k"><i class="fa-solid fa-city"></i> المدينة</div><div id="receiverCity70" class="r7-v">-</div></div>
+                <div class="r7-kv"><div class="r7-k"><i class="fa-solid fa-location-dot"></i> العنوان</div><div id="receiverAddress70" class="r7-v">-</div></div>
+              </div>
             </div>
-            <div class="r7-grid">
-              <div class="r7-cell"><div class="r7-cell-label">قطع</div><div id="pieces70" class="r7-cell-val">1</div></div>
-              <div class="r7-cell"><div class="r7-cell-label">وزن</div><div id="weight70" class="r7-cell-val">0.5</div></div>
-              <div class="r7-cell"><div class="r7-cell-label">COD</div><div id="codAmount70" class="r7-cell-val red">0</div></div>
+            <div class="r7-details">
+              <div class="r7-details-grid">
+                <div class="r7-detail-cell"><div class="r7-detail-label"><i class="fa-solid fa-box"></i> المحتوى</div><div id="content70" class="r7-detail-val">-</div></div>
+                <div class="r7-detail-cell"><div class="r7-detail-label"><i class="fa-solid fa-cubes"></i> القطع</div><div id="pieces70" class="r7-detail-val mono">1</div></div>
+                <div class="r7-detail-cell"><div class="r7-detail-label"><i class="fa-solid fa-weight-hanging"></i> الوزن</div><div id="weight70" class="r7-detail-val mono">0.5</div></div>
+                <div class="r7-detail-cell"><div class="r7-detail-label"><i class="fa-solid fa-calendar-days"></i> التاريخ</div><div id="shipDate70" class="r7-detail-val">-</div></div>
+              </div>
             </div>
-            <div><svg id="barcode70main" style="width:100%;height:10mm;display:block"></svg></div>
+            <div class="r7-delivery-type"><i class="fa-solid fa-truck"></i> نوع التسليم: <span id="deliveryType70">-</span></div>
+            <div class="r7-amounts">
+              <div class="r7-amount-box shipping">
+                <div class="r7-amount-label"><i class="fa-solid fa-truck-fast"></i> الشحن</div>
+                <div id="shippingCost70" class="r7-amount-val">0 ج.م</div>
+              </div>
+              <div class="r7-amount-box cod">
+                <div class="r7-amount-label"><i class="fa-solid fa-sack-dollar"></i> COD</div>
+                <div id="codAmount70" class="r7-amount-val">0 ج.م</div>
+              </div>
+            </div>
+          </div>
+          <div class="r7-footer">
+            <span id="companyFooter70" class="r7-footer-info">Granada Print</span>
+            <span id="barcodeNum70f" class="r7-footer-inv">GP1170-0001</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:5px;color:var(--silver)"><i class="fa-solid fa-ruler"></i> 100×70mm</span>
           </div>
         </article>
 
@@ -1116,26 +1215,27 @@ body *{visibility:hidden!important}
   <aside class="right-panel">
     <div class="right-header">
       <div style="display:flex;align-items:center;justify-content:space-between">
-        <h2>الأرشيف</h2>
+        <h2><i class="fa-solid fa-box-archive"></i> الأرشيف</h2>
         <span id="histCount" class="count-badge">0</span>
       </div>
       <p>الفواتير المحفوظة محلياً</p>
     </div>
-    <div class="right-search">
-      <input id="histSearch" placeholder="🔍 بحث برقم أو اسم..." oninput="renderHistory()">
+    <div class="right-search" style="position:relative">
+      <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;pointer-events:none"></i>
+      <input id="histSearch" placeholder="بحث برقم أو اسم..." oninput="renderHistory()" style="padding-left:36px">
     </div>
     <div class="right-actions">
-      <button class="btn btn-dark" onclick="exportInvoices()">↓ تصدير</button>
-      <button class="btn btn-dark" onclick="openImport()">↑ استيراد</button>
-      <button class="btn btn-danger" onclick="clearHistory()">🗑</button>
+      <button class="btn btn-dark" onclick="exportInvoices()"><i class="fa-solid fa-download action-icon"></i>تصدير</button>
+      <button class="btn btn-dark" onclick="openImport()"><i class="fa-solid fa-file-import action-icon"></i>استيراد</button>
+      <button class="btn btn-danger" onclick="clearHistory()"><i class="fa-solid fa-trash action-icon"></i></button>
     </div>
     <div class="history-list" id="historyList"></div>
   </aside>
 </div>
 
 <script>
-const SK='granada_v2_invoices';
-const DK='granada_v2_draft';
+const SK='granada_v4_invoices';
+const DK='granada_v4_draft';
 let logo='',editId=null,scanStream=null,scanAnim=null,camFace='environment';
 const $=id=>document.getElementById(id);
 const v=id=>($(id)?.value||'').trim();
@@ -1151,12 +1251,13 @@ function getData(){
     companyName:v('companyName')||'Granada Print',
     companyPhone:v('companyPhone')||'',
     companyAddress:v('companyAddress')||'',
-    invoiceNumber:v('invoiceNumber')||'GR-000000',
+    invoiceNumber:v('invoiceNumber')||'GP1170-0000',
     senderName:v('senderName')||'',senderPhone:v('senderPhone')||'',senderCity:v('senderCity')||'',senderAddress:v('senderAddress')||'',
     receiverName:v('receiverName')||'',receiverPhone:v('receiverPhone')||'',receiverCity:v('receiverCity')||'',receiverAddress:v('receiverAddress')||'',
-    content:v('content')||'',pieces:v('pieces')||'1',weight:v('weight')||'0.5',
+    content:v('content')||'',deliveryType:v('deliveryType')||'توصيل',pieces:v('pieces')||'1',weight:v('weight')||'0.5',
     shippingCost:v('shippingCost')||'0',codAmount:v('codAmount')||'0',
     shipDate:v('shipDate')||today(),notes:v('notes')||'',
+    companyInfoVisible:$('companyInfoVisible')?.checked !== false,
     logo:logo,printSize:$('printSize').value||'thermal80',
     createdAt:new Date().toISOString()
   }
@@ -1166,9 +1267,11 @@ function setData(d){
   editId=d.id||null;
   ['companyName','companyPhone','companyAddress','invoiceNumber','senderName','senderPhone','senderCity','senderAddress',
    'receiverName','receiverPhone','receiverCity','receiverAddress','content','pieces','weight','shippingCost','codAmount','shipDate','notes'].forEach(k=>{if($(k))$(k).value=d[k]??''});
+  if($('deliveryType'))$('deliveryType').value=d.deliveryType||'توصيل';
+  if($('companyInfoVisible'))$('companyInfoVisible').checked = d.companyInfoVisible !== false;
   if(d.printSize)$('printSize').value=d.printSize;
   logo=d.logo||'';
-  $('logoThumb').innerHTML=logo?`<img src="${logo}" style="width:100%;height:100%;object-fit:contain;padding:4px">`:'🏢';
+  $('logoThumb').innerHTML=logo?`<img src="${logo}" style="width:100%;height:100%;object-fit:contain;padding:4px">`:'<i class="fa-solid fa-building"></i>';
   updateUI();saveDraft();
 }
 
@@ -1180,7 +1283,7 @@ function loadLogo(inp){
 }
 
 function generateInvoiceNumber(){
-  const n='GR-'+Math.floor(100000+Math.random()*900000);
+  const n='GP1170-'+Math.floor(1000+Math.random()*9000);
   $('invoiceNumber').value=n;updateUI();
 }
 
@@ -1189,61 +1292,147 @@ function setLogoEl(id,html){const e=$(id);if(e)e.innerHTML=html}
 
 function bc(id,val,h,w){
   const el=$(id);if(!el||typeof JsBarcode==='undefined')return;
-  try{JsBarcode(el,String(val||'GR-000000'),{format:'CODE128',displayValue:false,margin:0,lineColor:'#0a0a0f',background:'transparent',width:w,height:h})}catch(e){el.innerHTML=''}
+  try{JsBarcode(el,String(val||'GP1170-0000'),{format:'CODE128',displayValue:false,margin:0,lineColor:'#0f172a',background:'transparent',width:w,height:h})}catch(e){el.innerHTML=''}
 }
 
 function updateUI(){
   const d=getData();
+  const showCompany = d.companyInfoVisible !== false;
   const s=(id,v)=>setEl(id,v);
-  const logoHTML=logo?`<img src="${logo}" style="width:100%;height:100%;object-fit:contain;padding:2px">`:'🖨';
-  const logoA4HTML=logo?`<img src="${logo}" style="width:100%;height:100%;object-fit:contain;padding:4px">`:'🖨';
+  const logoHTML=logo?`<img src="${logo}" style="width:100%;height:100%;object-fit:contain;padding:2px">`:'<i class="fa-solid fa-print"></i>';
+  const logoA4HTML=logo?`<img src="${logo}" style="width:100%;height:100%;object-fit:contain;padding:4px">`:'<i class="fa-solid fa-print"></i>';
 
-  // Thermal
+  // ===== THERMAL 80mm =====
   setLogoEl('logoThermal',logoHTML);
-  s('companyNameThermal',d.companyName);s('companyPhoneThermal',d.companyPhone);s('companyAddressThermal',d.companyAddress);
-  s('invoiceNumberThermal',d.invoiceNumber);s('barcodeNumThermal',d.invoiceNumber);s('companyFooterThermal',d.companyName);
-  s('senderNameThermal',d.senderName||'-');s('senderPhoneThermal',d.senderPhone||'-');s('senderCityThermal',d.senderCity||'-');s('senderAddressThermal',d.senderAddress||'-');
-  s('receiverNameThermal',d.receiverName||'-');s('receiverPhoneThermal',d.receiverPhone||'-');s('receiverCityThermal',d.receiverCity||'-');s('receiverAddressThermal',d.receiverAddress||'-');
-  s('contentThermal',d.content||'-');s('piecesThermal',d.pieces||'1');s('weightThermal',(d.weight||'0')+' كجم');s('shipDateThermal',niceDate(d.shipDate));
-  s('shippingCostThermal',money(d.shippingCost));s('codAmountThermal',money(d.codAmount));
+  s('companyNameThermal',d.companyName);
+  s('companyPhoneThermal',d.companyPhone);
+  s('companyAddressThermal',d.companyAddress);
+  s('invoiceNumberThermal',d.invoiceNumber);
+  s('barcodeNumThermal',d.invoiceNumber);
+  s('barcodeNumThermal2',d.invoiceNumber);
+  s('companyFooterThermal',d.companyName);
+  s('senderNameThermal',d.senderName||'-');
+  s('senderPhoneThermal',d.senderPhone||'-');
+  s('senderCityThermal',d.senderCity||'-');
+  s('senderAddressThermal',d.senderAddress||'-');
+  s('receiverNameThermal',d.receiverName||'-');
+  s('receiverPhoneThermal',d.receiverPhone||'-');
+  s('receiverCityThermal',d.receiverCity||'-');
+  s('receiverAddressThermal',d.receiverAddress||'-');
+  s('contentThermal',d.content||'-');
+  s('piecesThermal',d.pieces||'1');
+  s('weightThermal',(d.weight||'0')+' كجم');
+  s('shipDateThermal',niceDate(d.shipDate));
+  s('shippingCostThermal',money(d.shippingCost));
+  s('codAmountThermal',money(d.codAmount));
   if(d.notes){$('notesBoxThermal').style.display='block';s('notesThermal',d.notes)}else{$('notesBoxThermal').style.display='none'}
-  bc('barcodeThermal',d.invoiceNumber,40,1.4);
-  bc('barcodeThermalSmall',d.invoiceNumber,28,1.1);
+  s('deliveryTypeThermal',d.deliveryType||'-');
+  $('logoThermal').style.display = showCompany ? 'flex' : 'none';
+  $('companyNameThermal').style.display = showCompany ? 'block' : 'none';
+  $('companyPhoneThermal').style.display = showCompany ? 'block' : 'none';
+  $('companyAddressThermal').style.display = showCompany ? 'block' : 'none';
+  $('companyFooterThermal').style.display = showCompany ? 'inline' : 'none';
+  bc('barcodeThermal',d.invoiceNumber,36,1.2);
+  bc('barcodeThermalSmall',d.invoiceNumber,24,0.9);
 
-  // A4
+  // ===== A4 =====
   setLogoEl('logoA4',logoA4HTML);
   s('companyNameA4',d.companyName);
-  $('companyInfoA4').innerHTML=`${d.companyAddress?d.companyAddress+'<br>':''}${d.companyPhone||''}`;
+  const infoParts = [];
+  if(d.companyAddress) infoParts.push(d.companyAddress);
+  if(d.companyPhone) infoParts.push(d.companyPhone);
+  $('companyInfoA4').innerHTML = infoParts.join('<br>');
+  $('companyInfoA4').style.display = showCompany ? 'block' : 'none';
+  $('logoA4').style.display = showCompany ? 'flex' : 'none';
+  $('companyNameA4').style.display = showCompany ? 'block' : 'none';
+  s('deliveryTypeA4',d.deliveryType||'-');
   s('invoiceNumberA4',d.invoiceNumber);
+  s('barcodeNumA4',d.invoiceNumber);
   s('footerBrandA4',d.companyName);
-  s('senderNameA4',d.senderName||'-');s('senderPhoneA4',d.senderPhone||'-');s('senderCityA4',d.senderCity||'-');s('senderAddressA4',d.senderAddress||'-');
-  s('receiverNameA4',d.receiverName||'-');s('receiverPhoneA4',d.receiverPhone||'-');s('receiverCityA4',d.receiverCity||'-');s('receiverAddressA4',d.receiverAddress||'-');
-  s('contentA4',d.content||'-');s('piecesA4',d.pieces||'1');s('weightA4',(d.weight||'0')+' كجم');s('shipDateA4',niceDate(d.shipDate));
-  s('shippingCostA4',money(d.shippingCost));s('codAmountA4',money(d.codAmount));
+  $('footerBrandA4').style.display = showCompany ? 'block' : 'none';
+  s('senderNameA4',d.senderName||'-');
+  s('senderPhoneA4',d.senderPhone||'-');
+  s('senderCityA4',d.senderCity||'-');
+  s('senderAddressA4',d.senderAddress||'-');
+  s('receiverNameA4',d.receiverName||'-');
+  s('receiverPhoneA4',d.receiverPhone||'-');
+  s('receiverCityA4',d.receiverCity||'-');
+  s('receiverAddressA4',d.receiverAddress||'-');
+  s('contentA4',d.content||'-');
+  s('piecesA4',d.pieces||'1');
+  s('weightA4',(d.weight||'0')+' كجم');
+  s('shipDateA4',niceDate(d.shipDate));
+  s('shippingCostA4',money(d.shippingCost));
+  s('codAmountA4',money(d.codAmount));
   if(d.notes){$('notesBoxA4').style.display='block';s('notesA4',d.notes)}else{$('notesBoxA4').style.display='none'}
-  bc('barcodeA4',d.invoiceNumber,48,2.2);
+  bc('barcodeA4',d.invoiceNumber,42,1.8);
 
-  // 200x80
-  s('companyName200',d.companyName);s('companyPhone200',d.companyPhone);s('invoiceNumber200',d.invoiceNumber);
-  s('senderCity200',d.senderCity||'-');s('senderName200',d.senderName||'-');s('receiverCity200',d.receiverCity||'-');s('receiverName200',d.receiverName||'-');
-  s('pieces200',d.pieces||'1');s('weight200',d.weight||'0');s('shippingCost200',d.shippingCost||'0');s('codAmount200',d.codAmount||'0');
-  s('content200',d.content||'-');s('shipDate200',niceDate(d.shipDate));
-  bc('barcode200',d.invoiceNumber,34,1.0);
+  // ===== 200x80 =====
+  s('companyName200',d.companyName);
+  s('companyPhone200',d.companyPhone);
+  s('invoiceNumber200',d.invoiceNumber);
+  s('senderCity200',d.senderCity||'-');
+  s('senderName200',d.senderName||'-');
+  s('receiverCity200',d.receiverCity||'-');
+  s('receiverName200',d.receiverName||'-');
+  s('pieces200',d.pieces||'1');
+  s('weight200',d.weight||'0');
+  s('shippingCost200',d.shippingCost||'0');
+  s('codAmount200',d.codAmount||'0');
+  s('content200',d.content||'-');
+  s('shipDate200',niceDate(d.shipDate));
+  $('companyName200').style.display = showCompany ? 'block' : 'none';
+  $('companyPhone200').style.display = showCompany ? 'block' : 'none';
+  bc('barcode200',d.invoiceNumber,30,0.9);
 
-  // 100x150
-  s('companyName100',d.companyName);s('companyPhone100',d.companyPhone);s('invoiceNumber100',d.invoiceNumber);s('barcodeNum100',d.invoiceNumber);
-  s('senderCity100',d.senderCity||'-');s('senderName100',d.senderName||'-');s('senderPhone100',d.senderPhone||'-');
-  s('receiverCity100',d.receiverCity||'-');s('receiverName100',d.receiverName||'-');s('receiverPhone100',d.receiverPhone||'-');
-  s('pieces100',d.pieces||'1');s('weight100',d.weight||'0');s('shippingCost100',d.shippingCost||'0');
-  s('codAmount100',money(d.codAmount));s('shipDate100',niceDate(d.shipDate));
-  bc('barcode100',d.invoiceNumber,28,1.0);
+  // ===== 100x150 =====
+  s('companyName100',d.companyName);
+  s('companyPhone100',d.companyPhone);
+  s('invoiceNumber100',d.invoiceNumber);
+  s('barcodeNum100',d.invoiceNumber);
+  s('senderCity100',d.senderCity||'-');
+  s('senderName100',d.senderName||'-');
+  s('senderPhone100',d.senderPhone||'-');
+  s('receiverCity100',d.receiverCity||'-');
+  s('receiverName100',d.receiverName||'-');
+  s('receiverPhone100',d.receiverPhone||'-');
+  s('pieces100',d.pieces||'1');
+  s('weight100',d.weight||'0');
+  s('shippingCost100',d.shippingCost||'0');
+  s('deliveryType100',d.deliveryType||'-');
+  s('codAmount100',money(d.codAmount));
+  s('shipDate100',niceDate(d.shipDate));
+  $('companyName100').style.display = showCompany ? 'block' : 'none';
+  $('companyPhone100').style.display = showCompany ? 'block' : 'none';
+  bc('barcode100',d.invoiceNumber,24,0.9);
 
-  // 100x70
-  s('companyName70',d.companyName);s('invoiceNumber70v',d.invoiceNumber);s('shipDate70',niceDate(d.shipDate));
-  s('senderCity70',d.senderCity||'-');s('senderName70',d.senderName||'-');s('receiverCity70',d.receiverCity||'-');s('receiverName70',d.receiverName||'-');
-  s('pieces70',d.pieces||'1');s('weight70',d.weight||'0');s('codAmount70',d.codAmount||'0');
-  bc('barcode70',d.invoiceNumber,100,0.85);
-  bc('barcode70main',d.invoiceNumber,22,1.0);
+  // ===== 100x70 — FULL REDESIGN =====
+  setLogoEl('logo70',logoHTML);
+  s('companyName70',d.companyName);
+  s('companyPhone70',d.companyPhone);
+  s('companyAddress70',d.companyAddress);
+  s('invoiceNumber70',d.invoiceNumber);
+  s('barcodeNum70',d.invoiceNumber);
+  s('barcodeNum70f',d.invoiceNumber);
+  s('companyFooter70',d.companyName);
+  s('senderName70',d.senderName||'-');
+  s('senderPhone70',d.senderPhone||'-');
+  s('senderCity70',d.senderCity||'-');
+  s('senderAddress70',d.senderAddress||'-');
+  s('receiverName70',d.receiverName||'-');
+  s('receiverPhone70',d.receiverPhone||'-');
+  s('receiverCity70',d.receiverCity||'-');
+  s('receiverAddress70',d.receiverAddress||'-');
+  s('content70',d.content||'-');
+  s('pieces70',d.pieces||'1');
+  s('weight70',d.weight||'0');
+  s('shipDate70',niceDate(d.shipDate));
+  s('shippingCost70',money(d.shippingCost));
+  s('codAmount70',money(d.codAmount));
+  s('deliveryType70',d.deliveryType||'-');
+  $('r7CompanyHeader').style.display = showCompany ? 'flex' : 'none';
+  $('companyFooter70').style.display = showCompany ? 'inline' : 'none';
+  bc('barcode70main',d.invoiceNumber,18,0.85);
 
   saveDraft();renderHistory(false);
 }
@@ -1280,11 +1469,11 @@ function newInvoice(){
   if(!confirm('بدء فاتورة جديدة؟'))return;
   editId=null;
   setData({companyName:v('companyName')||'Granada Print',companyPhone:v('companyPhone')||'',companyAddress:v('companyAddress')||'',
-    invoiceNumber:'GR-'+Math.floor(100000+Math.random()*900000),
+    invoiceNumber:'GP1170-'+Math.floor(1000+Math.random()*9000),
     senderName:'',senderPhone:'',senderCity:'',senderAddress:'',
     receiverName:'',receiverPhone:'',receiverCity:'',receiverAddress:'',
-    content:'',pieces:'1',weight:'0.5',shippingCost:'0',codAmount:'0',
-    shipDate:today(),notes:'',logo:logo,printSize:$('printSize').value||'thermal80'});
+    content:'',deliveryType:'توصيل',pieces:'1',weight:'0.5',shippingCost:'0',codAmount:'0',
+    shipDate:today(),notes:'',companyInfoVisible:true,logo:logo,printSize:$('printSize').value||'thermal80'});
 }
 
 function openInvoice(id){
@@ -1329,20 +1518,20 @@ function renderHistory(full=true){
   $('histCount').textContent=fil.length;
   const wrap=$('historyList');
   if(!fil.length){
-    wrap.innerHTML=`<div class="hist-empty"><div class="hist-empty-icon">📋</div><div class="hist-empty-text">لا توجد فواتير محفوظة</div></div>`;return;
+    wrap.innerHTML=`<div class="hist-empty"><div class="hist-empty-icon"><i class="fa-solid fa-clipboard-list fa-2x" style="opacity:.4"></i></div><div class="hist-empty-text">لا توجد فواتير محفوظة</div></div>`;return;
   }
   wrap.innerHTML=fil.map(item=>`
     <div class="hist-item ${item.id===editId?'active':''}" onclick="openInvoice('${item.id}')">
-      <div class="hist-num">${item.invoiceNumber}</div>
+      <div class="hist-num"><i class="fa-solid fa-receipt"></i> ${item.invoiceNumber}</div>
       <div class="hist-route">${item.senderName||'-'} ← ${item.receiverName||'-'}</div>
-      <div style="font-size:10px;color:#94a3b8">${item.senderCity||'-'} ← ${item.receiverCity||'-'}</div>
+      <div style="font-size:10px;color:#94a3b8"><i class="fa-solid fa-location-dot"></i> ${item.senderCity||'-'} ← ${item.receiverCity||'-'}</div>
       <div class="hist-meta">
         <span class="hist-amount">${money(item.codAmount)}</span>
         <span class="hist-date">${niceDate(item.shipDate)}</span>
       </div>
       <div class="hist-actions">
-        <button class="btn btn-dark" onclick="event.stopPropagation();openInvoice('${item.id}')">👁 فتح</button>
-        <button class="btn btn-danger" onclick="event.stopPropagation();deleteInvoice('${item.id}')">🗑</button>
+        <button class="btn btn-dark" onclick="event.stopPropagation();openInvoice('${item.id}')"><i class="fa-solid fa-eye action-icon"></i>فتح</button>
+        <button class="btn btn-danger" onclick="event.stopPropagation();deleteInvoice('${item.id}')"><i class="fa-solid fa-trash action-icon"></i></button>
       </div>
     </div>
   `).join('');
@@ -1359,7 +1548,7 @@ function printInvoice(){
   setTimeout(()=>{
     window.print();
     setTimeout(()=>{pr.innerHTML='';pr.style.display='none'},700)
-  },200);
+  },300);
 }
 
 async function openScanner(){
@@ -1375,7 +1564,7 @@ async function openScanner(){
 function closeScanner(){
   $('scannerModal').classList.remove('active');
   if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null}
-  if(scannerAnim)cancelAnimationFrame(scannerAnim);scannerAnim=null;
+  if(scanAnim)cancelAnimationFrame(scanAnim);scanAnim=null;
 }
 function switchCamera(){camFace=camFace==='environment'?'user':'environment';closeScanner();setTimeout(openScanner,250)}
 function startScan(){
