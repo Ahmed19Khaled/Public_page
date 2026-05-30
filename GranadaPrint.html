@@ -36,8 +36,8 @@ html,body{height:100%;font-family:'Cairo',sans-serif;background:var(--bg);color:
 html,body{
     height:100%;
     overflow-x:auto;
-    overflow-y:hidden;
-}
+    overflow-y:auto;
+} 
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -54,7 +54,16 @@ html,body{
 
 .app{
     min-width:1200px;
-} @media (max-width:768px){
+} 
+    .app{
+    min-width:1200px; /* أو العرض الذي تريده */
+    min-height:100vh;
+    }
+    html,body{
+    height:100%;
+    overflow:scroll;
+    }
+    @media (max-width:768px){
 
     .app{
         display:flex;
