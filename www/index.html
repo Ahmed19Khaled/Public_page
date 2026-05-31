@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta http-equiv="Content-Security-Policy" content="default-src * 'self' data: blob: 'unsafe-inline' 'unsafe-eval'; img-src * data: blob:; connect-src * data: blob:;">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0f1e">
+<title>Granada Print Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!-- icon -->
+ <link rel="stylesheet" href="css/index.css">
+ <link rel="icon" type="image/x-icon" href="img\logo.png">
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
+<style>
+/* ════════ ROOT ════════ */
+:root{
+  --bg:#0a0f1e; --bg2:#111827; --surface:#1a2235; --surface2:#232f45;
+  --card:#ffffff; --line:#e2e8f0;
+  --ink:#0f172a; --ink2:#1e293b; --ink3:#334155; --muted:#64748b;
+  --gold:#c9a227; --gold2:#f0c842; --gold3:#fff8e1; --golddark:#8a6a00;
+  --blue:#3b82f6; --green:#10b981; --red:#ef4444; --orange:#f59e0b;
+  --r:18px; --r2:12px; --r3:10px;
+  --shadow:0 18px 50px rgba(0,0,0,.18);
+  --shadow-sm:0 4px 14px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+html,body{height:100%;font-family:'Cairo','Tajawal',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+body{background:linear-gradient(145deg,#0a0f1e 0%,#0f1c35 50%,#0a1528 100%);overflow:hidden}
+button,input,select,textarea{font:inherit;-webkit-appearance:none;appearance:none;outline:none}
+textarea{resize:vertical}
+
+/* ════════ APP SHELL ════════ */
+.app{
+  display:grid;
+  grid-template-columns:320px 1fr 300px;
+  gap:8px;
+  height:100vh;height:100dvh;
+  padding:8px;
+  padding-top:max(8px,env(safe-area-inset-top));
+  padding-bottom:max(8px,env(safe-area-inset-bottom));
+}
+.panel{
+  background:rgba(255,255,255,.97);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  display:flex;flex-direction:column;
+}
+
+/* ════════ LEFT PANEL ════════ */
+.lp-head{
+  padding:14px;
+  background:linear-gradient(135deg,#0a0f1e 0%,#1a2a4a 100%);
+  position:relative;overflow:hidden;flex-shrink:0;
+}
+.lp-head::after{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M20 20c0-11.046-8.954-20-20-20v20h20z'/%3E%3C/g%3E%3C/svg%3E");
+}
+.lp-brand{display:flex;align-items:center;gap:10px;position:relative}
+.lp-icon{
+  width:42px;height:42px;border-radius:12px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:grid;place-items:center;font-size:18px;color:#111;
+  box-shadow:0 6px 18px rgba(201,162,39,.35);flex-shrink:0;
+}
+.lp-name{font-size:17px;font-weight:900;color:#fff;letter-spacing:-.3px}
+.lp-sub{font-size:10px;color:rgba(255,255,255,.5);margin-top:1px}
+.lp-scroll{flex:1;overflow-y:auto;padding:10px;-webkit-overflow-scrolling:touch}
+.lp-scroll::-webkit-scrollbar{width:4px}
+.lp-scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
+
+/* ════════ SECTION / FIELD ════════ */
+.sec{
+  background:#fff;border:1px solid #eef2f7;
+  border-radius:var(--r2);padding:10px;margin-bottom:8px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+.sec-t{
+  font-weight:900;font-size:11px;color:#0f172a;
+  display:flex;align-items:center;gap:6px;
+  margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid #f1f5f9;
+}
+.fld{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.fld:last-child{margin-bottom:0}
+.fld label{font-size:10.5px;font-weight:800;color:#475569;display:flex;align-items:center;gap:4px}
+.fld input,.fld textarea,.fld select{
+  border:1.5px solid #e2e8f0;background:#f8fafc;
+  border-radius:10px;padding:8px 10px;
+  color:var(--ink);font-size:12.5px;width:100%;transition:.15s;
+}
+.fld input:focus,.fld textarea:focus,.fld select:focus{
+  border-color:var(--gold);background:#fff;
+  box-shadow:0 0 0 3px rgba(201,162,39,.12);
+}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g3{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+
+/* Logo upload */
+.logo-wrap{
+  display:flex;align-items:center;gap:10px;
+  border:1.5px dashed #cbd5e1;border-radius:12px;padding:9px;
+  background:#f8fafc;cursor:pointer;transition:.15s;
+}
+.logo-wrap:hover{border-color:var(--gold);background:#fffef0}
+.logo-thumb{
+  width:44px;height:44px;border-radius:11px;
+  background:#fff;border:1px solid #e5e7eb;
+  display:grid;place-items:center;overflow:hidden;
+  color:#94a3b8;flex-shrink:0;font-size:17px;
+}
+.logo-thumb img{width:100%;height:100%;object-fit:contain}
+
+/* Toggle switch */
+.sw-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:7px 9px;background:#f8fafc;border:1px solid #e2e8f0;
+  border-radius:10px;margin-top:6px;
+}
+.sw-info{display:flex;align-items:center;gap:8px}
+.sw-ico{
+  width:30px;height:30px;border-radius:9px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:grid;place-items:center;color:#111;font-size:12px;flex-shrink:0;
+}
+.sw-label{font-size:11.5px;font-weight:800;color:var(--ink)}
+.sw-desc{font-size:9.5px;color:var(--muted)}
+.sw{position:relative;width:48px;height:26px;flex-shrink:0}
+.sw input{opacity:0;width:0;height:0}
+.sw .track{
+  position:absolute;inset:0;background:#cbd5e1;
+  border-radius:99px;cursor:pointer;transition:.25s;
+}
+.sw .track::before{
+  content:'';position:absolute;
+  width:18px;height:18px;left:4px;top:4px;
+  background:#fff;border-radius:50%;transition:.25s;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);
+}
+.sw input:checked + .track{background:linear-gradient(135deg,var(--green),#059669)}
+.sw input:checked + .track::before{transform:translateX(22px)}
+
+/* ════════ BUTTONS ════════ */
+.btn{
+  border:0;border-radius:10px;padding:8px 12px;
+  font-weight:800;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  transition:.15s;font-size:11.5px;min-height:36px;
+  user-select:none;touch-action:manipulation;
+}
+.btn:active{transform:scale(.96)}
+.btn-ghost{background:#f1f5f9;color:#334155}
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#111;box-shadow:0 4px 12px rgba(201,162,39,.32);
+}
+.btn-dark{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff}
+.btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
+.btn-success{background:linear-gradient(135deg,#10b981,#059669);color:#fff}
+.btn-blue{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff}
+
+/* ACTION BAR */
+.action-bar{
+  position:fixed;bottom:max(8px,env(safe-area-inset-bottom));right:8px;
+  z-index:2000;display:flex;gap:6px;
+  background:rgba(10,15,30,.92);backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;padding:8px 10px;
+  box-shadow:0 8px 28px rgba(0,0,0,.38);
+}
+.action-bar .btn{min-height:38px}
+
+/* ════════ CENTER PANEL ════════ */
+.center-panel{display:flex;flex-direction:column;min-width:0}
+.cp-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:8px;padding:8px 10px;border-bottom:1px solid var(--line);
+  background:#fff;flex-shrink:0;flex-wrap:wrap;
+}
+.pill{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 9px;border-radius:99px;
+  background:#f1f5f9;color:#0f172a;font-size:10.5px;font-weight:800;
+}
+.pill-gold{background:rgba(201,162,39,.12);color:var(--golddark)}
+.tool-btn,.zoom-btn{
+  border:1.5px solid #e5e7eb;background:#fff;
+  border-radius:9px;padding:6px 9px;
+  font-size:10.5px;font-weight:800;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;
+  transition:.15s;color:#334155;min-height:32px;
+}
+.tool-btn:hover,.zoom-btn:hover{border-color:var(--gold);color:var(--golddark)}
+.zoom-btn.on{background:#0f172a;color:#fff;border-color:#0f172a}
+
+.paper-area{
+  flex:1;overflow:auto;padding:16px;
+  display:flex;justify-content:center;align-items:flex-start;
+  background:linear-gradient(135deg,#f0f4ff,#e8f0fe,#f0fdf4);
+  -webkit-overflow-scrolling:touch;
+}
+.pw{transform-origin:top center;transition:transform .2s}
+
+/* ════════ RIGHT PANEL ════════ */
+.rp-head{
+  padding:12px;border-bottom:1px solid var(--line);flex-shrink:0;
+}
+.rp-head-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+.rp-title{font-size:14px;font-weight:900;color:var(--ink)}
+.rp-sub{font-size:10.5px;color:var(--muted)}
+.rp-search{padding:7px 10px;border-bottom:1px solid var(--line);position:relative}
+.rp-search input{
+  width:100%;background:#f8fafc;border:1.5px solid var(--line);
+  border-radius:10px;padding:7px 10px 7px 32px;font-size:11.5px;
+  color:var(--ink);transition:.15s;
+}
+.rp-search input:focus{border-color:var(--gold);background:#fff}
+.rp-search i{position:absolute;left:22px;top:50%;transform:translateY(-50%);color:#94a3b8;pointer-events:none}
+.rp-actions{
+  padding:7px 10px;border-bottom:1px solid var(--line);
+  display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;
+}
+.batch-bar{
+  padding:7px 10px;border-bottom:1px solid var(--line);
+  display:flex;gap:6px;flex-shrink:0;
+}
+.batch-bar .btn{flex:1;font-size:10.5px;padding:6px 9px}
+.hist-list{flex:1;padding:8px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* History Item */
+.h-item{
+  border:1.5px solid var(--line);border-radius:12px;
+  padding:9px;margin-bottom:7px;cursor:pointer;
+  transition:.15s;background:#fff;position:relative;
+  touch-action:manipulation;
+}
+.h-item:hover{border-color:var(--gold);box-shadow:0 2px 12px rgba(201,162,39,.12)}
+.h-item.active{border-color:#0f172a;box-shadow:0 0 0 3px rgba(15,23,42,.06)}
+.h-item.selected{border-color:var(--blue);background:#eff6ff}
+.h-num{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:800;color:var(--ink);margin-bottom:2px}
+.h-route{font-size:10.5px;color:var(--ink3);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.h-meta{display:flex;justify-content:space-between;align-items:center;margin-top:5px}
+.h-cod{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:800;color:var(--red)}
+.h-date{font-size:9.5px;color:var(--muted)}
+.h-actions{display:flex;gap:4px;margin-top:7px}
+.h-actions .btn{flex:1;font-size:10px;padding:5px 7px;min-height:30px}
+.h-check{
+  position:absolute;top:8px;left:8px;
+  width:17px;height:17px;
+  accent-color:var(--blue);cursor:pointer;z-index:2;
+}
+.hist-empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:26px 12px;color:var(--muted);text-align:center;
+  border:1.5px dashed var(--line);border-radius:12px;margin-top:6px;gap:8px;
+}
+.badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:22px;height:22px;padding:0 7px;
+  border-radius:99px;font-size:11px;font-weight:800;
+  background:#0f172a;color:var(--gold2);
+}
+
+/* ════════ OVERLAYS ════════ */
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);
+  z-index:300;display:none;align-items:center;justify-content:center;
+  padding:14px;backdrop-filter:blur(6px);
+}
+.overlay.on{display:flex}
+.ob{
+  background:#fff;border-radius:18px;padding:18px;
+  width:min(90vw,440px);box-shadow:0 24px 64px rgba(0,0,0,.3);
+  max-height:88vh;overflow:auto;
+}
+.ob-t{font-size:15px;font-weight:900;color:var(--ink);margin-bottom:4px}
+.ob-s{font-size:10.5px;color:var(--muted);margin-bottom:12px}
+.ob-acts{display:flex;gap:8px;margin-top:14px}
+.ob-acts .btn{flex:1}
+.ob-ta{
+  width:100%;min-height:120px;border:1.5px solid var(--line);
+  border-radius:11px;padding:10px;font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;color:var(--ink);background:#f8fafc;
+}
+.ob-ta:focus{border-color:var(--gold);outline:none}
+
+/* Scanner */
+.sc-box{
+  background:#0f172a;border:1px solid #334155;border-radius:18px;
+  padding:16px;width:min(90vw,340px);color:#e2e8f0;
+  box-shadow:0 24px 64px rgba(0,0,0,.5);
+}
+.sc-frame{
+  position:relative;width:100%;aspect-ratio:1;
+  border-radius:12px;overflow:hidden;border:2px solid var(--gold);
+  margin-top:12px;
+}
+.sc-frame video{width:100%;height:100%;object-fit:cover}
+.sc-line{
+  position:absolute;left:10%;right:10%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold2),transparent);
+  animation:scan 2s ease-in-out infinite;
+}
+@keyframes scan{0%{top:10%;opacity:.3}50%{top:88%;opacity:1}100%{top:10%;opacity:.3}}
+
+/* ════════ PRINT PREVIEW SIZES ════════ */
+.receipt{background:#fff;box-shadow:0 18px 42px rgba(15,23,42,.14)}
+
+/* ──────── THERMAL 80mm REDESIGN ──────── */
+.r-t80{
+  width:80mm;
+  font-family:'Cairo','Tajawal',sans-serif;
+  color:#1a1a1a;
+  background:#fff;
+  position:relative;
+}
+.t80-accent{
+  height:4px;
+  background:repeating-linear-gradient(
+    90deg,
+    #c9a227 0px, #c9a227 8px,
+    #1a1a1a 8px, #1a1a1a 16px,
+    #c9a227 16px
+  );
+}
+.t80-head{
+  padding:3mm 3.5mm 2.5mm;
+  display:flex;align-items:center;gap:2.5mm;
+  border-bottom:1px solid #e5e7eb;
+  background:linear-gradient(135deg,#fefefe,#f9f5eb);
+}
+.t80-logo{
+  width:12mm;height:12mm;border-radius:3mm;
+  border:1px solid #ddd;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  background:#fff;flex-shrink:0;font-size:15px;color:#aaa;
+}
+.t80-logo img{width:100%;height:100%;object-fit:contain}
+.t80-co{flex:1;min-width:0}
+.t80-co-name{font-size:11px;font-weight:900;color:#0f172a;line-height:1.2}
+.t80-co-phone{font-size:6.5px;font-family:'IBM Plex Mono',monospace;color:#090d13;margin-top:.4mm;font-weight: bold;}
+.t80-co-addr{font-size:5.8px;color:#020509;margin-top:.25mm;line-height:1.35;font-weight: 600;}
+
+.t80-inv-box{
+  text-align:center;padding:1.8mm 2.5mm;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  margin:0;
+}
+.t80-inv-label{font-size:5.5px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.8px}
+.t80-inv-num{
+  font-family:'IBM Plex Mono',monospace;font-size:12px;
+  font-weight:900;color:var(--gold2);letter-spacing:1px;margin-top:.4mm;
+}
+.t80-bc-wrap{
+  padding:2mm 3.5mm;
+  background:#fafafa;
+  border-bottom:1px solid #e5e7eb;
+  display:flex;flex-direction:column;align-items:center;
+}
+.t80-bc-wrap svg{width:100%;height:14mm}
+.t80-bc-num{
+  font-family:'IBM Plex Mono',monospace;font-size:7px;
+  font-weight:700;color:#334155;margin-top:.8mm;letter-spacing:.8px;
+}
+.t80-sec-head{
+  display:flex;align-items:center;gap:2mm;
+  padding:1.8mm 3.5mm 1.3mm;
+  background:#f8fafc;
+  border-top:1px solid #e5e7eb;
+  border-bottom:1px solid #e5e7eb;
+}
+.t80-sec-dot{width:1.8mm;height:1.8mm;border-radius:50%;flex-shrink:0}
+.t80-sec-label{font-size:6.5px;font-weight:900;text-transform:uppercase;letter-spacing:.6px;color:#475569}
+.t80-parties{padding:2mm 3.5mm;display:flex;flex-direction:column;gap:1.6mm}
+.t80-party{
+  border-radius:2.2mm;padding:2mm;
+  position:relative;overflow:hidden;
+}
+.t80-party::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1.2mm;
+}
+.t80-party.snd{background:#f0f7ff;border:1px solid #bfdbfe}
+.t80-party.rcv{background:#f0fdf4;border:1px solid #bbf7d0}
+.t80-party.snd::before{background:linear-gradient(90deg,#1d4ed8,#3b82f6)}
+.t80-party.rcv::before{background:linear-gradient(90deg,#059669,#10b981)}
+
+.t80-party-tag{
+  font-size:6px;font-weight:900;text-transform:uppercase;letter-spacing:.4px;
+  display:flex;align-items:center;gap:1.3mm;margin-bottom:1.8mm;margin-top:.3mm;
+}
+.snd .t80-party-tag{color:#1d4ed8}
+.rcv .t80-party-tag{color:#059669}
+
+.t80-kv{display:flex;align-items:baseline;gap:2mm;margin-bottom:1mm}
+.t80-kv:last-child{margin-bottom:0}
+.t80-k{font-size:5.8px;color:#94a3b8;font-weight:700;flex-shrink:0;width:8mm}
+.t80-v{font-size:7px;font-weight:800;color:#1a1a1a;line-height:1.3;word-break:break-word}
+.t80-v.mono{font-family:'IBM Plex Mono',monospace}
+
+.t80-details{
+  margin:0 3.5mm 2mm;
+  border:1px solid #e5e7eb;border-radius:2.2mm;
+  overflow:hidden;background:#fafafa;
+}
+.t80-details-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.t80-dc{
+  padding:1.8mm .8mm;text-align:center;
+  border-left:1px solid #e5e7eb;
+}
+.t80-dc:last-child{border-left:none}
+.t80-dc-icon{font-size:7.5px;margin-bottom:.4mm;display:block}
+.t80-dc-label{font-size:5px;color:#94a3b8;font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-bottom:.4mm}
+.t80-dc-val{font-size:7.5px;font-weight:900;color:#0f172a;font-family:'IBM Plex Mono',monospace;line-height:1}
+
+.t80-delivery{
+  margin:0 3.5mm 2mm;
+  background:var(--gold3);border:1px solid #fde68a;
+  border-radius:2.2mm;padding:1.8mm 2.5mm;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.t80-delivery-label{font-size:6.5px;color:#92400e;font-weight:800}
+.t80-delivery-val{
+  font-size:7.5px;font-weight:900;color:#78350f;
+  font-family:'IBM Plex Mono',monospace;
+}
+.t80-fins{display:grid;grid-template-columns:1fr 1fr;gap:1.6mm;margin:0 3.5mm 2mm}
+.t80-fin{border-radius:2.2mm;padding:2.1mm;border:1px solid}
+.t80-fin.ship{background:#eff6ff;border-color:#bfdbfe}
+.t80-fin.cod{background:#fff7ed;border-color:#fed7aa}
+.t80-fin-label{font-size:5.8px;font-weight:900;text-transform:uppercase;letter-spacing:.3px;margin-bottom:.7mm}
+.ship .t80-fin-label{color:#1d4ed8}
+.cod .t80-fin-label{color:#ea580c}
+.t80-fin-val{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:900 !important;color:#0f172a}
+.t80-fin-icon{font-size:7.5px;margin-bottom:.4mm}
+.t80-notes{
+  margin:0 3.5mm 2mm;
+  background:#fffbeb;border:1px solid #fde68a;
+  border-radius:2.2mm;padding:2.1mm;
+}
+.t80-notes-t{font-size:6px;font-weight:900;color:#92400e;text-transform:uppercase;letter-spacing:.3px;margin-bottom:.8mm;display:flex;align-items:center;gap:1.2mm}
+.t80-notes-text{font-size:6.7px;color:#78350f;line-height:1.45}
+.t80-footer{
+  border-top:1px solid #e5e7eb;
+  padding:1.8mm 3.5mm;
+  background:#fafafa;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.t80-footer-left{font-size:5.8px;color:#94a3b8;font-weight:700;display:flex;align-items:center;gap:1.2mm}
+.t80-footer-num{
+  font-family:'IBM Plex Mono',monospace;font-size:5.8px;
+  font-weight:800;color:#334155;letter-spacing:.5px;
+}
+.t80-footer-brand{font-size:5.8px;color:#c9a227;font-weight:900}
+.t80-bottom{
+  height:3px;
+  background:linear-gradient(90deg,#c9a227,#f0c842,#c9a227);
+}
+
+/* ──────── A4 ──────── */
+.r-a4{
+  width:210mm;min-height:297mm;background:#fff;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.a4-band{height:5px;background:linear-gradient(90deg,#0f172a 0%,#c9a227 50%,#0f172a 100%)}
+.a4-head{
+  padding:8mm 12mm 7mm;
+  display:flex;justify-content:space-between;align-items:flex-start;
+  border-bottom:1.5px solid #e5e7eb;
+}
+.a4-brand{display:flex;align-items:center;gap:4mm}
+.a4-logo{
+  width:16mm;height:16mm;border-radius:4mm;
+  border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;background:#fafaf8;flex-shrink:0;font-size:10px;color:#aaa;
+}
+.a4-co-name{font-size:20px;font-weight:900;color:#0f172a}
+.a4-co-info{font-size:9.5px;color:#64748b;line-height:1.6}
+.a4-inv{text-align:left}
+.a4-inv-label{font-size:7.5px;color:#94a3b8;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.2mm}
+.a4-inv-num{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:800;color:#0f172a}
+.a4-bc-wrap{
+  margin-top:2mm;padding:1.8mm;
+  background:#f8fafc;border-radius:2mm;border:1px solid #e5e7eb;display:inline-block;
+}
+.a4-bc-wrap svg{width:46mm;height:14mm;display:block}
+.a4-bc-num{font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:#64748b;text-align:center;margin-top:.7mm;letter-spacing:.8px}
+.a4-body{padding:6mm 12mm;flex:1}
+.a4-st{
+  font-size:8.5px;font-weight:900;color:#0f172a;text-transform:uppercase;
+  letter-spacing:1px;margin-bottom:3mm;
+  display:flex;align-items:center;gap:3mm;
+}
+.a4-st::after{content:'';flex:1;height:1px;background:#e5e7eb}
+.a4-parties{display:flex;flex-direction:column;gap:3mm;margin-bottom:5mm}
+.a4-party{
+  border:1px solid #e5e7eb;border-radius:3mm;
+  padding:3.5mm;background:#fafaf8;position:relative;overflow:hidden;
+}
+.a4-party::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2.5px;
+}
+.a4-party.snd::before{background:linear-gradient(90deg,#1d4ed8,#60a5fa)}
+.a4-party.rcv::before{background:linear-gradient(90deg,#059669,#34d399)}
+.a4-party-tag{font-size:7.5px;font-weight:900;margin-bottom:1.8mm;display:flex;align-items:center;gap:2mm}
+.a4-party.snd .a4-party-tag{color:#1d4ed8}
+.a4-party.rcv .a4-party-tag{color:#059669}
+.a4-pname{font-size:14px;font-weight:900;color:#0f172a;margin-bottom:1.2mm}
+.a4-pd{font-size:10px;color:#475569;margin-bottom:.9mm;display:flex;align-items:center;gap:2mm}
+.a4-shipment{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:2.5mm;margin-bottom:4.5mm;
+}
+.a4-sc{
+  border:1px solid #e5e7eb;border-radius:2.5mm;
+  padding:2.5mm;text-align:center;background:#fafaf8;
+}
+.a4-sc-label{font-size:7.5px;color:#94a3b8;font-weight:800;text-transform:uppercase;margin-bottom:1.2mm}
+.a4-sc-val{font-size:12px;font-weight:900;color:#0f172a}
+.a4-delivery-badge{
+  background:var(--gold3);border:1px solid #fde68a;
+  border-radius:2.5mm;padding:1.8mm 2.5mm;
+  font-size:9.5px;color:#92400e;font-weight:800;
+  margin-bottom:4.5mm;display:flex;align-items:center;justify-content:space-between;
+}
+.a4-fins{display:grid;grid-template-columns:1fr 1fr;gap:3mm;margin-bottom:4.5mm}
+.a4-fin{border-radius:3mm;padding:4mm}
+.a4-fin.ship{background:#eff6ff;border:1px solid #bfdbfe}
+.a4-fin.cod{background:#fff7ed;border:1px solid #fed7aa}
+.a4-fin-label{font-size:7.5px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:1.5mm}
+.a4-fin.ship .a4-fin-label{color:#1d4ed8}
+.a4-fin.cod .a4-fin-label{color:#ea580c}
+.a4-fin-val{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:800;color:#0f172a}
+.a4-notes-box{border:1px solid #fde68a;background:#fffbeb;border-radius:3mm;padding:3.5mm;margin-bottom:4.5mm}
+.a4-notes-label{font-size:7.5px;font-weight:900;color:#92400e;margin-bottom:1.2mm;text-transform:uppercase}
+.a4-notes-text{font-size:10px;color:#78350f;line-height:1.6}
+.a4-foot{
+  margin-top:auto;padding:4.5mm 12mm;border-top:1.5px solid #e5e7eb;
+  display:flex;align-items:center;justify-content:space-between;
+  background:#fafaf8;
+}
+.a4-foot-brand{font-size:9px;font-weight:900;color:#334155}
+.a4-foot-mono{font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:#94a3b8}
+
+/* ──────── 200×80 ──────── */
+.r-200x80{
+  width:200mm;height:90mm;background:#fff;
+  display:flex;flex-direction:column;overflow:hidden;
+  border-radius:3mm;
+}
+.r200-band{height:2.6mm;background:linear-gradient(90deg,#c9a227,#f0c842,#c9a227)}
+.r200-body{display:grid;grid-template-columns:42mm 1fr;flex:1;min-height:0}
+.r200-side{
+  color:#0f172a !important;padding:2.5mm;
+  display:flex;flex-direction:column;gap:2mm;
+  position:relative;overflow:hidden;
+}
+.r200-side::after{
+  content:'';position:absolute;top:0;right:0;width:1px;
+  height:100%;background:linear-gradient(180deg,transparent,#c9a227 50%,transparent);
+}
+.r200-side-logo{
+  display:flex;align-items:center;gap:1.8mm;
+}
+.r200-side-logo-box{
+  width:9mm;height:9mm;border-radius:2.2mm;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  display:grid;place-items:center;flex-shrink:0;
+  color:#c9a227;font-size:9px;overflow:hidden;
+}
+.r200-side-logo-box img{width:100%;height:100%;object-fit:contain}
+.r200-co-name{font-size:9.5px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#0f172a;font-weight:600;}
+.r200-co-phone{font-size:6px;font-family:'IBM Plex Mono',monospace;margin-top:.4mm;color:#475569;font-weight:700;}
+.r200-inv{
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+  border-radius:2mm;padding:1.8mm;flex-shrink:0;
+}
+.r200-inv-label{font-size:5px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.7mm}
+.r200-inv-num{font-size:8px;font-family:'IBM Plex Mono',monospace;font-weight:900;color:#f0c842;letter-spacing:.5px}
+.r200-bc-area{
+  flex:1;display:flex;align-items:center;justify-content:center;padding:1.5mm 0;
+}
+.r200-bc-inner{
+  width:52mm;height:10mm;
+  transform:rotate(-90deg);transform-origin:center center;
+  display:flex;align-items:center;justify-content:center;
+}
+.r200-bc-inner svg{width:52mm;height:10mm}
+.r200-main{
+  padding:2.5mm 3mm 2.2mm;
+  display:flex;flex-direction:column;gap:1.8mm;
+}
+.r200-top{display:flex;gap:2mm;align-items:flex-start}
+.r200-parties{flex:1;display:flex;flex-direction:column;gap:1.6mm;min-width:0}
+.r200-party{
+  border-radius:2.2mm;padding:1.8mm;position:relative;overflow:hidden;
+}
+.r200-party::before{content:'';position:absolute;top:0;left:0;right:0;height:1.2px}
+.r200-party.snd{background:#eff6ff;border:1px solid #bfdbfe}
+.r200-party.snd::before{background:linear-gradient(90deg,#2563eb,#60a5fa)}
+.r200-party.rcv{background:#f0fdf4;border:1px solid #bbf7d0}
+.r200-party.rcv::before{background:linear-gradient(90deg,#059669,#34d399)}
+.r200-party-tag{font-size:5.8px;font-weight:900;text-transform:uppercase;letter-spacing:.4px;margin-bottom:1mm}
+.r200-party.snd .r200-party-tag{color:#1d4ed8}
+.r200-party.rcv .r200-party-tag{color:#059669}
+.r200-party-name{font-size:10px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.7mm}
+.r200-party-phone{font-size:10px;color:#475569;font-weight:700;font-family:'IBM Plex Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r200-meta{width:25mm;flex-shrink:0;display:flex;flex-direction:column;gap:1.3mm}
+.r200-badge{
+  border-radius:2mm;padding:1.6mm 1.8mm;font-size:6px;
+  font-weight:900;display:flex;align-items:center;gap:1mm;border:1px solid;
+}
+.r200-badge.type{background:#ecfdf5;color:#047857;border-color:#bbf7d0}
+.r200-badge.date{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+.r200-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1.6mm}
+.r200-stat{
+  background:#fff;border:1px solid #e5e7eb;
+  border-radius:2mm;padding:1.8mm 1.3mm;text-align:center;
+}
+.r200-stat-icon{font-size:7.5px;margin-bottom:.6mm}
+.r200-stat-label{font-size:5px;color:#94a3b8;font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-bottom:.4mm}
+.r200-stat-val{font-size:7px;font-weight:900;color:#0f172a;word-break:break-word;line-height:1.1}
+.r200-fins{display:grid;grid-template-columns:1fr 1fr;gap:1.6mm}
+.r200-fin{
+  border-radius:2.2mm;padding:2mm;
+  display:flex;align-items:center;gap:1.6mm;border:1px solid;
+}
+.r200-fin.ship{background:#eff6ff;border-color:#bfdbfe}
+.r200-fin.cod{background:#fff7ed;border-color:#fed7aa}
+.r200-fin-icon{
+  width:5.5mm;height:5.5mm;border-radius:50%;
+  display:grid;place-items:center;background:#fff;border:1px solid #e5e7eb;font-size:6.5px;
+}
+.r200-fin-label{font-size:5px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-bottom:.5mm}
+.ship .r200-fin-label{color:#1d4ed8}
+.cod .r200-fin-label{color:#ea580c}
+.r200-fin-val{font-size:7px;font-weight:900;color:#0f172a}
+.r200-footer{
+  padding:1.6mm 3mm;border-top:1px solid #e5e7eb;
+  display:flex;justify-content:space-between;align-items:center;
+  background:#fafafa;
+}
+.r200-footer-txt{font-size:5.8px;color:#94a3b8;font-weight:700;display:flex;align-items:center;gap:1.2mm}
+.r200-footer-num{font-family:'IBM Plex Mono',monospace;font-size:6px;font-weight:900;color:#0f172a}
+
+/* ──────── 100×150 ──────── */
+.r-100x150{width:100mm;background:#fff;display:flex;flex-direction:column}
+.r150-hero{
+  padding:2.5mm 3.5mm 2mm;border-bottom:1px solid #e5e7eb;
+  background:linear-gradient(135deg,#fefefe,#f9f5eb);
+  flex-shrink:0;position:relative;overflow:hidden;
+}
+.r150-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#c9a227,#f0c842,#c9a227)}
+.r150-hero-top{display:flex;align-items:center;justify-content:space-between;gap:1.8mm;margin-bottom:1.5mm}
+.r150-brand{display:flex;align-items:center;gap:1.8mm}
+.r150-logo-box{
+  width:9mm;height:9mm;border-radius:2.2mm;
+  background:linear-gradient(135deg,#c9a227,#f0c842);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:#111;flex-shrink:0;overflow:hidden;
+}
+.r150-logo-box img{width:100%;height:100%;object-fit:contain;border-radius:2.2mm}
+.r150-co-name{font-size:10px;font-weight:900;color:#0f172a;font-weight:600}
+.r150-co-phone{font-size:6px;font-family:'IBM Plex Mono',monospace;color:#060c15;font-weight:700}
+.r150-inv-chip{
+  background:rgba(15,23,42,.06);border:1px solid rgba(15,23,42,.1);
+  border-radius:2mm;padding:1.3mm 1.8mm;flex-shrink:0;
+}
+.r150-inv-label{font-size:5px;text-transform:uppercase;letter-spacing:.6px;color:#94a3b8;margin-bottom:.4mm}
+.r150-inv-val{font-family:'IBM Plex Mono',monospace;font-size:8.5px;font-weight:900;color:#c9a227}
+.r150-badges{display:flex;gap:1.2mm}
+.r150-badge{
+  display:inline-flex;align-items:center;gap:.9mm;
+  padding:.9mm 1.8mm;border-radius:99px;font-size:5.8px;font-weight:900;
+}
+.r150-badge.dlv{background:rgba(201,162,39,.15);border:1px solid rgba(201,162,39,.3);color:#8a6a00}
+.r150-badge.dt{background:rgba(15,23,42,.06);border:1px solid rgba(15,23,42,.08);color:#334155;font-family:'IBM Plex Mono',monospace}
+.r150-route{padding:2.2mm 3.5mm;border-bottom:1px solid #e5e7eb;flex-shrink:0}
+.r150-rt-label{font-size:6px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:1.4mm;display:flex;align-items:center;gap:1.2mm}
+.r150-rt-label::after{content:'';flex:1;height:1px;background:#f1f5f9}
+.r150-flow{display:flex;flex-direction:column;gap:1.5mm}
+.r150-party{border-radius:2mm;padding:2.2mm;position:relative;overflow:hidden}
+.r150-party.snd{background:#f0f7ff;border:1px solid #dbeafe}
+.r150-party.rcv{background:#f0fdf7;border:1px solid #bbf7d0}
+.r150-party::before{content:'';position:absolute;top:0;left:0;right:0;height:1mm}
+.r150-party.snd::before{background:linear-gradient(90deg,#1d4ed8,#3b82f6)}
+.r150-party.rcv::before{background:linear-gradient(90deg,#059669,#10b981)}
+.r150-ptag{font-size:5.8px;font-weight:900;text-transform:uppercase;letter-spacing:.4px;margin-bottom:1.2mm;display:flex;align-items:center;gap:1mm}
+.snd .r150-ptag{color:#1d4ed8}
+.rcv .r150-ptag{color:#059669}
+.r150-pname{font-size:8.5px;font-weight:900;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.7mm}
+.r150-pphone{font-size:6.5px;color:#64748b;font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;gap:1mm}
+.r150-pcity{font-size:7px;font-weight:800;color:#334155;margin-top:.4mm;display:flex;align-items:center;gap:1mm}
+.r150-paddr{font-size:6px;color:#94a3b8;line-height:1.45;margin-top:.4mm}
+.r150-details{padding:2.2mm 3.5mm;border-bottom:1px solid #e5e7eb;flex-shrink:0}
+.r150-dgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.3mm}
+.r150-dc{background:#f8fafc;border:1px solid #e5e7eb;border-radius:1.8mm;padding:1.8mm;text-align:center}
+.r150-dc-icon{font-size:8px;margin-bottom:.5mm;display:block}
+.r150-dc-label{font-size:5px;color:#94a3b8;font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-bottom:.35mm}
+.r150-dc-val{font-size:7.5px;font-weight:900;color:#0f172a;font-family:'IBM Plex Mono',monospace}
+.r150-fin{padding:1.8mm 3.5mm;border-bottom:1px solid #e5e7eb;flex-shrink:0}
+.r150-fgrid{display:grid;grid-template-columns:1fr 1fr;gap:1.3mm}
+.r150-fbox{border-radius:2mm;padding:2mm;display:flex;align-items:center;gap:1.6mm}
+.r150-fbox.ship{background:#eff6ff;border:1px solid #bfdbfe}
+.r150-fbox.cod{background:#fff7ed;border:1px solid #fed7aa}
+.r150-ficon{width:6mm;height:6mm;border-radius:1.8mm;display:flex;align-items:center;justify-content:center;font-size:7.5px;flex-shrink:0}
+.ship .r150-ficon{background:#1d4ed8;color:#fff}
+.cod .r150-ficon{background:#ea580c;color:#fff}
+.r150-flabel{font-size:5px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-bottom:.35mm}
+.ship .r150-flabel{color:#1d4ed8}
+.cod .r150-flabel{color:#ea580c}
+.r150-fval{font-family:'IBM Plex Mono',monospace;font-size:8.5px;font-weight:900;color:#0f172a}
+.r150-notes-wrap{padding:1.6mm 3.5mm;flex-shrink:0}
+.r150-notes{background:#fffbeb;border:1px solid #fde68a;border-radius:2mm;padding:1.8mm;display:flex;align-items:flex-start;gap:1.3mm}
+.r150-notes-icon{font-size:7px;color:#92400e;flex-shrink:0;margin-top:.2mm}
+.r150-notes-text{font-size:6px;color:#78350f;line-height:1.45}
+.r150-foot{
+  margin-top:auto;padding:2.2mm 3.5mm 1.8mm;
+  border-top:1.5px solid #e5e7eb;
+  background:linear-gradient(180deg,#fafbfc,#f1f5f9);flex-shrink:0;
+}
+.r150-bc{background:#fff;border:1px solid #e2e8f0;border-radius:2mm;padding:1.3mm;text-align:center}
+.r150-bc svg{width:80%;height:14mm;display:block;margin:0 auto}
+.r150-bc-num{font-family:'IBM Plex Mono',monospace;font-size:6.5px;font-weight:800;color:#0f172a;letter-spacing:.8px;margin-top:.8mm}
+.r150-foot-brand{display:flex;align-items:center;justify-content:space-between;margin-top:1.2mm;font-size:5.8px;color:#94a3b8}
+.r150-foot-brand-name{font-weight:800;color:#334155}
+
+/* ──────── 100×70 ──────── */
+.r-100x70{
+  width:100mm;background:#fff;color:#111;
+  border:1px solid #dbe2ea;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.r70-band{height:2.3mm;background:linear-gradient(90deg,#0f172a,#c9a227,#0f172a)}
+.r70-head{
+  display:flex;align-items:center;justify-content:space-between;gap:3px;
+  padding:2.5px 4.5px;border-bottom:1px dashed #cbd5e1;flex-shrink:0;
+}
+.r70-logo{width:26px;height:26px;border:1px solid #dbe2ea;border-radius:7px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff;flex-shrink:0;font-size:11px;color:#aaa}
+.r70-co-name{font-size:9.5px;font-weight:900;color:#0f172a;line-height:1.1}
+.r70-co-phone{font-size:6.5px;color:#030d1b;font-weight:700}
+.r70-num-label{font-size:6px;color:#020d1d;font-weight:700}
+.r70-num-val{font-size:8px;font-weight:900;font-family:'IBM Plex Mono',monospace;color:#0f172a}
+.r70-body{flex:1;padding:2.5px 4.5px;display:flex;flex-direction:column;gap:2.5px;overflow:hidden}
+.r70-bc-wrap{text-align:center;padding-bottom:2px;border-bottom:1px dashed #e2e8f0}
+.r70-bc-wrap svg{max-width:100%;height:17px}
+.r70-bc-num{font-size:6px;font-family:'IBM Plex Mono',monospace;font-weight:700;color:#475569}
+.r70-parties{display:flex;flex-direction:column;gap:2.5px}
+.r70-party{border:1px solid #e2e8f0;border-radius:7px;padding:3px 3.5px;background:#fafafa}
+.r70-ptag{font-size:6px;font-weight:800;margin-bottom:1.2px;display:flex;align-items:center;gap:2px}
+.r70-ptag.snd{color:#2563eb}
+.r70-ptag.rcv{color:#10b981}
+.r70-kv{display:flex;justify-content:space-between;gap:2.2px;margin-bottom:.7px}
+.r70-k{font-size:5.2px;color:#94a3b8;font-weight:700;white-space:nowrap}
+.r70-v{font-size:5.8px;color:#0f172a;font-weight:800;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.r70-amounts{display:grid;grid-template-columns:1fr 1fr;gap:2.5px}
+.r70-abox{border-radius:7px;padding:2.8px;text-align:center}
+.r70-abox.ship{background:#eff6ff;border:1px solid #bfdbfe}
+.r70-abox.cod{background:#ecfdf5;border:1px solid #bbf7d0}
+.r70-alabel{font-size:5px;font-weight:800;color:#475569}
+.r70-aval{font-size:8px;font-weight:900;margin-top:1.2px;font-family:'IBM Plex Mono',monospace;color:#0f172a}
+.r70-foot{border-top:1px dashed #cbd5e1;padding:2.2px 4.5px;display:flex;justify-content:space-between;align-items:center;font-size:5.2px;flex-shrink:0}
+.r70-foot-brand{font-weight:800;color:#334155}
+.r70-foot-num{font-family:'IBM Plex Mono',monospace;font-weight:900;color:#0f172a;font-size:5.8px}
+
+/* ════════ PRINT MEDIA ════════ */
+@media print{
+  @page{margin:0}
+  body *{visibility:hidden!important}
+  #print-root,#print-root *{visibility:visible!important}
+  #print-root{
+    display:block!important;position:static!important;
+    width:auto!important;height:auto!important;
+    background:#fff!important;padding:0!important;margin:0!important;
+    overflow:visible!important;
+  }
+  .receipt{
+    box-shadow:none!important;margin:0!important;
+    transform:none!important;position:static!important;
+  }
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+}
+
+/* ════════ RESPONSIVE ════════ */
+@media(max-width:1100px){
+  body{overflow:auto}
+  .app{
+    grid-template-columns:1fr;height:auto;
+    overflow:visible;padding:6px;padding-bottom:76px;
+  }
+  .right-panel{
+    position:fixed;top:8px;bottom:8px;right:8px;
+    width:min(88vw,320px);z-index:40;
+    transform:translateX(110%);transition:.22s ease;
+    border-radius:18px;
+  }
+  .right-panel.open{transform:translateX(0)}
+  .r-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.4);
+    display:none;z-index:35;backdrop-filter:blur(2px);
+  }
+  .r-overlay.on{display:block}
+  .mobile-only{display:inline-flex!important}
+  .paper-area{padding:10px}
+  .action-bar{left:8px;right:8px;bottom:max(8px,env(safe-area-inset-bottom));justify-content:center}
+  .action-bar .btn{flex:1}
+}
+@media(max-width:600px){
+  .g2{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr 1fr}
+  .app{padding:5px;padding-bottom:76px}
+}
+.mobile-only{display:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:99px}
+</style>
+<base target="_blank">
+</head>
+<body>
+<div id="print-root"></div>
+
+<!-- Scanner -->
+<div id="scanModal" class="overlay" onclick="if(event.target===this)closeScanner()">
+  <div class="sc-box">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:15px;font-weight:900;color:#fff;display:flex;align-items:center;gap:8px"><i class="fa-solid fa-qrcode"></i> قارئ الباركود</div>
+        <div style="font-size:10.5px;color:#64748b;margin-top:3px">وجّه الكاميرا نحو QR أو CODE128</div>
+      </div>
+      <button class="btn btn-dark" style="width:36px;height:36px;padding:0;border-radius:9px" onclick="closeScanner()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="sc-frame"><video id="scVideo" autoplay playsinline muted></video><div class="sc-line"></div></div>
+    <div id="scStatus" style="font-size:11px;color:#64748b;margin-top:9px;min-height:16px;text-align:center">جارِ تشغيل الكاميرا...</div>
+    <div style="display:flex;gap:7px;margin-top:12px">
+      <button class="btn btn-gold" style="flex:1" onclick="switchCam()"><i class="fa-solid fa-camera-rotate"></i> تبديل</button>
+      <button class="btn btn-danger" style="flex:1" onclick="closeScanner()"><i class="fa-solid fa-xmark"></i> إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import -->
+<div id="importModal" class="overlay" onclick="if(event.target===this)closeImport()">
+  <div class="ob">
+    <div class="ob-t"><i class="fa-solid fa-file-import"></i> استيراد JSON</div>
+    <div class="ob-s">الصق مصفوفة الفواتير المصدّرة مسبقًا</div>
+    <textarea id="importArea" class="ob-ta" placeholder='[{"invoiceNumber":"GP1170"}]'></textarea>
+    <div class="ob-acts">
+      <button class="btn btn-gold" onclick="doImport()"><i class="fa-solid fa-file-import"></i> استيراد</button>
+      <button class="btn btn-dark" onclick="closeImport()"><i class="fa-solid fa-ban"></i> إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- Right overlay -->
+<div id="rOverlay" class="r-overlay" onclick="toggleRight()"></div>
+
+<!-- ══════════════ APP ══════════════ -->
+<div class="app">
+
+  <!-- ACTION BAR -->
+  <div class="action-bar">
+    <button class="btn btn-gold" onclick="saveInvoice()"><i class="fa-solid fa-floppy-disk"></i> حفظ</button>
+    <button class="btn btn-success" onclick="newInvoice()" title="جديد"><i class="fa-solid fa-plus"></i></button>
+    <button class="btn btn-blue" onclick="printInvoice()" title="طباعة"><i class="fa-solid fa-print"></i></button>
+    <button class="btn btn-ghost mobile-only" onclick="toggleRight()"><i class="fa-solid fa-box-archive"></i></button>
+  </div>
+
+  <!-- ══ LEFT PANEL ══ -->
+  <aside class="panel" style="max-height:90vh;max-height:90dvh">
+    <div class="lp-head">
+      <div class="lp-brand">
+        <div class="lp-icon"><i class="fa-solid fa-print"></i></div>
+        <div>
+          <div class="lp-name">Granada Print</div>
+          <div class="lp-sub">نظام الفواتير الاحترافي</div>
+        </div>
+      </div>
+    </div>
+    <div class="lp-scroll">
+
+      <!-- Company -->
+      <div class="sec">
+        <div class="sec-t"><i class="fa-solid fa-building" style="color:#3b82f6"></i> بيانات الشركة</div>
+        <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="loadLogo(this)">
+        <label for="logoInput" class="logo-wrap" style="margin-bottom:9px">
+          <div class="logo-thumb" id="logoThumb"><i class="fa-solid fa-building"></i></div>
+          <div style="font-size:11.5px;color:#64748b"><strong style="color:#334155"><i class="fa-solid fa-image"></i> شعار الشركة</strong><br>PNG / JPG / SVG — اضغط للرفع</div>
+        </label>
+        <div class="g2">
+          <div class="fld"><label><i class="fa-solid fa-signature"></i> اسم الشركة</label><input id="companyName" value="Granada Print" oninput="updateUI()"></div>
+          <div class="fld"><label><i class="fa-solid fa-phone"></i> الهاتف</label><input id="companyPhone" value="01102952777" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace"></div>
+        </div>
+        <div class="fld"><label><i class="fa-solid fa-location-dot"></i> العنوان</label><textarea id="companyAddress" oninput="updateUI()" rows="2">40 شارع الشيخ ابراهيم من شارع الجيش باب الشعريه</textarea></div>
+        <div class="sw-row">
+          <div class="sw-info"><div class="sw-ico"><i class="fa-solid fa-building"></i></div><div><div class="sw-label">معلومات الشركة</div><div class="sw-desc">إظهار في الفاتورة</div></div></div>
+          <label class="sw"><input id="companyVisible" type="checkbox" checked onchange="updateUI()"><span class="track"></span></label>
+        </div>
+      </div>
+
+      <!-- Invoice # -->
+      <div class="sec">
+        <div class="sec-t"><i class="fa-solid fa-file-invoice" style="color:#c9a227"></i> رقم الفاتورة</div>
+        <div style="display:flex;gap:7px;align-items:center">
+          <input id="invoiceNumber" value="GP1170" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;letter-spacing:.8px;flex:1">
+          <button class="btn btn-dark" onclick="genNum()" style="height:38px;padding:0 11px;flex-shrink:0"><i class="fa-solid fa-rotate"></i> توليد</button>
+        </div>
+      </div>
+
+      <!-- Sender -->
+      <div class="sec">
+        <div class="sec-t" style="color:#1d4ed8"><i class="fa-solid fa-truck-fast"></i> الراسل</div>
+        <div class="fld"><label><i class="fa-solid fa-user"></i> الاسم</label><input id="senderName" oninput="updateUI()"></div>
+        <div class="g2">
+          <div class="fld"><label><i class="fa-solid fa-phone"></i> الهاتف</label><input id="senderPhone" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace" inputmode="tel"></div>
+          <div class="fld"><label><i class="fa-solid fa-city"></i> المدينة</label><input id="senderCity" oninput="updateUI()"></div>
+        </div>
+        <div class="fld"><label><i class="fa-solid fa-location-dot"></i> العنوان</label><textarea id="senderAddress" oninput="updateUI()" rows="2"></textarea></div>
+      </div>
+
+      <!-- Receiver -->
+      <div class="sec">
+        <div class="sec-t" style="color:#059669"><i class="fa-solid fa-user-check"></i> المستلم</div>
+        <div class="fld"><label><i class="fa-solid fa-user"></i> الاسم</label><input id="receiverName" oninput="updateUI()"></div>
+        <div class="g2">
+          <div class="fld"><label><i class="fa-solid fa-phone"></i> الهاتف</label><input id="receiverPhone" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace" inputmode="tel"></div>
+          <div class="fld"><label><i class="fa-solid fa-city"></i> المدينة</label><input id="receiverCity" oninput="updateUI()"></div>
+        </div>
+        <div class="fld"><label><i class="fa-solid fa-location-dot"></i> العنوان</label><textarea id="receiverAddress" oninput="updateUI()" rows="2"></textarea></div>
+      </div>
+
+      <!-- Shipment -->
+      <div class="sec">
+        <div class="sec-t"><i class="fa-solid fa-box-open" style="color:#f59e0b"></i> تفاصيل الشحنة</div>
+        <div class="fld"><label><i class="fa-solid fa-box"></i> المحتوى</label><input id="content" oninput="updateUI()" placeholder="ملابس، إلكترونيات..."></div>
+        <div class="fld"><label><i class="fa-solid fa-truck"></i> نوع التسليم</label>
+          <select id="deliveryType" onchange="updateUI()">
+            <option>توصيل</option><option>استلام محل</option><option>شحن</option>
+          </select>
+        </div>
+        <div class="g3">
+          <div class="fld"><label><i class="fa-solid fa-cubes"></i> القطع</label><input id="pieces" type="number" min="1" value="1" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace" inputmode="numeric"></div>
+          <div class="fld"><label><i class="fa-solid fa-weight-hanging"></i> الوزن (كجم)</label><input id="weight" type="number" step="0.1" min="0" value="0.5" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace" inputmode="decimal"></div>
+          <div class="fld"><label><i class="fa-solid fa-calendar-days"></i> التاريخ</label><input id="shipDate" type="date" oninput="updateUI()"></div>
+        </div>
+        <div class="g2">
+          <div class="fld"><label><i class="fa-solid fa-truck-moving"></i> شركة الشحن</label><input id="shippingCompany" oninput="updateUI()" placeholder="اسم الشركة"></div>
+          <div class="fld"><label><i class="fa-solid fa-sack-dollar" style="color:#dc2626"></i> التحصيل (COD)</label><input id="codAmount" type="number" min="0" value="0" oninput="updateUI()" style="font-family:'IBM Plex Mono',monospace" inputmode="numeric"></div>
+        </div>
+        <div class="fld"><label><i class="fa-solid fa-note-sticky"></i> ملاحظات</label><textarea id="notes" oninput="updateUI()" rows="2" placeholder="ملاحظات إضافية..."></textarea></div>
+        <div class="fld"><label><i class="fa-solid fa-ruler-combined"></i> مقاس الفاتورة</label>
+          <select id="printSize" onchange="changeSize()">
+            <option value="thermal80">حراري 80mm (الافتراضي)</option>
+            <option value="a4">A4 كامل</option>
+            <option value="100x150">100 × 150 mm</option>
+            <option value="100x70">100 × 70 mm</option>
+            <!-- <option value="200x80">200 × 80 mm</option> -->
+          </select>
+        </div>
+      </div>
+
+    </div><!-- end lp-scroll -->
+  </aside>
+
+  <!-- ══ CENTER PANEL ══ -->
+  <main class="panel center-panel">
+    <div class="cp-toolbar">
+      <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+        <span class="pill"><i class="fa-solid fa-eye"></i> معاينة مباشرة</span>
+        <span id="sizeBadge" class="pill pill-gold"><i class="fa-solid fa-ruler"></i> حراري 80mm</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <button class="tool-btn mobile-only" onclick="toggleRight()"><i class="fa-solid fa-box-archive"></i> الأرشيف</button>
+        <button class="tool-btn" onclick="openScanner()"><i class="fa-solid fa-barcode"></i> باركود</button>
+        <button class="zoom-btn" onclick="setZoom(.6)">60%</button>
+        <button class="zoom-btn" onclick="setZoom(.75)">75%</button>
+        <button class="zoom-btn on" id="z90" onclick="setZoom(.9)">90%</button>
+        <button class="zoom-btn" onclick="setZoom(1.1)">110%</button>
+      </div>
+    </div>
+    <div class="paper-area">
+      <div id="previewWrap" class="pw" style="transform:scale(.9)">
+
+        <!-- THERMAL 80mm -->
+        <article id="page-thermal80" class="receipt r-t80">
+          <div class="t80-accent"></div>
+          <div class="t80-head">
+            <div class="t80-logo" id="logoT80"><i class="fa-solid fa-print"></i></div>
+            <div class="t80-co">
+              <div id="coNameT80" class="t80-co-name">Granada Print</div>
+              <div id="coPhoneT80" class="t80-co-phone">01102952777</div>
+              <div id="coAddrT80" class="t80-co-addr"></div>
+            </div>
+          </div>
+          <div class="t80-inv-box">
+            <div class="t80-inv-label"><i class="fa-solid fa-barcode"></i> رقم الفاتورة</div>
+            <div id="invNumT80" class="t80-inv-num">GP1170-0001</div>
+          </div>
+         <div class="t80-bc-wrap">
+  <div class="barcode-box">
+    <svg id="bcT80"></svg>
+  </div>
+  <div id="bcNumT80" class="t80-bc-num">GP1170-0001</div>
+</div>
+          <!-- Sender -->
+          <div class="t80-sec-head">
+            <div class="t80-sec-dot" style="background:#1d4ed8"></div>
+            <span class="t80-sec-label"><i class="fa-solid fa-truck-fast" style="color:#1d4ed8;font-size:7px"></i> الراسل</span>
+          </div>
+          <div class="t80-parties">
+            <div class="t80-party snd">
+              <div class="t80-party-tag"><i class="fa-solid fa-truck-fast" style="font-size:6px"></i> معلومات الراسل</div>
+              <div class="t80-kv"><span class="t80-k">الاسم</span><span id="snNameT80" class="t80-v">-</span></div>
+              <div class="t80-kv"><span class="t80-k">الهاتف</span><span id="snPhoneT80" class="t80-v mono">-</span></div>
+              <div class="t80-kv"><span class="t80-k">المدينة</span><span id="snCityT80" class="t80-v">-</span></div>
+              <div class="t80-kv"><span class="t80-k">العنوان</span><span id="snAddrT80" class="t80-v">-</span></div>
+            </div>
+          </div>
+          <!-- Receiver -->
+          <div class="t80-sec-head">
+            <div class="t80-sec-dot" style="background:#059669"></div>
+            <span class="t80-sec-label"><i class="fa-solid fa-user-check" style="color:#059669;font-size:7px"></i> المستلم</span>
+          </div>
+          <div class="t80-parties">
+            <div class="t80-party rcv">
+              <div class="t80-party-tag"><i class="fa-solid fa-user-check" style="font-size:6px"></i> معلومات المستلم</div>
+              <div class="t80-kv"><span class="t80-k">الاسم</span><span id="rcNameT80" class="t80-v">-</span></div>
+              <div class="t80-kv"><span class="t80-k">الهاتف</span><span id="rcPhoneT80" class="t80-v mono">-</span></div>
+              <div class="t80-kv"><span class="t80-k">المدينة</span><span id="rcCityT80" class="t80-v">-</span></div>
+              <div class="t80-kv"><span class="t80-k">العنوان</span><span id="rcAddrT80" class="t80-v">-</span></div>
+            </div>
+          </div>
+          <!-- Details -->
+          <div class="t80-details" style="margin-top:2.5mm">
+            <div class="t80-details-grid">
+              <div class="t80-dc"><span class="t80-dc-icon" style="color:#f59e0b"><i class="fa-solid fa-box"></i></span><div class="t80-dc-label">المحتوى</div><div id="contentT80" class="t80-dc-val" style="font-family:'Cairo',sans-serif;font-size:6.5px;word-break:break-all">-</div></div>
+              <div class="t80-dc"><span class="t80-dc-icon" style="color:#8b5cf6"><i class="fa-solid fa-cubes"></i></span><div class="t80-dc-label">القطع</div><div id="piecesT80" class="t80-dc-val">1</div></div>
+              <div class="t80-dc"><span class="t80-dc-icon" style="color:#0ea5e9"><i class="fa-solid fa-weight-hanging"></i></span><div class="t80-dc-label">الوزن</div><div id="weightT80" class="t80-dc-val">0.5</div></div>
+              <div class="t80-dc"><span class="t80-dc-icon" style="color:#10b981"><i class="fa-solid fa-calendar-days"></i></span><div class="t80-dc-label">التاريخ</div><div id="dateT80" class="t80-dc-val" style="font-family:'Cairo',sans-serif;font-size:6px">-</div></div>
+            </div>
+          </div>
+          <!-- Delivery -->
+          <div class="t80-delivery">
+            <span class="t80-delivery-label"><i class="fa-solid fa-truck"></i> نوع التسليم</span>
+            <span id="dlvTypeT80" class="t80-delivery-val">توصيل</span>
+          </div>
+          <!-- Financials -->
+          <div class="t80-fins">
+            <div class="t80-fin ship"><div class="t80-fin-icon"><i class="fa-solid fa-building-columns" style="color:#1d4ed8"></i></div><div class="t80-fin-label">شركة الشحن</div><div id="shipCoT80" class="t80-fin-val" style="font-family:'Cairo',sans-serif;font-size:9px">-</div></div>
+            <div class="t80-fin cod"><div class="t80-fin-icon"><i class="fa-solid fa-sack-dollar" style="color:#ea580c"></i></div><div class="t80-fin-label">التحصيل COD</div><div id="codT80" class="t80-fin-val">0 ج.م</div></div>
+          </div>
+          <!-- Notes -->
+          <div id="notesBoxT80" class="t80-notes" style="display:none">
+            <div class="t80-notes-t"><i class="fa-solid fa-note-sticky"></i> ملاحظات</div>
+            <div id="notesT80" class="t80-notes-text"></div>
+          </div>
+          <div class="t80-footer">
+            <div class="t80-footer-left"><i class="fa-solid fa-print" style="font-size:6px"></i> <span id="coFooterT80" class="t80-footer-brand">Granada Print</span></div>
+            <div id="footNumT80" class="t80-footer-num">GP1170-0001</div>
+            <div style="font-size:5.5px;color:#94a3b8;font-family:'IBM Plex Mono',monospace">80MM</div>
+          </div>
+          <div class="t80-bottom"></div>
+        </article>
+
+        <!-- A4 -->
+        <article id="page-a4" class="receipt r-a4" style="display:none">
+          <div class="a4-band"></div>
+          <div class="a4-head">
+            <div class="a4-brand">
+              <div id="logoA4" class="a4-logo"><i class="fa-solid fa-print"></i></div>
+              <div>
+                <div id="coNameA4" class="a4-co-name">Granada Print</div>
+                <div id="coInfoA4" class="a4-co-info"></div>
+              </div>
+            </div>
+            <div class="a4-inv">
+              <div class="a4-inv-label"><i class="fa-solid fa-barcode"></i> رقم الفاتورة</div>
+              <div id="invNumA4" class="a4-inv-num">GP1170</div>
+              <div class="a4-bc-wrap" style="margin-top:2.5mm">
+                <svg id="bcA4"></svg>
+              </div>
+            </div>
+          </div>
+          <div class="a4-body">
+            <div class="a4-st"><i class="fa-solid fa-address-card"></i> بيانات الراسل والمستلم</div>
+            <div class="a4-parties">
+              <div class="a4-party snd">
+                <div class="a4-party-tag"><i class="fa-solid fa-truck-fast"></i> الراسل</div>
+                <div id="snNameA4" class="a4-pname">-</div>
+                <div id="snPhoneA4" class="a4-pd">-</div>
+                <div id="snCityA4" class="a4-pd">-</div>
+                <div id="snAddrA4" class="a4-pd">-</div>
+              </div>
+              <div class="a4-party rcv">
+                <div class="a4-party-tag"><i class="fa-solid fa-user-check"></i> المستلم</div>
+                <div id="rcNameA4" class="a4-pname">-</div>
+                <div id="rcPhoneA4" class="a4-pd">-</div>
+                <div id="rcCityA4" class="a4-pd">-</div>
+                <div id="rcAddrA4" class="a4-pd">-</div>
+              </div>
+            </div>
+            <div class="a4-st" style="margin-top:10px"><i class="fa-solid fa-box-open"></i> تفاصيل الشحنة</div>
+            <div class="a4-shipment">
+              <div class="a4-sc"><div class="a4-sc-label"><i class="fa-solid fa-box"></i> المحتوى</div><div id="contentA4" class="a4-sc-val">-</div></div>
+              <div class="a4-sc"><div class="a4-sc-label"><i class="fa-solid fa-cubes"></i> القطع</div><div id="piecesA4" class="a4-sc-val">1</div></div>
+              <div class="a4-sc"><div class="a4-sc-label"><i class="fa-solid fa-weight-hanging"></i> الوزن</div><div id="weightA4" class="a4-sc-val">0.5 كجم</div></div>
+              <div class="a4-sc"><div class="a4-sc-label"><i class="fa-solid fa-calendar-days"></i> التاريخ</div><div id="dateA4" class="a4-sc-val">-</div></div>
+            </div>
+            <div class="a4-delivery-badge"><span><i class="fa-solid fa-truck"></i> نوع التسليم</span><span id="dlvA4">توصيل</span></div>
+            <div class="a4-st"><i class="fa-solid fa-coins"></i> المبالغ</div>
+            <div class="a4-fins">
+              <div class="a4-fin ship"><div class="a4-fin-label"><i class="fa-solid fa-truck-moving"></i> شركة الشحن</div><div id="shipCoA4" class="a4-fin-val">-</div></div>
+              <div class="a4-fin cod"><div class="a4-fin-label"><i class="fa-solid fa-sack-dollar"></i> التحصيل COD</div><div id="codA4" class="a4-fin-val">0 ج.م</div></div>
+            </div>
+            <div id="notesBoxA4" class="a4-notes-box" style="display:none">
+              <div class="a4-notes-label"><i class="fa-solid fa-note-sticky"></i> ملاحظات</div>
+              <div id="notesA4" class="a4-notes-text"></div>
+            </div>
+          </div>
+          <div class="a4-foot">
+            <span id="coFootA4" class="a4-foot-brand">Granada Print</span>
+            <span class="a4-foot-mono"><i class="fa-solid fa-print"></i> A4 · GRANADA PRINT SYSTEM</span>
+          </div>
+        </article>
+
+        <!-- 200x80 -->
+        <article id="page-200x80" class="receipt r-200x80" style="display:none">
+          <div class="r200-band"></div>
+          <div class="r200-body">
+            <aside class="r200-side">
+              <div class="r200-side-logo">
+                <div class="r200-side-logo-box" id="logo200"><i class="fa-solid fa-print" style="font-size:10px"></i></div>
+                <div><div id="coName200" class="r200-co-name">Granada Print</div><div id="coPhone200" class="r200-co-phone">01102952777</div></div>
+              </div>
+              <div class="r200-inv">
+                <div class="r200-inv-label"><i class="fa-solid fa-receipt"></i> رقم الفاتورة</div>
+                <div id="invNum200" class="r200-inv-num">GP1170</div>
+              </div>
+              <div class="r200-bc-area"><div class="r200-bc-inner"><svg id="bc200side"></svg></div></div>
+            </aside>
+            <section class="r200-main">
+              <div class="r200-top">
+                <div class="r200-parties">
+                  <div class="r200-party snd">
+                    <div class="r200-party-tag"><i class="fa-solid fa-truck-fast" style="font-size:5.5px"></i> الراسل</div>
+                    <div id="snName200" class="r200-party-name">-</div>
+                    <div id="snPhone200" class="r200-party-phone">-</div>
+                    <div id="snCity200" class="r200-party-phone" style="color:#334155;font-family:'Cairo',sans-serif">-</div>
+                  </div>
+                  <div class="r200-party rcv">
+                    <div class="r200-party-tag"><i class="fa-solid fa-user-check" style="font-size:5.5px"></i> المستلم</div>
+                    <div id="rcName200" class="r200-party-name">-</div>
+                    <div id="rcPhone200" class="r200-party-phone">-</div>
+                    <div id="rcCity200" class="r200-party-phone" style="color:#334155;font-family:'Cairo',sans-serif">-</div>
+                  </div>
+                </div>
+                <div class="r200-meta">
+                  <div class="r200-badge type"><i class="fa-solid fa-truck" style="font-size:5.5px"></i><span id="dlv200">توصيل</span></div>
+                  <div class="r200-badge date"><i class="fa-solid fa-calendar" style="font-size:5.5px"></i><span id="date200">-</span></div>
+                </div>
+              </div>
+              <div class="r200-stats">
+                <div class="r200-stat"><div class="r200-stat-icon" style="color:#f59e0b"><i class="fa-solid fa-box"></i></div><div class="r200-stat-label">المحتوى</div><div id="content200" class="r200-stat-val" style="font-family:'Cairo',sans-serif">-</div></div>
+                <div class="r200-stat"><div class="r200-stat-icon" style="color:#8b5cf6"><i class="fa-solid fa-cubes"></i></div><div class="r200-stat-label">القطع</div><div id="pieces200" class="r200-stat-val">1</div></div>
+                <div class="r200-stat"><div class="r200-stat-icon" style="color:#0ea5e9"><i class="fa-solid fa-weight-hanging"></i></div><div class="r200-stat-label">الوزن</div><div id="weight200" class="r200-stat-val">0.5</div></div>
+                <div class="r200-stat"><div class="r200-stat-icon" style="color:#10b981"><i class="fa-solid fa-building-columns"></i></div><div class="r200-stat-label">شركة الشحن</div><div id="shipCo200" class="r200-stat-val" style="font-family:'Cairo',sans-serif">-</div></div>
+              </div>
+              <div class="r200-fins">
+                <div class="r200-fin ship"><div class="r200-fin-icon"><i class="fa-solid fa-truck-moving" style="color:#1d4ed8"></i></div><div><div class="r200-fin-label">شركة الشحن</div><div id="shipCoFin200" class="r200-fin-val" style="font-family:'Cairo',sans-serif">-</div></div></div>
+                <div class="r200-fin cod"><div class="r200-fin-icon"><i class="fa-solid fa-sack-dollar" style="color:#ea580c"></i></div><div><div class="r200-fin-label">التحصيل COD</div><div id="cod200" class="r200-fin-val">0 ج.م</div></div></div>
+              </div>
+            </section>
+          </div>
+          <div class="r200-footer">
+            <div class="r200-footer-txt"><span style="width:7px;height:7px;background:#c9a227;border-radius:50%;display:inline-block"></span><span id="coFoot200">GRANADA PRINT</span><span style="width:7px;height:7px;background:#3b82f6;border-radius:50%;display:inline-block"></span><span>200×80 MM</span></div>
+            <span id="invFoot200" class="r200-footer-num">GP1170-0001</span>
+          </div>
+        </article>
+
+        <!-- 100x150 -->
+        <article id="page-100x150" class="receipt r-100x150" style="display:none">
+          <div class="r150-hero">
+            <div class="r150-hero-top">
+              <div class="r150-brand">
+                <div id="logo150" class="r150-logo-box"><i class="fa-solid fa-print" style="font-size:11px"></i></div>
+                <div><div id="coName150" class="r150-co-name">Granada Print</div><div id="coPhone150" class="r150-co-phone">01102952777</div></div>
+              </div>
+              <div class="r150-inv-chip">
+                <div class="r150-inv-label"><i class="fa-solid fa-barcode" style="font-size:5px"></i> رقم الفاتورة</div>
+                <div id="invNum150" class="r150-inv-val">GP1170</div>
+              </div>
+            </div>
+            <div class="r150-badges">
+              <div class="r150-badge dlv"><i class="fa-solid fa-truck" style="font-size:5px"></i><span id="dlv150">توصيل</span></div>
+              <div class="r150-badge dt"><i class="fa-solid fa-calendar" style="font-size:5px"></i><span id="date150">-</span></div>
+            </div>
+          </div>
+          <div class="r150-route">
+            <div class="r150-rt-label"><i class="fa-solid fa-route" style="font-size:5.5px"></i> مسار الشحنة</div>
+            <div class="r150-flow">
+              <div class="r150-party snd">
+                <div class="r150-ptag"><i class="fa-solid fa-truck-fast" style="font-size:5px"></i> الراسل</div>
+                <div id="snName150" class="r150-pname">-</div>
+                <div id="snPhone150" class="r150-pphone"><i class="fa-solid fa-phone" style="font-size:5px"></i><span id="snPhone150Span">-</span></div>
+                <div id="snCity150" class="r150-pcity"><i class="fa-solid fa-city" style="font-size:5px"></i><span id="snCity150Span">-</span></div>
+                <div id="snAddr150" class="r150-paddr">-</div>
+              </div>
+              <div class="r150-party rcv">
+                <div class="r150-ptag"><i class="fa-solid fa-user-check" style="font-size:5px"></i> المستلم</div>
+                <div id="rcName150" class="r150-pname">-</div>
+                <div id="rcPhone150" class="r150-pphone"><i class="fa-solid fa-phone" style="font-size:5px"></i><span id="rcPhone150Span">-</span></div>
+                <div id="rcCity150" class="r150-pcity"><i class="fa-solid fa-city" style="font-size:5px"></i><span id="rcCity150Span">-</span></div>
+                <div id="rcAddr150" class="r150-paddr">-</div>
+              </div>
+            </div>
+          </div>
+          <div class="r150-details">
+            <div class="r150-dgrid">
+              <div class="r150-dc"><span class="r150-dc-icon" style="color:#f59e0b"><i class="fa-solid fa-box"></i></span><div class="r150-dc-label">المحتوى</div><div id="content150" class="r150-dc-val" style="font-family:'Cairo',sans-serif;font-size:6px">-</div></div>
+              <div class="r150-dc"><span class="r150-dc-icon" style="color:#8b5cf6"><i class="fa-solid fa-cubes"></i></span><div class="r150-dc-label">القطع</div><div id="pieces150" class="r150-dc-val">1</div></div>
+              <div class="r150-dc"><span class="r150-dc-icon" style="color:#0ea5e9"><i class="fa-solid fa-weight-hanging"></i></span><div class="r150-dc-label">الوزن</div><div id="weight150" class="r150-dc-val">0.5</div></div>
+              <div class="r150-dc"><span class="r150-dc-icon" style="color:#10b981"><i class="fa-solid fa-calendar-days"></i></span><div class="r150-dc-label">التاريخ</div><div id="date150b" class="r150-dc-val" style="font-size:5.5px;font-family:'Cairo',sans-serif">-</div></div>
+            </div>
+          </div>
+          <div class="r150-fin">
+            <div class="r150-fgrid">
+              <div class="r150-fbox ship"><div class="r150-ficon"><i class="fa-solid fa-building-columns"></i></div><div><div class="r150-flabel">شركة الشحن</div><div id="shipCo150" class="r150-fval" style="font-family:'Cairo',sans-serif;font-size:7.5px">-</div></div></div>
+              <div class="r150-fbox cod"><div class="r150-ficon"><i class="fa-solid fa-sack-dollar"></i></div><div><div class="r150-flabel">التحصيل COD</div><div id="cod150" class="r150-fval">0 ج.م</div></div></div>
+            </div>
+          </div>
+          <div id="notesBox150" class="r150-notes-wrap" style="display:none">
+            <div class="r150-notes"><span class="r150-notes-icon"><i class="fa-solid fa-note-sticky"></i></span><div id="notes150" class="r150-notes-text"></div></div>
+          </div>
+          <div class="r150-foot">
+            <div class="r150-bc"><svg id="bc150"></svg></div>
+            <div class="r150-foot-brand"><span id="coFoot150" class="r150-foot-brand-name">Granada Print</span><span style="font-size:5.5px;color:#94a3b8"><i class="fa-solid fa-print" style="font-size:5px"></i> 100×150MM</span></div>
+          </div>
+        </article>
+
+        <!-- 100x70 -->
+        <article id="page-100x70" class="receipt r-100x70" style="display:none">
+          <div class="r70-band"></div>
+          <div class="r70-head" id="r70Head">
+            <div class="r70-logo" id="logo70"><i class="fa-solid fa-print"></i></div>
+            <div style="flex:1;min-width:0;padding:0 3px">
+              <div id="coName70" class="r70-co-name">Granada Print</div>
+              <div id="coPhone70" class="r70-co-phone">01102952777</div>
+            </div>
+            <div>
+              <div class="r70-num-label"><i class="fa-solid fa-barcode"></i> رقم الفاتورة</div>
+              <div id="invNum70" class="r70-num-val">GP1170</div>
+            </div>
+          </div>
+          <div class="r70-body">
+            <div class="r70-bc-wrap"><svg id="bc70"></svg><div id="bcNum70" class="r70-bc-num">GP1170</div></div>
+            <div class="r70-parties">
+              <div class="r70-party">
+                <div class="r70-ptag snd"><i class="fa-solid fa-truck-fast" style="font-size:5.5px"></i> الراسل</div>
+                <div class="r70-kv"><span class="r70-k">الاسم</span><span id="snName70" class="r70-v">-</span></div>
+                <div class="r70-kv"><span class="r70-k">الهاتف</span><span id="snPhone70" class="r70-v">-</span></div>
+                <div class="r70-kv"><span class="r70-k">العنوان</span><span id="snCity70" class="r70-v">-</span></div>
+              </div>
+              <div class="r70-party">
+                <div class="r70-ptag rcv"><i class="fa-solid fa-user-check" style="font-size:5.5px"></i> المستلم</div>
+                <div class="r70-kv"><span class="r70-k">الاسم</span><span id="rcName70" class="r70-v">-</span></div>
+                <div class="r70-kv"><span class="r70-k">الهاتف</span><span id="rcPhone70" class="r70-v">-</span></div>
+                <div class="r70-kv"><span class="r70-k">العنوان</span><span id="rcCity70" class="r70-v">-</span></div>
+              </div>
+            </div>
+            <div class="r70-amounts">
+              <div class="r70-abox ship"><div class="r70-alabel"><i class="fa-solid fa-truck-moving"></i> شركة الشحن</div><div id="shipCo70" class="r70-aval" style="font-family:'Cairo',sans-serif;font-size:7px">-</div></div>
+              <div class="r70-abox cod"><div class="r70-alabel"><i class="fa-solid fa-sack-dollar"></i> COD</div><div id="cod70" class="r70-aval">0 ج.م</div></div>
+            </div>
+          </div>
+          <div class="r70-foot">
+            <span id="coFoot70" class="r70-foot-brand">Granada Print</span>
+            <span id="footNum70" class="r70-foot-num">GP1170-0001</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:5px;color:#94a3b8">100×70MM</span>
+          </div>
+        </article>
+
+      </div><!-- end pw -->
+    </div><!-- end paper-area -->
+  </main>
+
+  <!-- ══ RIGHT PANEL ══ -->
+  <aside class="panel right-panel" id="rightPanel" style="max-height:90vh;max-height:90dvh">
+    <div class="rp-head">
+      <div class="rp-head-row">
+        <div class="rp-title"><i class="fa-solid fa-box-archive"></i> الأرشيف</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span id="histCount" class="badge">0</span>
+          <button class="btn btn-ghost" style="padding:6px 8px;min-height:32px;font-size:11px" onclick="closeRight()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+      <div class="rp-sub">الفواتير المحفوظة محليًا</div>
+    </div>
+    <div class="rp-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input id="histSearch" placeholder="بحث برقم أو اسم..." oninput="renderHistory()">
+    </div>
+    <div class="rp-actions">
+      <button class="btn btn-dark" onclick="exportInvoices()" style="flex:1;font-size:11px"><i class="fa-solid fa-download"></i> تصدير</button>
+      <button class="btn btn-dark" onclick="openImport()" style="flex:1;font-size:11px"><i class="fa-solid fa-file-import"></i> استيراد</button>
+      <button class="btn btn-danger" onclick="clearHistory()" style="padding:7px 10px;min-height:36px"><i class="fa-solid fa-trash"></i></button>
+    </div>
+    <div class="batch-bar">
+      <button class="btn btn-blue" id="batchPrintBtn" onclick="batchPrint()"><i class="fa-solid fa-print"></i> طباعة (<span id="batchCount">0</span>)</button>
+      <button class="btn btn-ghost" onclick="toggleSelectAll()"><i class="fa-solid fa-check-double"></i> الكل</button>
+    </div>
+    <div class="hist-list" id="histList"></div>
+  </aside>
+
+</div><!-- end app -->
+
+<script src="cordova.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>
