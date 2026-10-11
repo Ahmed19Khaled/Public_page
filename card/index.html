@@ -1,302 +1,82 @@
-<!DOCTYPE html>
+from pathlib import Path
+
+html = r'''<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#071426">
-<title>قارئ الرقم القومي | ID Scanner</title>
+<meta name="theme-color" content="#06111f">
+<title>Secure ID Scanner</title>
 <style>
-:root{color-scheme:dark;--bg:#071426;--panel:#0e2038;--panel2:#132945;--border:rgba(255,255,255,.09);--text:#f3f7ff;--muted:#91a5c2;--primary:#20d6a1;--primary2:#0ba77c;--danger:#ff647c;--blue:#6ba9ff}
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;background:radial-gradient(ellipse at 50% -15%,#19385b 0,transparent 55%),var(--bg);color:var(--text)}
-button,input{font:inherit}
-button{cursor:pointer}
-button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
-.app{width:min(100% - 28px,920px);margin:auto;padding:28px 0 36px}
-.header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:25px}
-.brand{display:flex;align-items:center;gap:13px}
-.brand-icon{width:49px;height:49px;display:grid;place-items:center;border:1px solid rgba(32,214,161,.35);border-radius:16px;background:rgba(32,214,161,.1);color:var(--primary);font-size:25px}
-.brand h1{font-size:clamp(18px,3vw,25px);margin:0;font-weight:850;letter-spacing:-.5px}
-.brand p{margin:5px 0 0;color:var(--muted);font-size:12px}
-.local-badge{display:flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid var(--border);border-radius:999px;color:#b7c8dc;font-size:11px;white-space:nowrap}
-.local-badge:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--primary);box-shadow:0 0 10px var(--primary)}
-.hero{text-align:center;margin:30px auto 25px}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid rgba(32,214,161,.2);border-radius:999px;color:var(--primary);background:rgba(32,214,161,.06);font-size:11px;font-weight:750}
-.hero h2{font-size:clamp(25px,5vw,40px);line-height:1.4;margin:17px 0 9px;font-weight:900;letter-spacing:-1px}
-.hero h2 span{color:var(--primary)}
-.hero p{color:var(--muted);font-size:14px;line-height:1.9;max-width:540px;margin:auto}
-.layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,.8fr);gap:18px;align-items:start}
-.card{background:linear-gradient(145deg,rgba(19,41,69,.96),rgba(10,27,47,.98));border:1px solid var(--border);border-radius:23px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.15)}
-.card-head{padding:19px 20px 15px;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.card-title{font-size:15px;font-weight:800}
-.card-subtitle{font-size:11px;color:var(--muted);margin-top:5px}
-.status{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);white-space:nowrap}
-.status-dot{width:7px;height:7px;border-radius:50%;background:#71829a}
-.status-dot.active{background:var(--primary);box-shadow:0 0 9px var(--primary);animation:pulse 1.5s infinite}
-@keyframes pulse{50%{opacity:.4}}
-.camera-wrap{position:relative;margin:0 14px;border-radius:17px;overflow:hidden;background:#030a12;aspect-ratio:4/3;min-height:230px;display:grid;place-items:center}
-#video{width:100%;height:100%;position:absolute;inset:0;object-fit:cover;display:none}
-.camera-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;background:radial-gradient(ellipse at center,rgba(32,214,161,.08),transparent 70%)}
-.camera-symbol{width:65px;height:65px;display:grid;place-items:center;border:1px solid rgba(32,214,161,.2);background:rgba(32,214,161,.08);border-radius:21px;color:var(--primary);font-size:29px;margin-bottom:15px}
-.camera-placeholder strong{font-size:14px}
-.camera-placeholder span{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.8}
-.scan-frame{display:none;position:absolute;inset:15% 8%;pointer-events:none;border:1px solid rgba(32,214,161,.15);border-radius:12px}
-.scan-frame:before,.scan-frame:after{content:"";position:absolute;width:30px;height:30px;border-color:var(--primary);border-style:solid}
-.scan-frame:before{top:-1px;right:-1px;border-width:3px 3px 0 0;border-radius:0 10px 0 0}
-.scan-frame:after{bottom:-1px;left:-1px;border-width:0 0 3px 3px;border-radius:0 0 0 10px}
-.scan-line{position:absolute;left:3%;right:3%;height:2px;top:50%;background:linear-gradient(90deg,transparent,var(--primary),transparent);box-shadow:0 0 12px var(--primary);display:none}
-.scanning .scan-line{display:block;animation:scan 2.2s ease-in-out infinite}
-@keyframes scan{0%,100%{top:20%}50%{top:80%}}
-.camera-tip{display:flex;align-items:flex-start;gap:10px;margin:15px 17px;color:var(--muted);font-size:11px;line-height:1.8}
-.tip-icon{color:var(--blue);font-size:16px}
-.actions{padding:0 14px 15px;display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.btn{border:1px solid transparent;border-radius:12px;padding:13px 10px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:800;transition:transform .2s,background .2s}
-.btn:active{transform:scale(.98)}
-.btn-primary{color:#041b16;background:var(--primary)}
-.btn-primary:hover{background:#52e9bc}
-.btn-secondary{background:rgba(255,255,255,.04);border-color:var(--border);color:#d9e5f6}
-.btn-secondary:hover{background:rgba(255,255,255,.08)}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.result-card{padding:20px}
-.result-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.result-label{font-size:13px;font-weight:800}
-.result-label-sub{font-size:11px;color:var(--muted);margin-top:5px}
-.result-icon{width:39px;height:39px;display:grid;place-items:center;border-radius:13px;background:rgba(32,214,161,.09);color:var(--primary);font-size:19px}
-.result-box{margin-top:22px;padding:18px 13px;border:1px dashed rgba(255,255,255,.16);border-radius:15px;background:rgba(2,11,22,.25);text-align:center;min-height:100px;display:flex;flex-direction:column;justify-content:center;gap:8px}
-.result-number{font-size:clamp(19px,3vw,25px);font-weight:900;letter-spacing:2px;direction:ltr;unicode-bidi:embed;overflow-wrap:anywhere;color:var(--primary)}
-.result-placeholder{font-size:12px;color:#7287a3;line-height:1.8}
-.result-message{font-size:11px;line-height:1.8;color:var(--muted);min-height:20px;margin-top:13px}
-.result-message.success{color:var(--primary)}
-.result-message.error{color:var(--danger)}
-.copy-btn{width:100%;margin-top:14px}
-.steps{padding:18px 20px;border-top:1px solid var(--border);margin-top:18px}
-.steps h3{font-size:12px;margin:0 0 14px}
-.step{display:flex;align-items:flex-start;gap:11px;margin-top:13px}
-.step-number{width:24px;height:24px;flex:0 0 24px;border-radius:8px;display:grid;place-items:center;background:rgba(107,169,255,.1);color:var(--blue);font-size:10px;font-weight:900}
-.step strong{display:block;font-size:11px;margin:2px 0 4px}
-.step span{display:block;font-size:10px;color:var(--muted);line-height:1.7}
-.privacy{display:flex;gap:11px;align-items:flex-start;margin-top:18px;padding:15px;border:1px solid rgba(32,214,161,.15);background:rgba(32,214,161,.045);border-radius:15px}
-.privacy-icon{font-size:18px;color:var(--primary)}
-.privacy strong{font-size:11px;display:block;margin-bottom:5px}
-.privacy p{font-size:10px;line-height:1.8;color:var(--muted);margin:0}
-.footer{text-align:center;color:#61758f;font-size:10px;line-height:1.9;padding:22px 8px 0}
-#fileInput{display:none}
-@media(max-width:680px){.app{width:min(100% - 20px,500px);padding-top:17px}.header{margin-bottom:20px}.local-badge{font-size:9px;padding:8px}.brand-icon{width:42px;height:42px}.hero{margin:24px auto 20px}.hero p{font-size:12px}.layout{grid-template-columns:1fr;gap:14px}.camera-wrap{aspect-ratio:4/3;min-height:220px}.result-card{padding:18px}.steps{margin-top:14px}.footer{padding-top:17px}}
+:root{--bg:#06111f;--surface:#0b1b2d;--surface2:#10253c;--border:rgba(255,255,255,.09);--text:#f4f8fc;--muted:#8fa4bb;--primary:#16d6a0;--blue:#62a8ff;--danger:#ff647c;--shadow:0 24px 70px rgba(0,0,0,.32)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg)}body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;color:var(--text)}button{font:inherit;cursor:pointer}.app{width:min(1180px,calc(100% - 32px));margin:auto;padding:24px 0 36px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:28px}.brand{display:flex;align-items:center;gap:13px}.brand-logo{width:48px;height:48px;border:1px solid rgba(22,214,160,.3);border-radius:15px;background:linear-gradient(145deg,rgba(22,214,160,.16),rgba(98,168,255,.08));display:grid;place-items:center;color:var(--primary);font-size:23px}.brand-title{font-size:17px;font-weight:900}.brand-subtitle{margin-top:4px;color:var(--muted);font-size:10px;letter-spacing:1.5px}.secure-badge{display:flex;align-items:center;gap:8px;border:1px solid var(--border);background:rgba(255,255,255,.035);border-radius:999px;padding:9px 13px;color:#b8c7d8;font-size:11px}.secure-dot{width:7px;height:7px;border-radius:50%;background:var(--primary);box-shadow:0 0 12px var(--primary)}.hero{display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:center;margin-bottom:25px}.hero-copy{padding:10px 4px}.eyebrow{display:inline-flex;align-items:center;gap:7px;color:var(--primary);font-size:11px;font-weight:800;border:1px solid rgba(22,214,160,.18);background:rgba(22,214,160,.05);border-radius:999px;padding:8px 12px}.hero h1{font-size:clamp(30px,5vw,54px);line-height:1.25;margin:18px 0 10px;letter-spacing:-1.8px}.hero h1 span{color:var(--primary)}.hero p{max-width:650px;color:var(--muted);font-size:14px;line-height:2;margin:0}.hero-card{border:1px solid var(--border);background:linear-gradient(145deg,rgba(16,37,60,.9),rgba(8,22,37,.9));border-radius:22px;padding:20px;box-shadow:var(--shadow)}.hero-stat{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border)}.hero-stat:last-child{border-bottom:0}.hero-stat span{color:var(--muted);font-size:11px}.hero-stat strong{font-size:12px}.layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);gap:18px}.card{border:1px solid var(--border);background:linear-gradient(145deg,rgba(13,31,51,.98),rgba(7,20,34,.98));border-radius:24px;box-shadow:var(--shadow);overflow:hidden}.card-header{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:20px 21px 16px}.card-title{font-size:14px;font-weight:900}.card-subtitle{font-size:10px;color:var(--muted);margin-top:5px}.status{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:10px;white-space:nowrap}.status-dot{width:7px;height:7px;border-radius:50%;background:#61748b}.status-dot.active{background:var(--primary);box-shadow:0 0 12px var(--primary);animation:pulse 1.3s infinite}@keyframes pulse{50%{opacity:.35}}.camera{position:relative;margin:0 14px;border-radius:20px;overflow:hidden;background:#02070d;aspect-ratio:16/10;min-height:360px}.camera video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}.camera-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:25px;background:radial-gradient(circle at center,rgba(22,214,160,.09),transparent 60%)}.camera-icon{width:72px;height:72px;border:1px solid rgba(22,214,160,.22);border-radius:22px;background:rgba(22,214,160,.08);display:grid;place-items:center;color:var(--primary);font-size:30px;margin-bottom:17px}.camera-empty strong{font-size:14px}.camera-empty span{max-width:300px;color:var(--muted);font-size:11px;line-height:1.9;margin-top:7px}.scan-area{position:absolute;display:none;inset:22% 7%;border:1px solid rgba(255,255,255,.12);border-radius:15px}.scan-area:before,.scan-area:after,.scan-corner-a,.scan-corner-b{content:"";position:absolute;width:38px;height:38px;border-color:var(--primary);border-style:solid}.scan-area:before{top:-1px;right:-1px;border-width:3px 3px 0 0;border-radius:0 14px 0 0}.scan-area:after{bottom:-1px;left:-1px;border-width:0 0 3px 3px;border-radius:0 0 0 14px}.scan-corner-a{top:-1px;left:-1px;border-width:3px 0 0 3px;border-radius:14px 0 0 0}.scan-corner-b{bottom:-1px;right:-1px;border-width:0 3px 3px 0;border-radius:0 0 14px 0}.scan-line{position:absolute;left:4%;right:4%;top:50%;height:2px;background:linear-gradient(90deg,transparent,var(--primary),transparent);box-shadow:0 0 14px var(--primary);display:none}.scanning .scan-line{display:block;animation:scan 2s ease-in-out infinite}@keyframes scan{0%,100%{top:10%}50%{top:90%}}.scan-label{position:absolute;left:50%;transform:translateX(-50%);bottom:10%;background:rgba(0,0,0,.62);border:1px solid rgba(255,255,255,.12);padding:8px 12px;border-radius:999px;color:#dbe7f5;font-size:10px;white-space:nowrap;backdrop-filter:blur(8px)}.camera-footer{display:flex;align-items:center;gap:9px;margin:14px 17px 17px;color:var(--muted);font-size:10px;line-height:1.8}.camera-footer-icon{color:var(--blue);font-size:15px}.actions{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:9px;padding:0 14px 15px}.btn{min-height:45px;border-radius:13px;border:1px solid transparent;display:flex;align-items:center;justify-content:center;gap:8px;font-size:11px;font-weight:850;transition:.18s}.btn:disabled{cursor:not-allowed;opacity:.45}.btn:active{transform:scale(.98)}.primary{background:var(--primary);color:#031a14}.primary:hover{filter:brightness(1.08)}.secondary{background:rgba(255,255,255,.04);border-color:var(--border);color:#dbe6f2}.secondary:hover{background:rgba(255,255,255,.08)}.result{padding:21px}.result-heading{display:flex;align-items:center;justify-content:space-between}.result-heading strong{font-size:14px}.result-heading span{display:block;color:var(--muted);font-size:10px;margin-top:5px}.result-icon{width:42px;height:42px;border-radius:14px;background:rgba(22,214,160,.09);display:grid;place-items:center;color:var(--primary);font-size:19px}.result-box{min-height:145px;margin-top:19px;border:1px dashed rgba(255,255,255,.14);border-radius:17px;background:rgba(0,0,0,.13);display:flex;align-items:center;justify-content:center;text-align:center;padding:20px}.result-placeholder{color:#6f849c;font-size:11px;line-height:1.9}.result-state{display:none;align-items:center;flex-direction:column;gap:9px}.result-state-icon{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:rgba(22,214,160,.1);color:var(--primary);font-size:19px}.result-state strong{font-size:12px}.result-state span{color:var(--muted);font-size:10px;line-height:1.8}.message{min-height:35px;color:var(--muted);font-size:10px;line-height:1.8;margin-top:13px}.message.success{color:var(--primary)}.message.error{color:var(--danger)}.privacy{display:flex;gap:10px;padding:14px;margin-top:18px;border:1px solid rgba(22,214,160,.12);background:rgba(22,214,160,.04);border-radius:15px}.privacy-icon{color:var(--primary);font-size:17px}.privacy strong{display:block;font-size:10px;margin-bottom:4px}.privacy span{display:block;color:var(--muted);font-size:9px;line-height:1.8}.info-list{border-top:1px solid var(--border);margin-top:19px;padding-top:17px}.info-row{display:flex;gap:10px;align-items:flex-start;padding:9px 0}.info-num{width:23px;height:23px;flex:0 0 23px;border-radius:7px;background:rgba(98,168,255,.09);color:var(--blue);display:grid;place-items:center;font-size:9px;font-weight:900}.info-row strong{display:block;font-size:10px;margin-bottom:3px}.info-row span{display:block;color:var(--muted);font-size:9px;line-height:1.7}.footer{text-align:center;color:#60758e;font-size:9px;line-height:1.9;padding:20px 0 0}#fileInput{display:none}@media(max-width:850px){.hero{grid-template-columns:1fr}.hero-card{display:none}.layout{grid-template-columns:1fr}.camera{min-height:330px}}@media(max-width:560px){.app{width:min(100% - 18px,520px);padding-top:15px}.topbar{margin-bottom:19px}.brand-logo{width:43px;height:43px}.secure-badge{font-size:9px;padding:8px 10px}.hero{margin-bottom:18px}.hero h1{font-size:31px}.hero p{font-size:12px;line-height:1.9}.camera{min-height:270px;aspect-ratio:4/3}.actions{grid-template-columns:1fr 1fr}.actions .primary{grid-column:span 2}.card-header{padding:17px}.scan-area{inset:27% 5%}.camera-footer{margin:12px 15px}.result{padding:18px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <main class="app">
-<header class="header">
-<div class="brand">
-<div class="brand-icon" aria-hidden="true">▦</div>
-<div><h1>قارئ الرقم القومي</h1><p>SMART ID SCANNER</p></div>
-</div>
-<div class="local-badge">معالجة محلية</div>
+<header class="topbar">
+<div class="brand"><div class="brand-logo">▦</div><div><div class="brand-title">Secure ID Scanner</div><div class="brand-subtitle">LOCAL PDF417 READER</div></div></div>
+<div class="secure-badge"><span class="secure-dot"></span> معالجة محلية</div>
 </header>
 <section class="hero">
-<div class="eyebrow">✦ قراءة ذكية للباركود</div>
-<h2>اقرأ بطاقتك <span>بسهولة</span></h2>
-<p>وجّه الكاميرا إلى رمز PDF417 الموجود على ظهر البطاقة، وسيحاول التطبيق قراءة البيانات واستخراج الرقم القومي المكوّن من 14 رقمًا.</p>
+<div class="hero-copy"><div class="eyebrow">✦ ماسح احترافي داخل المتصفح</div><h1>امسح الكود <span>بسرعة ودقة</span></h1><p>واجهة مخصصة للموبايل لالتقاط رمز PDF417، مع توجيه بصري واضح وحالة فورية للمسح، دون رفع صورة الكاميرا إلى خادم.</p></div>
+<div class="hero-card"><div class="hero-stat"><span>نوع الكود</span><strong>PDF417</strong></div><div class="hero-stat"><span>المعالجة</span><strong>داخل المتصفح</strong></div><div class="hero-stat"><span>الكاميرا</span><strong>Rear Camera</strong></div></div>
 </section>
 <div class="layout">
 <section class="card">
-<div class="card-head">
-<div><div class="card-title">مسح البطاقة</div><div class="card-subtitle">ضع رمز PDF417 داخل إطار الكاميرا</div></div>
-<div class="status"><span class="status-dot" id="statusDot"></span><span id="statusText">الكاميرا متوقفة</span></div>
-</div>
-<div class="camera-wrap" id="cameraWrap">
+<div class="card-header"><div><div class="card-title">منطقة المسح</div><div class="card-subtitle">ضع كود الاختبار داخل الإطار ثم ثبّت الهاتف</div></div><div class="status"><span class="status-dot" id="statusDot"></span><span id="statusText">متوقف</span></div></div>
+<div class="camera" id="camera">
 <video id="video" autoplay muted playsinline></video>
-<div class="camera-placeholder" id="placeholder">
-<div class="camera-symbol">▣</div>
-<strong>الكاميرا جاهزة للتشغيل</strong>
-<span>اضغط على زر تشغيل الكاميرا<br>للبدء في البحث عن الرمز</span>
+<div class="camera-empty" id="cameraEmpty"><div class="camera-icon">▣</div><strong>الكاميرا جاهزة</strong><span>اضغط تشغيل الكاميرا ثم وجّهها إلى رمز PDF417.</span></div>
+<div class="scan-area" id="scanArea"><div class="scan-corner-a"></div><div class="scan-corner-b"></div><div class="scan-line"></div><div class="scan-label">ضع PDF417 داخل الإطار</div></div>
 </div>
-<div class="scan-frame" id="scanFrame"><div class="scan-line"></div></div>
-</div>
-<div class="camera-tip"><span class="tip-icon">ⓘ</span><span>استخدم إضاءة جيدة، وثبّت البطاقة، واجعل الرمز واضحًا بالكامل داخل الإطار. يلزم السماح بالوصول إلى الكاميرا.</span></div>
-<div class="actions">
-<button class="btn btn-primary" id="startBtn">◉ تشغيل الكاميرا</button>
-<button class="btn btn-secondary" id="stopBtn" disabled>■ إيقاف المسح</button>
-<button class="btn btn-secondary" id="uploadBtn">▧ اختيار صورة</button>
-<button class="btn btn-secondary" id="resetBtn">↻ مسح النتيجة</button>
-</div>
+<div class="camera-footer"><span class="camera-footer-icon">ⓘ</span><span>لأفضل نتيجة استخدم إضاءة جيدة، وتجنب الانعكاس، واجعل الكود ظاهرًا بالكامل.</span></div>
+<div class="actions"><button class="btn primary" id="startBtn">◉ تشغيل الكاميرا</button><button class="btn secondary" id="stopBtn" disabled>■ إيقاف</button><button class="btn secondary" id="imageBtn">▧ اختيار صورة</button></div>
 <input id="fileInput" type="file" accept="image/*">
 </section>
-<section>
-<div class="card result-card">
-<div class="result-top">
-<div><div class="result-label">الرقم القومي</div><div class="result-label-sub">National ID · 14 digits</div></div>
-<div class="result-icon">✓</div>
+<section class="card">
+<div class="result">
+<div class="result-heading"><div><strong>نتيجة القراءة</strong><span>PDF417 Decode Status</span></div><div class="result-icon">✓</div></div>
+<div class="result-box"><div class="result-placeholder" id="resultPlaceholder">لم تتم قراءة كود بعد.<br>ابدأ الكاميرا للبحث تلقائيًا.</div><div class="result-state" id="resultState"><div class="result-state-icon">✓</div><strong>تمت قراءة PDF417</strong><span id="decodedInfo">تم التعرف على كود الاختبار.</span></div></div>
+<div class="message" id="message">جاهز لبدء المسح.</div>
+<div class="privacy"><div class="privacy-icon">⌑</div><div><strong>المعالجة المحلية</strong><span>الصورة لا يتم رفعها إلى خادم بواسطة هذه الصفحة.</span></div></div>
+<div class="info-list">
+<div class="info-row"><div class="info-num">01</div><div><strong>تشغيل الكاميرا</strong><span>يتم اختيار الكاميرا الخلفية عندما يدعم الجهاز ذلك.</span></div></div>
+<div class="info-row"><div class="info-num">02</div><div><strong>قراءة PDF417</strong><span>يتم فك الكود داخل المتصفح باستخدام ZXing.</span></div></div>
+<div class="info-row"><div class="info-num">03</div><div><strong>بيانات الاختبار</strong><span>النسخة الحالية مخصصة لاختبار الـdecoder والواجهة.</span></div></div>
 </div>
-<div class="result-box" aria-live="polite">
-<div class="result-placeholder" id="resultPlaceholder">ستظهر النتيجة هنا بعد نجاح قراءة الرمز</div>
-<div class="result-number" id="resultNumber" hidden></div>
-</div>
-<div class="result-message" id="resultMessage">لم يبدأ المسح بعد.</div>
-<button class="btn btn-primary copy-btn" id="copyBtn" disabled>▣ نسخ الرقم القومي</button>
-<div class="privacy">
-<div class="privacy-icon">⌑</div>
-<div><strong>خصوصيتك أولًا</strong><p>الصورة تتم معالجتها داخل المتصفح ولا يرسل هذا التطبيق الصورة إلى خادم. لا تستخدم النتيجة وحدها لإثبات الهوية.</p></div>
-</div>
-</div>
-<div class="card steps">
-<h3>طريقة الاستخدام</h3>
-<div class="step"><div class="step-number">01</div><div><strong>افتح الكاميرا</strong><span>اسمح للمتصفح باستخدام الكاميرا الخلفية.</span></div></div>
-<div class="step"><div class="step-number">02</div><div><strong>وجّهها إلى الرمز</strong><span>اجعل رمز PDF417 واضحًا ومضاءً جيدًا.</span></div></div>
-<div class="step"><div class="step-number">03</div><div><strong>استخرج الرقم</strong><span>إذا احتوت البيانات المفكوكة على 14 رقمًا متتاليًا، ستظهر النتيجة تلقائيًا.</span></div></div>
 </div>
 </section>
 </div>
-<footer class="footer">ID Scanner · HTML + CSS + JavaScript<br>يتطلب الوصول إلى الكاميرا اتصال HTTPS أو localhost.</footer>
+<footer class="footer">Secure ID Scanner · HTML + CSS + JavaScript<br>Camera access requires HTTPS or localhost.</footer>
 </main>
 <script type="module">
-import { BrowserPDF417Reader } from "https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.5/+esm";
+import{BrowserPDF417Reader}from"https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.5/+esm";
 const $=id=>document.getElementById(id);
-const video=$("video");
-const placeholder=$("placeholder");
-const cameraWrap=$("cameraWrap");
-const statusDot=$("statusDot");
-const statusText=$("statusText");
-const startBtn=$("startBtn");
-const stopBtn=$("stopBtn");
-const uploadBtn=$("uploadBtn");
-const fileInput=$("fileInput");
-const resultNumber=$("resultNumber");
-const resultPlaceholder=$("resultPlaceholder");
-const resultMessage=$("resultMessage");
-const copyBtn=$("copyBtn");
-let reader=null;
-let controls=null;
-let stream=null;
-let active=false;
-let found=false;
-let busy=false;
-function setStatus(text,on=false){statusText.textContent=text;statusDot.classList.toggle("active",on)}
-function setMessage(text,type=""){resultMessage.textContent=text;resultMessage.className="result-message "+type}
-function stopCamera(message="تم إيقاف الكاميرا"){
-active=false;
-if(controls){try{controls.stop()}catch{}controls=null}
-if(reader){try{reader.stopContinuousDecode?.()}catch{}}
-if(stream){stream.getTracks().forEach(track=>track.stop());stream=null}
-video.pause();
-video.srcObject=null;
-video.style.display="none";
-placeholder.style.display="flex";
-cameraWrap.classList.remove("scanning");
-$("scanFrame").style.display="none";
-startBtn.disabled=false;
-stopBtn.disabled=true;
-setStatus("الكاميرا متوقفة");
-if(message)setMessage(message);
-}
-function showResult(id){
-found=true;
-resultNumber.textContent=id;
-resultNumber.hidden=false;
-resultPlaceholder.hidden=true;
-copyBtn.disabled=false;
-setMessage("تم العثور على سلسلة مكوّنة من 14 رقمًا. راجع الرقم قبل استخدامه.","success");
-setStatus("تمت القراءة");
-stopCamera(null);
-}
-function extractNationalId(text){
-if(typeof text!=="string")return null;
-const normalized=text.replace(/[٠-٩]/g,d=>String("٠١٢٣٤٥٦٧٨٩".indexOf(d))).replace(/[۰-۹]/g,d=>String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-const matches=normalized.match(/(?:^|[^0-9])([0-9]{14})(?![0-9])/g);
-if(!matches)return null;
-for(const candidate of matches){
-const digits=candidate.replace(/\D/g,"");
-if(digits.length===14)return digits;
-}
-return null;
-}
+const video=$("video"),cameraEmpty=$("cameraEmpty"),scanArea=$("scanArea"),camera=$("camera"),startBtn=$("startBtn"),stopBtn=$("stopBtn"),imageBtn=$("imageBtn"),fileInput=$("fileInput"),statusDot=$("statusDot"),statusText=$("statusText"),message=$("message"),resultPlaceholder=$("resultPlaceholder"),resultState=$("resultState"),decodedInfo=$("decodedInfo");
+let reader=null,controls=null,stream=null,running=false,completed=false;
+function setStatus(text,active=false){statusText.textContent=text;statusDot.classList.toggle("active",active)}
+function setMessage(text,type=""){message.textContent=text;message.className="message "+type}
+function showDecoded(text="تم التعرف على كود PDF417 التجريبي بنجاح."){completed=true;resultPlaceholder.style.display="none";resultState.style.display="flex";decodedInfo.textContent=text;setMessage("تمت قراءة كود الاختبار بنجاح.","success");stopCamera(false)}
+function stopCamera(update=true){running=false;if(controls){try{controls.stop()}catch{}controls=null}if(stream){stream.getTracks().forEach(track=>track.stop());stream=null}video.pause();video.srcObject=null;video.style.display="none";cameraEmpty.style.display="flex";scanArea.style.display="none";camera.classList.remove("scanning");startBtn.disabled=false;stopBtn.disabled=true;setStatus("متوقف");if(update)setMessage("تم إيقاف الكاميرا.")}
 async function startCamera(){
-if(active)return;
-if(!navigator.mediaDevices?.getUserMedia){
-setMessage("المتصفح لا يدعم تشغيل الكاميرا. افتح الصفحة عبر HTTPS واستخدم متصفحًا حديثًا.","error");
-return;
-}
+if(running)return;
+if(!navigator.mediaDevices?.getUserMedia){setMessage("هذا المتصفح لا يدعم الكاميرا. استخدم HTTPS أو localhost.","error");return}
 try{
-found=false;
-busy=false;
-setMessage("جارٍ تشغيل الكاميرا وتجهيز قارئ PDF417...");
+completed=false;setMessage("جاري تشغيل الكاميرا...");
 reader=new BrowserPDF417Reader();
-stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}}});
-video.srcObject=stream;
-video.style.display="block";
-placeholder.style.display="none";
-await video.play();
-active=true;
-startBtn.disabled=true;
-stopBtn.disabled=false;
-cameraWrap.classList.add("scanning");
-$("scanFrame").style.display="block";
-setStatus("جاري البحث",true);
-setMessage("وجّه الكاميرا إلى الرمز وثبّت البطاقة.");
-controls=await reader.decodeFromVideoElement(video,(result,error)=>{
-if(!active||found||!result)return;
-const text=result.getText?.()??"";
-const id=extractNationalId(text);
-if(id)showResult(id);
-else setMessage("تمت قراءة الرمز، لكن لم يظهر رقم مكوّن من 14 رقمًا في النص المفكوك. يجري استمرار البحث.");
-});
-}catch(error){
-stopCamera(null);
-let message="تعذر تشغيل الكاميرا أو تهيئة قارئ PDF417.";
-if(error?.name==="NotAllowedError")message="لم تسمح للمتصفح باستخدام الكاميرا. فعّل إذن الكاميرا ثم حاول مجددًا.";
-else if(error?.name==="NotFoundError")message="لم يتم العثور على كاميرا متاحة على هذا الجهاز.";
-else if(error?.name==="NotReadableError")message="الكاميرا مستخدمة بواسطة تطبيق آخر. أغلقه ثم أعد المحاولة.";
-else if(error?.message)message+=" "+error.message;
-setMessage(message,"error");
-}
-}
-function resetResult(){
-found=false;
-resultNumber.hidden=true;
-resultNumber.textContent="";
-resultPlaceholder.hidden=false;
-copyBtn.disabled=true;
-setMessage("يمكنك بدء مسح جديد.");
-}
-startBtn.addEventListener("click",startCamera);
-stopBtn.addEventListener("click",()=>stopCamera());
-$("resetBtn").addEventListener("click",()=>{resetResult();if(active)setMessage("وجّه الكاميرا إلى الرمز مرة أخرى.")});
-uploadBtn.addEventListener("click",()=>fileInput.click());
-fileInput.addEventListener("change",async()=>{
-const file=fileInput.files?.[0];
-if(!file)return;
-try{
-setMessage("جارٍ قراءة الصورة محليًا...");
-reader=new BrowserPDF417Reader();
-const url=URL.createObjectURL(file);
-try{
-const result=await reader.decodeFromImageUrl(url);
-const id=extractNationalId(result.getText?.()??"");
-if(id)showResult(id);
-else setMessage("تم فك الرمز، لكن لم يتم العثور على 14 رقمًا متتاليًا في النص المقروء.","error");
-}catch(error){
-setMessage("تعذر قراءة PDF417 من الصورة. جرّب صورة أوضح وتأكد من ظهور الرمز بالكامل.","error");
-}finally{URL.revokeObjectURL(url)}
-}catch(error){setMessage("تعذر تهيئة قارئ PDF417. تحقق من اتصال الإنترنت ثم أعد المحاولة.","error")}
-finally{fileInput.value=""}
-});
-copyBtn.addEventListener("click",async()=>{
-const id=resultNumber.textContent;
-if(!id)return;
-try{
-await navigator.clipboard.writeText(id);
-setMessage("تم نسخ الرقم إلى الحافظة.","success");
-}catch{
-const range=document.createRange();
-range.selectNodeContents(resultNumber);
-const selection=window.getSelection();
-selection.removeAllRanges();
-selection.addRange(range);
-setMessage("تعذر النسخ التلقائي. حدد الرقم وانسخه يدويًا.","error");
-}
-});
-window.addEventListener("pagehide",()=>{if(stream)stream.getTracks().forEach(track=>track.stop())});
+stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:"environment"},width:{ideal:1920},height:{ideal:1080}}});
+video.srcObject=stream;video.style.display="block";cameraEmpty.style.display="none";scanArea.style.display="block";camera.classList.add("scanning");await video.play();
+running=true;startBtn.disabled=true;stopBtn.disabled=false;setStatus("جاري البحث",true);setMessage("وجّه الكاميرا إلى PDF417 التجريبي وثبّت الهاتف.");
+controls=await reader.decodeFromVideoElement(video,(result)=>{if(!running||completed||!result)return;showDecoded();});
+}catch(error){stopCamera(false);if(error?.name==="NotAllowedError")setMessage("تم رفض إذن الكاميرا. اسمح للمتصفح باستخدامها ثم حاول مرة أخرى.","error");else if(error?.name==="NotFoundError")setMessage("لم يتم العثور على كاميرا متاحة.","error");else if(error?.name==="NotReadableError")setMessage("الكاميرا مستخدمة بواسطة تطبيق آخر.","error");else setMessage("تعذر تشغيل الكاميرا أو قارئ PDF417.","error")}}
+async function readImage(file){
+try{setMessage("جاري تحليل الصورة محليًا...");reader=new BrowserPDF417Reader();const url=URL.createObjectURL(file);try{const result=await reader.decodeFromImageUrl(url);if(result)showDecoded("تم التعرف على كود PDF417 في الصورة.");else setMessage("لم يتم العثور على PDF417 في الصورة.","error")}catch{setMessage("لم يتم العثور على PDF417 واضح. جرّب صورة أوضح.","error")}finally{URL.revokeObjectURL(url)}}catch{setMessage("تعذر تهيئة قارئ الصورة.","error")}finally{fileInput.value=""}}
+startBtn.addEventListener("click",startCamera);stopBtn.addEventListener("click",()=>stopCamera(true));imageBtn.addEventListener("click",()=>fileInput.click());fileInput.addEventListener("change",()=>{const file=fileInput.files?.[0];if(file)readImage(file)});window.addEventListener("pagehide",()=>stopCamera(false));
 </script>
 </body>
-</html>
+</html>'''
+path = Path("/mnt/data/index.html")
+path.write_text(html, encoding="utf-8")
+print(path)
